@@ -27,6 +27,8 @@ add_library(
   src/faction.cpp
   src/faction.hpp
   src/field.cpp
+  src/file_utils.cpp
+  src/file_utils.hpp
   src/game.cpp
   src/game.hpp
   src/help.cpp

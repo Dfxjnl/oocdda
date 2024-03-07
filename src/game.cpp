@@ -14,6 +14,7 @@
 #include "bionics.hpp"
 #include "bodypart.hpp"
 #include "color.hpp"
+#include "file_utils.hpp"
 #include "item.hpp"
 #include "keypress.hpp"
 #include "line.hpp"
@@ -38,6 +39,9 @@ game::game()
 {
     clear(); // Clear the screen
     intro(); // Print an intro screen, make sure we're at least 80x25
+
+    ensure_save_directory_exists();
+
     // Gee, it sure is init-y around here!
     init_itypes(); // Set up item types                   (SEE itypedef.cpp)
     init_mtypes(); // Set up monster types                (SEE mtypedef.cpp)
