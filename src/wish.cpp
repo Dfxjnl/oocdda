@@ -10,6 +10,7 @@
 #include "output.hpp"
 #include "player.hpp"
 
+namespace oocdda {
 #define LESS(a, b) ((a) < (b) ? (a) : (b))
 
 void game::wish()
@@ -98,3 +99,4 @@ void game::wish()
     advance_nextinv();
     getch();
 }
+} // namespace oocdda

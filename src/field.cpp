@@ -15,6 +15,7 @@
 #include "pldata.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 bool vector_has(std::vector<item> vec, itype_id type);
 
 bool map::process_fields(game* g)
@@ -510,3 +511,4 @@ bool vector_has(std::vector<item> vec, itype_id type)
     }
     return false;
 }
+} // namespace oocdda

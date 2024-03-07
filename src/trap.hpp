@@ -7,6 +7,7 @@
 #include "itype.hpp"
 #include "monster.hpp"
 
+namespace oocdda {
 enum trap_id {
     tr_null,
     tr_bubblewrap,
@@ -110,5 +111,6 @@ struct trap {
         va_end(ap);
     }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_TRAP_HPP

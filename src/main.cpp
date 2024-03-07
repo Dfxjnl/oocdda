@@ -27,7 +27,8 @@ int main(int argc, char* argv[])
     curs_set(0);
 
     rand();
-    game g;
+    oocdda::game g;
+
     while (!g.do_turn())
         ;
     erase();

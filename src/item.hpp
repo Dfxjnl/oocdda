@@ -9,6 +9,7 @@
 #include "itype.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 class game;
 class player;
 struct mtype;
@@ -88,5 +89,6 @@ public:
     unsigned int bday; // The turn on which it was created
     bool owned; // If true, NPCs will shout at you for picking it up
 };
+} // namespace oocdda
 
 #endif // OOCDDA_ITEM_HPP

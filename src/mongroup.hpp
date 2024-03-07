@@ -5,6 +5,7 @@
 
 #include "mtype.hpp"
 
+namespace oocdda {
 enum moncat_id {
     mcat_null = 0,
     mcat_forest,
@@ -35,5 +36,6 @@ struct mongroup {
         population = ppop;
     }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MONGROUP_HPP

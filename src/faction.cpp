@@ -9,6 +9,7 @@
 #include "omdata.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 std::string invent_name();
 std::string invent_adj();
 
@@ -656,3 +657,4 @@ std::string fac_respect_text(int val)
 
     return "Neutral";
 }
+} // namespace oocdda

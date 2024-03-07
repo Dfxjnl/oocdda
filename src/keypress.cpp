@@ -2,6 +2,7 @@
 
 #include <ncurses/curses.h>
 
+namespace oocdda {
 long input()
 {
     long ch = getch();
@@ -71,3 +72,4 @@ void get_direction(int& x, int& y, char ch)
         y = -2;
     }
 }
+} // namespace oocdda

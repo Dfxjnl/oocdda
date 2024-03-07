@@ -4,6 +4,7 @@
 
 #include "mapdata.hpp"
 
+namespace oocdda {
 #define SGN(a) (((a) < 0) ? -1 : 1)
 
 std::vector<point> line_to(int x1, int y1, int x2, int y2, int t)
@@ -98,3 +99,4 @@ std::string direction_from(int x1, int y1, int x2, int y2)
         }
     }
 }
+} // namespace oocdda

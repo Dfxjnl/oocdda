@@ -6,6 +6,7 @@
 #include "itype.hpp"
 #include "mtype.hpp"
 
+namespace oocdda {
 struct component;
 struct items_location_and_chance;
 
@@ -13,5 +14,6 @@ void setvector(std::vector<itype_id>& vec, ...);
 void setvector(std::vector<component>& vec, ...);
 void setvector(std::vector<mon_id>& vec, ...);
 void setvector(std::vector<items_location_and_chance>& vec, ...);
+} // namespace oocdda
 
 #endif // OOCDDA_SETVECTOR_HPP

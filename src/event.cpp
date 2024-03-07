@@ -8,6 +8,7 @@
 #include "player.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 void event::actualize(game* g)
 {
     npc tmp;
@@ -32,3 +33,4 @@ void event::actualize(game* g)
         break;
     }
 }
+} // namespace oocdda

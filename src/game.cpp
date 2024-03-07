@@ -23,6 +23,7 @@
 #include "skill.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 #define LONG_RANGE 10
 #define BLINK_SPEED 300
 #define BULLET_SPEED 10000000
@@ -5640,3 +5641,4 @@ downward so you get an extra line.\n");
     }
     erase();
 }
+} // namespace oocdda

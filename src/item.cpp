@@ -13,6 +13,7 @@
 #include "player.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 bool is_flammable(material m);
 
 item::item()
@@ -877,3 +878,4 @@ bool is_flammable(material m)
         return true;
     return false;
 }
+} // namespace oocdda

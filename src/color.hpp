@@ -3,6 +3,7 @@
 
 #include <ncurses/curses.h>
 
+namespace oocdda {
 enum col_attribute { WA_NULL = 0, HI = 1, INV = 2 };
 
 enum nc_color {
@@ -59,5 +60,6 @@ enum nc_color {
 };
 
 void setattr(nc_color& col, col_attribute attr);
+} // namespace oocdda
 
 #endif // OOCDDA_COLOR_HPP

@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace oocdda {
 enum tut_lesson {
     LESSON_INTRO,
     LESSON_MOVE,
@@ -246,5 +247,6 @@ the pickup key (',' or 'g'), then select a watertight container to put the\n\
 water into.",
 
 };
+} // namespace oocdda
 
 #endif // OOCDDA_TUTORIAL_HPP

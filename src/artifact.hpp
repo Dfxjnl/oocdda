@@ -3,6 +3,7 @@
 
 #include "itype.hpp"
 
+namespace oocdda {
 struct it_artifact : itype {
     itype base;
     virtual bool is_artifact() { return true; }
@@ -23,5 +24,6 @@ struct it_artifact : itype {
     // *carry is every-turn effect while it's in your inventory
     void (iuse::*carry)(game*, item*, bool);
 };
+} // namespace oocdda
 
 #endif // OOCDDA_ARTIFACT_HPP

@@ -15,6 +15,7 @@
 #include "skill.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 void trapfunc::bubble(game* g, int x, int y)
 {
     g->add_msg("You step on some bubblewrap!");
@@ -444,3 +445,4 @@ void trapfunc::sinkhole(game* g, int x, int y)
         g->vertical_move(-1, true);
     }
 }
+} // namespace oocdda

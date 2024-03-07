@@ -20,6 +20,7 @@
 #include "pldata.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 // Why put this in a Big Switch?  Why not let bionics have pointers to
 // functions, much like monsters and items?
 //
@@ -341,3 +342,4 @@ void player::activate_bionic(int b, game* g)
     }
     delwin(w);
 }
+} // namespace oocdda

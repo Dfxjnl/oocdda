@@ -21,6 +21,7 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 // " ...|-+%|-"
 // Null Dirt Grass floor Wall-V Wall-H O-door B-door C-door-V C-door-H
 bool inbounds(int x, int y);
@@ -1113,3 +1114,4 @@ void cast_to_nonant(int& x, int& y, int& n)
         y = SEEY - 1;
     }
 }
+} // namespace oocdda

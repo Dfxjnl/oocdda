@@ -2,6 +2,7 @@
 
 #include "rng.hpp"
 
+namespace oocdda {
 std::string body_part_name(body_part bp, int side)
 {
     switch (bp) {
@@ -57,3 +58,4 @@ body_part random_body_part()
         return bp_arms;
     return bp_torso;
 }
+} // namespace oocdda

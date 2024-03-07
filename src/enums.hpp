@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 
+namespace oocdda {
 #ifndef sgn
 #    define sgn(x) (((x) < 0) ? -1 : 1)
 #endif
@@ -67,5 +68,6 @@ struct point {
     }
     ~point() { }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_ENUMS_HPP

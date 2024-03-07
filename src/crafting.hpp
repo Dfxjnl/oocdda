@@ -6,6 +6,7 @@
 #include "itype.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 enum craft_cat { CC_NULL = 0, CC_WEAPON, CC_FOOD, CC_ELECTRONIC, CC_ARMOR, CC_MISC, NUM_CC };
 
 struct component {
@@ -56,5 +57,6 @@ struct recipe {
     {
     }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_CRAFTING_HPP

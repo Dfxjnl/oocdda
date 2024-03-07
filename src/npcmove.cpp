@@ -22,6 +22,7 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 std::string npc_action_name(npc_action action);
 
 void npc::move(game* g)
@@ -986,3 +987,4 @@ std::string npc_action_name(npc_action action)
         return "unknown";
     }
 }
+} // namespace oocdda

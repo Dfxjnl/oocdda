@@ -15,6 +15,7 @@
 #include "omdata.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 class game;
 class monster;
 class overmap;
@@ -112,5 +113,6 @@ private:
     std::vector<trap*>* traps;
     std::vector<itype_id> (*mapitems)[num_itloc];
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MAP_HPP

@@ -15,6 +15,7 @@
 #include "rng.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 class game;
 
 #ifndef sgn
@@ -4265,3 +4266,4 @@ void set_science_room(map* m, int x1, int y1, bool faces_right, int turn)
         }
     }
 }
+} // namespace oocdda

@@ -13,6 +13,7 @@
 #include "pldata.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 // GENERAL GUIDELINES
 // When adding a new item, you MUST REMEMBER to insert it in the itype_id enum
 //  at the top of itype.h!
@@ -2407,3 +2408,4 @@ itype_id default_ammo(ammotype guntype)
     }
     return itm_null;
 }
+} // namespace oocdda

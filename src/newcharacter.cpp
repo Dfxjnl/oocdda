@@ -15,6 +15,7 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 #define LINE_XOXO 4194424
 #define LINE_OXOX 4194417
 #define LINE_XXOO 4194413
@@ -1551,3 +1552,4 @@ int random_skill(character_type type)
         }
     }
 }
+} // namespace oocdda

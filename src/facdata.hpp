@@ -5,6 +5,7 @@
 
 #include "faction.hpp"
 
+namespace oocdda {
 std::string faction_adj_pos[15] = { "Shining", "Sacred", "Golden", "Holy", "Righteous", "Devoted",
     "Virtuous", "Splendid", "Divine", "Radiant", "Noble", "Venerable",
     "Immaculate"
@@ -101,5 +102,6 @@ faction_value_datum facval_data[NUM_FACVALS] = {
  * apocalyptic world people might be a LITTLE less virtuous), and to keep
  * strength valued a bit higher than the others.
  */
+} // namespace oocdda
 
 #endif // OOCDDA_FACDATA_HPP

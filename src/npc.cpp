@@ -24,6 +24,7 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 std::vector<item> starting_clothes(npc_class type, bool male, game* g);
 std::vector<item> starting_inv(npc* me, npc_class type, game* g);
 
@@ -1497,3 +1498,4 @@ void npc::die(game* g)
     if (weapon.type->id != itm_null)
         g->m.add_item(posx, posy, weapon);
 }
+} // namespace oocdda

@@ -3,6 +3,7 @@
 
 #include "itype.hpp"
 
+namespace oocdda {
 enum mission_category {
     MISS_NULL = 0,
     MISS_GO_TO, // GOTO considered harmful.
@@ -18,5 +19,6 @@ struct mission {
     int count;
     int npc_id;
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MISSION_HPP

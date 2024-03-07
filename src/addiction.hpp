@@ -6,6 +6,7 @@
 #include "game.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 void addict_effect(game* g, addiction& add)
 {
     int in = add.intensity;
@@ -191,5 +192,6 @@ Movement rate reduction.  Depression.  Weak immune system.  Frequent cravings.";
         return "Perception - 1;   Intelligence - 1;  Frequent cravings.";
     }
 }
+} // namespace oocdda
 
 #endif // OOCDDA_ADDICTION_HPP

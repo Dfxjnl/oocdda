@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+namespace oocdda {
 class game;
 
 // TODO: Redefine?
@@ -91,5 +92,6 @@ struct faction {
     int size; // How big is our sphere of influence?
     int power; // General measure of our power
 };
+} // namespace oocdda
 
 #endif // OOCDDA_FACTION_HPP

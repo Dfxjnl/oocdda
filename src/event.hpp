@@ -3,6 +3,7 @@
 
 #include <cstddef>
 
+namespace oocdda {
 class game;
 struct faction;
 
@@ -29,5 +30,6 @@ struct event {
 
     void actualize(game* g);
 };
+} // namespace oocdda
 
 #endif // OOCDDA_EVENT_HPP

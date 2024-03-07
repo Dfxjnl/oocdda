@@ -19,6 +19,7 @@
 #include "pldata.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 #define SGN(a) (((a) < 0) ? -1 : 1)
 #define SQR(a) (a * a)
 
@@ -436,3 +437,4 @@ void monster::make_friendly()
     plans.clear();
     friendly = rng(5, 30) + rng(0, 20);
 }
+} // namespace oocdda

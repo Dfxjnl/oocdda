@@ -5,6 +5,7 @@
 
 #include "output.hpp"
 
+namespace oocdda {
 #define OMAPX 180
 #define OMAPY 180
 
@@ -350,5 +351,6 @@ const oter_t oterlist[num_ter_types] = {
     { "cavern",               '0',       c_ltgray,  5},
     { "tutorial room",        'O',       c_cyan,    5}
 };
+} // namespace oocdda
 
 #endif // OOCDDA_OMDATA_HPP

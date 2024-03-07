@@ -1,6 +1,7 @@
 #ifndef OOCDDA_MONDEATH_HPP
 #define OOCDDA_MONDEATH_HPP
 
+namespace oocdda {
 class game;
 class monster;
 
@@ -19,5 +20,6 @@ public:
     void melt(game* g, monster* z); // Normal death, but melts
     void explode(game* g, monster* z); // Damaging explosion
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MONDEATH_HPP

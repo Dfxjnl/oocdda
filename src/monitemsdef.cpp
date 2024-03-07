@@ -6,6 +6,7 @@
 #include "mtype.hpp"
 #include "setvector.hpp"
 
+namespace oocdda {
 void game::init_monitems()
 {
     setvector(monitems[mon_ant], mi_ants, 1, NULL);
@@ -42,3 +43,4 @@ void game::init_monitems()
     monitems[mon_tankbot] = monitems[mon_eyebot];
     monitems[mon_turret] = monitems[mon_eyebot];
 }
+} // namespace oocdda

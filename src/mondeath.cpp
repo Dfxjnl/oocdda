@@ -17,6 +17,7 @@
 #include "pldata.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 void mdeath::normal(game* g, monster* z)
 {
     int junk;
@@ -202,3 +203,4 @@ void mdeath::explode(game* g, monster* z)
     }
     g->explosion(z->posx, z->posy, size, 0, false);
 }
+} // namespace oocdda

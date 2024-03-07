@@ -1,5 +1,6 @@
 #include "skill.hpp"
 
+namespace oocdda {
 std::string skill_name(int sk)
 {
     switch (sk) {
@@ -186,3 +187,4 @@ double price_adjustment(int barter_skill)
         return double(int(100 * (.3 + 1 / barter_skill)) / 100);
     }
 }
+} // namespace oocdda

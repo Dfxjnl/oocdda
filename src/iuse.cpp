@@ -30,6 +30,7 @@
 #include "skill.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 void iuse::royal_jelly(game* g, item* it, bool t)
 {
     // TODO: Add other diseases here; royal jelly is a cure-all!
@@ -1373,3 +1374,4 @@ void iuse::portal(game* g, item* it, bool t)
 {
     g->m.add_trap(g->u.posx + rng(-2, 2), g->u.posy + rng(-2, 2), tr_portal);
 }
+} // namespace oocdda

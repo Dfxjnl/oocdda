@@ -5,6 +5,7 @@
 #include "keypress.hpp"
 #include "output.hpp"
 
+namespace oocdda {
 #ifndef LINE_XOXO
 #    define LINE_XOXO 4194424
 #    define LINE_OXOX 4194417
@@ -483,3 +484,4 @@ O           Parking lot - Empty lot, few items.  Mostly useless.");
         }
     } while (ch != 'q' && ch != KEY_ESCAPE);
 }
+} // namespace oocdda

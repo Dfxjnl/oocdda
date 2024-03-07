@@ -4,6 +4,8 @@
 
 #include "enums.hpp"
 
+using oocdda::flag_to_bit_position;
+
 TEST(FlagToBitPositionTest, HandlesZero) { EXPECT_EQ(flag_to_bit_position(0), 1); }
 
 TEST(FlagToBitPositionTest, HandlesPositiveNumbers)

@@ -7,8 +7,7 @@
 #include "game.hpp"
 #include "rng.hpp"
 
-class game;
-
+namespace oocdda {
 void dis_msg(game* g, dis_type type)
 {
     switch (type) {
@@ -675,5 +674,6 @@ You're stuck in a pit.  Sight distance is limited and you have to climb out.";
         return "Who knows?";
     }
 }
+} // namespace oocdda
 
 #endif // OOCDDA_DISEASE_HPP

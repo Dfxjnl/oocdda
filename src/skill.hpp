@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace oocdda {
 enum skill {
     sk_null = 0,
     // Melee
@@ -39,5 +40,6 @@ enum skill {
 std::string skill_name(int);
 std::string skill_description(int);
 double price_adjustment(int);
+} // namespace oocdda
 
 #endif // OOCDDA_SKILL_HPP

@@ -21,6 +21,7 @@
 #include "skill.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 #ifndef SGN
 #    define SGN(a) (((a) < 0) ? -1 : 1)
 #endif
@@ -519,3 +520,4 @@ void monster::stumble(game* g, bool moved)
         }
     }
 }
+} // namespace oocdda

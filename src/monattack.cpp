@@ -20,6 +20,7 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 void mattack::antqueen(game* g, monster* z)
 {
     std::vector<point> egg_points;
@@ -508,3 +509,4 @@ void mattack::multi_robot(game* g, monster* z)
         break;
     }
 }
+} // namespace oocdda

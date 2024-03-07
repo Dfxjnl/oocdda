@@ -1,6 +1,7 @@
 #ifndef OOCDDA_IUSE_HPP
 #define OOCDDA_IUSE_HPP
 
+namespace oocdda {
 class game;
 class item;
 
@@ -71,5 +72,6 @@ public:
     void pheromone(game* g, item* it, bool t);
     void portal(game* g, item* it, bool t);
 };
+} // namespace oocdda
 
 #endif // OOCDDA_IUSE_HPP

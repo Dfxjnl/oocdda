@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace oocdda {
 enum character_type {
     PLTYPE_CUSTOM,
     PLTYPE_RANDOM,
@@ -507,5 +508,6 @@ hampered.  You cannot eat anything besides meat."                               
 };
 
 enum hp_part { hp_head = 0, hp_torso, hp_arm_l, hp_arm_r, hp_leg_l, hp_leg_r, num_hp_parts };
+} // namespace oocdda
 
 #endif // OOCDDA_PLDATA_HPP

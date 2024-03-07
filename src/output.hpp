@@ -6,6 +6,7 @@
 
 #include "color.hpp"
 
+namespace oocdda {
 //      LINE_NESW  - X for on, O for off
 #define LINE_XOXO 4194424
 #define LINE_OXOX 4194417
@@ -60,5 +61,6 @@ void full_screen_popup(const char* mes, ...);
 nc_color hilite(nc_color c);
 nc_color rand_color();
 char rand_char();
+} // namespace oocdda
 
 #endif // OOCDDA_OUTPUT_HPP

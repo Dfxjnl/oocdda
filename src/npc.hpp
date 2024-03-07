@@ -11,6 +11,7 @@
 #include "player.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 class game;
 class item;
 class monster;
@@ -221,5 +222,6 @@ public:
     std::vector<npc_need> needs;
     unsigned flags : NF_MAX;
 };
+} // namespace oocdda
 
 #endif // OOCDDA_NPC_HPP

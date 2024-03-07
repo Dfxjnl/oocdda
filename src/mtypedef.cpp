@@ -7,6 +7,7 @@
 #include "mondeath.hpp"
 #include "mtype.hpp"
 
+namespace oocdda {
 // This function populates the master list of monster types.
 // If you edit this function, you'll also need to edit:
 //  * mtype.h - enum mon_id MUST match the order of this list!
@@ -629,3 +630,4 @@ pair of vicious mandibles.");
         0, 0, 5, 100, 3, 0, 0, 0, 0, 0, 0, 1, 20, &mdeath::guilt, &mattack::disappear, "\
 Mom?");
 }
+} // namespace oocdda

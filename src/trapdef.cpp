@@ -6,6 +6,7 @@
 #include "itype.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 void game::init_traps()
 {
     int id = -1;
@@ -80,3 +81,4 @@ void game::init_traps()
     TRAP("shimmering portal", '%', c_magenta, 0, 30, 80, &trapfunc::portal, &trapfuncm::portal,
         itm_null, NULL);
 }
+} // namespace oocdda

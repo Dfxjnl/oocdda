@@ -4,6 +4,7 @@
 #include "faction.hpp"
 #include "omdata.hpp"
 
+namespace oocdda {
 class game;
 
 struct settlement {
@@ -23,5 +24,6 @@ struct settlement {
     int size;
     int buildings[ot_wall - ot_set_house + 1];
 };
+} // namespace oocdda
 
 #endif // OOCDDA_SETTLEMENT_HPP

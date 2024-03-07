@@ -18,6 +18,7 @@
 #include "rng.hpp"
 #include "setvector.hpp"
 
+namespace oocdda {
 void draw_recipe_tabs(WINDOW* w, craft_cat tab);
 
 void game::init_recipes()
@@ -827,3 +828,4 @@ void game::complete_craft()
         add_msg("%c - %s", newit.invlet, newit.tname().c_str());
     }
 }
+} // namespace oocdda

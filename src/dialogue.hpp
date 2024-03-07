@@ -7,6 +7,7 @@
 #include "npc.hpp"
 #include "player.hpp"
 
+namespace oocdda {
 struct dialogue {
     player* alpha;
     npc* beta;
@@ -74,5 +75,6 @@ std::string talk_no_faction[10] = { "I'm unaffiliated.", "I don't run with a cre
     "I work alone, <name_g>.", "I'm a free agent, more money that way.",
     "I prefer to work uninhibited by that kind of connection.",
     "I haven't found one that's good enough for me.", "I don't belong to a faction, <name_g>" };
+} // namespace oocdda
 
 #endif // OOCDDA_DIALOGUE_HPP

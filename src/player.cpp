@@ -22,6 +22,7 @@
 #include "rng.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 nc_color encumb_color(int level);
 
 player::player()
@@ -4007,3 +4008,4 @@ nc_color encumb_color(int level)
         return c_ltred;
     return c_red;
 }
+} // namespace oocdda

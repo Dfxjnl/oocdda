@@ -2,6 +2,7 @@
 
 #include "rng.hpp"
 
+namespace oocdda {
 long rng(long low, long high)
 {
     return low + long((high - low + 1) * double(rand() / double(RAND_MAX + 1.0)));
@@ -22,3 +23,4 @@ int dice(int number, int sides)
     }
     return ret;
 }
+} // namespace oocdda

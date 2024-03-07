@@ -11,6 +11,7 @@
 #include "pldata.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 enum itype_id {
     itm_null = 0,
     itm_corpse,
@@ -843,5 +844,6 @@ struct it_bionic : public itype {
         va_end(ap);
     }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_ITYPE_HPP

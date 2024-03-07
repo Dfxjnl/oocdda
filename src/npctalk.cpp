@@ -25,6 +25,7 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 void say_hello(game* g, dialogue& d);
 void say_ask_for(game* g, dialogue& d, npc_need need);
 void say_put_em_up(game* g, dialogue& d);
@@ -841,3 +842,4 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
         return true;
     return false;
 }
+} // namespace oocdda

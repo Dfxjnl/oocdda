@@ -1,6 +1,7 @@
 #ifndef OOCDDA_MONATTACK_HPP
 #define OOCDDA_MONATTACK_HPP
 
+namespace oocdda {
 class game;
 class monster;
 
@@ -26,5 +27,6 @@ public:
     void flamethrower(game* g, monster* z);
     void multi_robot(game* g, monster* z); // Pick from tazer, smg, flame
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MONATTACK_HPP

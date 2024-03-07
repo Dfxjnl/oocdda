@@ -14,6 +14,7 @@
 #include "pldata.hpp"
 #include "skill.hpp"
 
+namespace oocdda {
 class game;
 class monster;
 struct trap;
@@ -185,5 +186,6 @@ public:
     std::vector<disease> illness;
     std::vector<addiction> addictions;
 };
+} // namespace oocdda
 
 #endif // OOCDDA_PLAYER_HPP

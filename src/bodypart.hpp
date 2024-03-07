@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace oocdda {
 enum body_part {
     bp_head = 0,
     bp_eyes,
@@ -17,5 +18,6 @@ enum body_part {
 
 std::string body_part_name(body_part bp, int side);
 body_part random_body_part();
+} // namespace oocdda
 
 #endif // OOCDDA_BODYPART_HPP

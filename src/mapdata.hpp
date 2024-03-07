@@ -9,6 +9,7 @@
 #include "item.hpp"
 #include "trap.hpp"
 
+namespace oocdda {
 class game;
 class monster;
 
@@ -368,5 +369,6 @@ struct submap {
     int rad[SEEX][SEEY]; // Irradiation of each square
     std::vector<spawn_point> spawns;
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MAPDATA_HPP

@@ -11,6 +11,7 @@
 #include "monattack.hpp"
 #include "mondeath.hpp"
 
+namespace oocdda {
 class mdeath;
 
 enum mon_id {
@@ -213,5 +214,6 @@ struct mtype {
         description = pdescription;
     }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MTYPE_HPP

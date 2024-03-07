@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace oocdda {
 /* Thought: Perhaps a HUD bionic that changes the display of the game?
  * Showing more information or something. */
 
@@ -341,5 +342,6 @@ By drawing the moisture from the air, and synthesizing water from in-air\n\
 elements, you can create a massive puddle around you.  The effects are more\n\
 powerful when used near a body of water."}
 };
+} // namespace oocdda
 
 #endif // OOCDDA_BIONICS_HPP

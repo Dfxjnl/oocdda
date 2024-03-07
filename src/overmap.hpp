@@ -10,6 +10,7 @@
 #include "omdata.hpp"
 #include "settlement.hpp"
 
+namespace oocdda {
 class game;
 
 struct city {
@@ -119,5 +120,6 @@ private:
     void place_NPCs(game* g);
     // File I/O
 };
+} // namespace oocdda
 
 #endif // OOCDDA_OVERMAP_HPP

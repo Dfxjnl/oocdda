@@ -10,6 +10,7 @@
 #include "enums.hpp"
 #include "mtype.hpp"
 
+namespace oocdda {
 class game;
 class map;
 class player;
@@ -85,5 +86,6 @@ public:
 private:
     std::vector<point> plans;
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MONSTER_HPP

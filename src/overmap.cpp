@@ -14,6 +14,7 @@
 #include "rng.hpp"
 #include "settlement.hpp"
 
+namespace oocdda {
 class game;
 
 #define STREETCHANCE 2
@@ -1837,3 +1838,4 @@ void overmap::open(game* g, int x, int y, int z)
         save(x, y, z);
     }
 }
+} // namespace oocdda

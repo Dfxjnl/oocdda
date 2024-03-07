@@ -3,6 +3,7 @@
 #include "output.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 settlement::settlement()
 {
     fact.randomize();
@@ -48,3 +49,4 @@ void settlement::add_building(oter_id ter)
         return;
     buildings[ter - ot_set_house]++;
 }
+} // namespace oocdda

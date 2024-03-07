@@ -5,6 +5,7 @@
 #include "crafting.hpp"
 #include "mapitems.hpp"
 
+namespace oocdda {
 void setvector(std::vector<itype_id>& vec, ...)
 {
     va_list ap;
@@ -50,3 +51,4 @@ void setvector(std::vector<items_location_and_chance>& vec, ...)
     }
     va_end(ap);
 }
+} // namespace oocdda

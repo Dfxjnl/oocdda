@@ -1,6 +1,7 @@
 #ifndef OOCDDA_MAPITEMS_HPP
 #define OOCDDA_MAPITEMS_HPP
 
+namespace oocdda {
 enum items_location {
     mi_none,
     mi_field,
@@ -89,5 +90,6 @@ struct items_location_and_chance {
         chance = c;
     }
 };
+} // namespace oocdda
 
 #endif // OOCDDA_MAPITEMS_HPP

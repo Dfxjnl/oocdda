@@ -5,6 +5,7 @@
 #include "mapitems.hpp"
 #include "setvector.hpp"
 
+namespace oocdda {
 void game::init_mapitems()
 {
     setvector(mapitems[mi_field], itm_rock, itm_strawberries, NULL);
@@ -209,3 +210,4 @@ void game::init_mapitems()
         itm_chainsaw_on, itm_grenade_act, itm_gasbomb_act, itm_molotov_lit, itm_dynamite_act,
         itm_mininuke_act, NULL);
 }
+} // namespace oocdda

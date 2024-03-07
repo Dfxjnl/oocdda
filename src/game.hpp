@@ -23,6 +23,7 @@
 #include "player.hpp"
 #include "tutorial.hpp"
 
+namespace oocdda {
 class item;
 struct trap;
 
@@ -204,5 +205,6 @@ private:
     bool tutorials_seen[NUM_LESSONS]; // Which tutorial lessons have we learned
     bool in_tutorial;
 };
+} // namespace oocdda
 
 #endif // OOCDDA_GAME_HPP

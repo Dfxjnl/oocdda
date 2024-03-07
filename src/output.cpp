@@ -12,6 +12,7 @@
 #include "keypress.hpp"
 #include "rng.hpp"
 
+namespace oocdda {
 #define LINE_XOXO 4194424
 #define LINE_OXOX 4194417
 #define LINE_XXOO 4194413
@@ -710,3 +711,4 @@ char rand_char()
         return '^';
     }
 }
+} // namespace oocdda
