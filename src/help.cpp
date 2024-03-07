@@ -1,9 +1,9 @@
 #include <ncurses/curses.h>
 
-#include "color.h"
-#include "game.h"
-#include "keypress.h"
-#include "output.h"
+#include "color.hpp"
+#include "game.hpp"
+#include "keypress.hpp"
+#include "output.hpp"
 
 #ifndef LINE_XOXO
 #    define LINE_XOXO 4194424

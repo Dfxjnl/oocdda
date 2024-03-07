@@ -3,12 +3,12 @@
 
 #include <ncurses/curses.h>
 
-#include "color.h"
-#include "game.h"
-#include "item.h"
-#include "itype.h"
-#include "output.h"
-#include "player.h"
+#include "color.hpp"
+#include "game.hpp"
+#include "item.hpp"
+#include "itype.hpp"
+#include "output.hpp"
+#include "player.hpp"
 
 #define LESS(a, b) ((a) < (b) ? (a) : (b))
 

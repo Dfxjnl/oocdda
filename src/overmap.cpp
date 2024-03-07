@@ -4,15 +4,15 @@
 #include <fstream>
 #include <vector>
 
-#include "overmap.h"
+#include "overmap.hpp"
 
 #include <ncurses/curses.h>
 
-#include "faction.h"
-#include "line.h"
-#include "output.h"
-#include "rng.h"
-#include "settlement.h"
+#include "faction.hpp"
+#include "line.hpp"
+#include "output.hpp"
+#include "rng.hpp"
+#include "settlement.hpp"
 
 class game;
 

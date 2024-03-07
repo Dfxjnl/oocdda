@@ -1,4 +1,4 @@
-#include "keypress.h"
+#include "keypress.hpp"
 
 #include <ncurses/curses.h>
 

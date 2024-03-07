@@ -2,25 +2,25 @@
 #include <cstdlib>
 #include <sstream>
 
-#include "player.h"
+#include "player.hpp"
 
 #include <ncurses/curses.h>
 
-#include "addiction.h"
-#include "bionics.h"
-#include "disease.h"
-#include "enums.h"
-#include "game.h"
-#include "iuse.h"
-#include "keypress.h"
-#include "map.h"
-#include "mapdata.h"
-#include "monster.h"
-#include "mtype.h"
-#include "npc.h"
-#include "output.h"
-#include "rng.h"
-#include "trap.h"
+#include "addiction.hpp"
+#include "bionics.hpp"
+#include "disease.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "iuse.hpp"
+#include "keypress.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "monster.hpp"
+#include "mtype.hpp"
+#include "npc.hpp"
+#include "output.hpp"
+#include "rng.hpp"
+#include "trap.hpp"
 
 nc_color encumb_color(int level);
 

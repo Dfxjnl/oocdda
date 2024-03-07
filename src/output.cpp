@@ -1,19 +1,16 @@
-#ifndef _OUTPUT_H_
-#define _OUTPUT_H_
-
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
 #include <string>
 #include <vector>
 
-#include "output.h"
+#include "output.hpp"
 
 #include <ncurses/curses.h>
 
-#include "color.h"
-#include "keypress.h"
-#include "rng.h"
+#include "color.hpp"
+#include "keypress.hpp"
+#include "rng.hpp"
 
 #define LINE_XOXO 4194424
 #define LINE_OXOX 4194417
@@ -713,4 +710,3 @@ char rand_char()
         return '^';
     }
 }
-#endif

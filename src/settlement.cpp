@@ -1,7 +1,7 @@
-#include "settlement.h"
+#include "settlement.hpp"
 
-#include "output.h"
-#include "rng.h"
+#include "output.hpp"
+#include "rng.hpp"
 
 settlement::settlement()
 {

@@ -2,21 +2,21 @@
 #include <sstream>
 #include <string>
 
-#include "crafting.h"
+#include "crafting.hpp"
 
 #include <ncurses/curses.h>
 
-#include "bionics.h"
-#include "color.h"
-#include "game.h"
-#include "item.h"
-#include "keypress.h"
-#include "map.h"
-#include "output.h"
-#include "player.h"
-#include "pldata.h"
-#include "rng.h"
-#include "setvector.h"
+#include "bionics.hpp"
+#include "color.hpp"
+#include "game.hpp"
+#include "item.hpp"
+#include "keypress.hpp"
+#include "map.hpp"
+#include "output.hpp"
+#include "player.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
+#include "setvector.hpp"
 
 void draw_recipe_tabs(WINDOW* w, craft_cat tab);
 

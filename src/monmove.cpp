@@ -4,22 +4,22 @@
 #include <string>
 #include <vector>
 
-#include "bionics.h"
-#include "bodypart.h"
-#include "enums.h"
-#include "game.h"
-#include "line.h"
-#include "map.h"
-#include "mapdata.h"
-#include "monattack.h"
-#include "monster.h"
-#include "mtype.h"
-#include "npc.h"
-#include "player.h"
-#include "pldata.h"
-#include "rng.h"
-#include "skill.h"
-#include "trap.h"
+#include "bionics.hpp"
+#include "bodypart.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "line.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "monattack.hpp"
+#include "monster.hpp"
+#include "mtype.hpp"
+#include "npc.hpp"
+#include "player.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
+#include "skill.hpp"
+#include "trap.hpp"
 
 #ifndef SGN
 #    define SGN(a) (((a) < 0) ? -1 : 1)

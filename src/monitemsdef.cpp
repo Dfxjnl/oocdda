@@ -1,10 +1,10 @@
 #include <cstddef>
 #include <vector>
 
-#include "game.h"
-#include "mapitems.h"
-#include "mtype.h"
-#include "setvector.h"
+#include "game.hpp"
+#include "mapitems.hpp"
+#include "mtype.hpp"
+#include "setvector.hpp"
 
 void game::init_monitems()
 {

@@ -1,8 +1,8 @@
 #include <cmath>
 
-#include "line.h"
+#include "line.hpp"
 
-#include "mapdata.h"
+#include "mapdata.hpp"
 
 #define SGN(a) (((a) < 0) ? -1 : 1)
 

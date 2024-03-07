@@ -3,21 +3,21 @@
 #include <cstdlib>
 #include <sstream>
 
-#include "monster.h"
+#include "monster.hpp"
 
 #include <ncurses/curses.h>
 
-#include "color.h"
-#include "game.h"
-#include "itype.h"
-#include "map.h"
-#include "mapdata.h"
-#include "mapitems.h"
-#include "mondeath.h"
-#include "output.h"
-#include "player.h"
-#include "pldata.h"
-#include "rng.h"
+#include "color.hpp"
+#include "game.hpp"
+#include "itype.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "mapitems.hpp"
+#include "mondeath.hpp"
+#include "output.hpp"
+#include "player.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
 
 #define SGN(a) (((a) < 0) ? -1 : 1)
 #define SQR(a) (a * a)

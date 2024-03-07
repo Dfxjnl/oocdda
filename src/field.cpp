@@ -1,19 +1,19 @@
 #include <vector>
 
-#include "bionics.h"
-#include "bodypart.h"
-#include "enums.h"
-#include "game.h"
-#include "item.h"
-#include "itype.h"
-#include "map.h"
-#include "mapdata.h"
-#include "monster.h"
-#include "mtype.h"
-#include "output.h"
-#include "player.h"
-#include "pldata.h"
-#include "rng.h"
+#include "bionics.hpp"
+#include "bodypart.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "item.hpp"
+#include "itype.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "monster.hpp"
+#include "mtype.hpp"
+#include "output.hpp"
+#include "player.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
 
 bool vector_has(std::vector<item> vec, itype_id type);
 

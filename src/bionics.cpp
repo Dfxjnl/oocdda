@@ -1,24 +1,24 @@
 #include <vector>
 
-#include "bionics.h"
+#include "bionics.hpp"
 
 #include <ncurses/curses.h>
 
-#include "bodypart.h"
-#include "color.h"
-#include "enums.h"
-#include "game.h"
-#include "item.h"
-#include "itype.h"
-#include "keypress.h"
-#include "line.h"
-#include "map.h"
-#include "mapdata.h"
-#include "monster.h"
-#include "output.h"
-#include "player.h"
-#include "pldata.h"
-#include "rng.h"
+#include "bodypart.hpp"
+#include "color.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "item.hpp"
+#include "itype.hpp"
+#include "keypress.hpp"
+#include "line.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "monster.hpp"
+#include "output.hpp"
+#include "player.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
 
 // Why put this in a Big Switch?  Why not let bionics have pointers to
 // functions, much like monsters and items?

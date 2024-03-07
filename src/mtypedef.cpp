@@ -1,11 +1,11 @@
 #include <vector>
 
-#include "color.h"
-#include "enums.h"
-#include "game.h"
-#include "monattack.h"
-#include "mondeath.h"
-#include "mtype.h"
+#include "color.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "monattack.hpp"
+#include "mondeath.hpp"
+#include "mtype.hpp"
 
 // This function populates the master list of monster types.
 // If you edit this function, you'll also need to edit:

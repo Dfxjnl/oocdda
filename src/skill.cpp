@@ -1,4 +1,4 @@
-#include "skill.h"
+#include "skill.hpp"
 
 std::string skill_name(int sk)
 {

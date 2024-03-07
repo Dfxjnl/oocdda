@@ -2,16 +2,16 @@
 #include <string>
 #include <vector>
 
-#include "bionics.h"
-#include "bodypart.h"
-#include "color.h"
-#include "enums.h"
-#include "game.h"
-#include "itype.h"
-#include "iuse.h"
-#include "output.h"
-#include "pldata.h"
-#include "skill.h"
+#include "bionics.hpp"
+#include "bodypart.hpp"
+#include "color.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "itype.hpp"
+#include "iuse.hpp"
+#include "output.hpp"
+#include "pldata.hpp"
+#include "skill.hpp"
 
 // GENERAL GUIDELINES
 // When adding a new item, you MUST REMEMBER to insert it in the itype_id enum

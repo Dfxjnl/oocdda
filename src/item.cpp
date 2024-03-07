@@ -1,17 +1,17 @@
 #include <cstddef>
 #include <sstream>
 
-#include "item.h"
+#include "item.hpp"
 
 #include <ncurses/curses.h>
 
-#include "bionics.h"
-#include "bodypart.h"
-#include "game.h"
-#include "mtype.h"
-#include "output.h"
-#include "player.h"
-#include "skill.h"
+#include "bionics.hpp"
+#include "bodypart.hpp"
+#include "game.hpp"
+#include "mtype.hpp"
+#include "output.hpp"
+#include "player.hpp"
+#include "skill.hpp"
 
 bool is_flammable(material m);
 

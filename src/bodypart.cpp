@@ -1,6 +1,6 @@
-#include "bodypart.h"
+#include "bodypart.hpp"
 
-#include "rng.h"
+#include "rng.hpp"
 
 std::string body_part_name(body_part bp, int side)
 {

@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "enums.h"
+#include "enums.hpp"
 
 TEST(FlagToBitPositionTest, HandlesZero) { EXPECT_EQ(flag_to_bit_position(0), 1); }
 

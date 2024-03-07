@@ -3,26 +3,26 @@
 #include <fstream>
 #include <sstream>
 
-#include "npc.h"
+#include "npc.hpp"
 
 #include <ncurses/curses.h>
 
-#include "bodypart.h"
-#include "color.h"
-#include "enums.h"
-#include "game.h"
-#include "item.h"
-#include "itype.h"
-#include "map.h"
-#include "mapdata.h"
-#include "mapitems.h"
-#include "monster.h"
-#include "mtype.h"
-#include "output.h"
-#include "overmap.h"
-#include "pldata.h"
-#include "rng.h"
-#include "skill.h"
+#include "bodypart.hpp"
+#include "color.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "item.hpp"
+#include "itype.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "mapitems.hpp"
+#include "monster.hpp"
+#include "mtype.hpp"
+#include "output.hpp"
+#include "overmap.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
+#include "skill.hpp"
 
 std::vector<item> starting_clothes(npc_class type, bool male, game* g);
 std::vector<item> starting_inv(npc* me, npc_class type, game* g);

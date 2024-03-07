@@ -1,9 +1,9 @@
 #include <cstddef>
 
-#include "game.h"
-#include "itype.h"
-#include "mapitems.h"
-#include "setvector.h"
+#include "game.hpp"
+#include "itype.hpp"
+#include "mapitems.hpp"
+#include "setvector.hpp"
 
 void game::init_mapitems()
 {

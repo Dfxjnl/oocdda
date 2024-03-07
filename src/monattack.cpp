@@ -2,23 +2,23 @@
 #include <string>
 #include <vector>
 
-#include "monattack.h"
+#include "monattack.hpp"
 
-#include "bodypart.h"
-#include "enums.h"
-#include "game.h"
-#include "item.h"
-#include "itype.h"
-#include "line.h"
-#include "map.h"
-#include "mapdata.h"
-#include "monster.h"
-#include "mtype.h"
-#include "npc.h"
-#include "player.h"
-#include "pldata.h"
-#include "rng.h"
-#include "skill.h"
+#include "bodypart.hpp"
+#include "enums.hpp"
+#include "game.hpp"
+#include "item.hpp"
+#include "itype.hpp"
+#include "line.hpp"
+#include "map.hpp"
+#include "mapdata.hpp"
+#include "monster.hpp"
+#include "mtype.hpp"
+#include "npc.hpp"
+#include "player.hpp"
+#include "pldata.hpp"
+#include "rng.hpp"
+#include "skill.hpp"
 
 void mattack::antqueen(game* g, monster* z)
 {

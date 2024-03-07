@@ -9,82 +9,81 @@ find_package(Curses REQUIRED)
 # Library
 add_library(
   oocdda_lib OBJECT
-  src/addiction.h
-  src/artifact.h
+  src/addiction.hpp
+  src/artifact.hpp
   src/bionics.cpp
-  src/bionics.h
+  src/bionics.hpp
   src/bodypart.cpp
-  src/bodypart.h
-  src/color.h
+  src/bodypart.hpp
+  src/color.hpp
   src/crafting.cpp
-  src/crafting.h
-  src/dialogue.h
-  src/disease.h
-  src/enums.h
+  src/crafting.hpp
+  src/dialogue.hpp
+  src/disease.hpp
+  src/enums.hpp
   src/event.cpp
-  src/event.h
-  src/facdata.h
+  src/event.hpp
+  src/facdata.hpp
   src/faction.cpp
-  src/faction.h
+  src/faction.hpp
   src/field.cpp
   src/game.cpp
-  src/game.h
+  src/game.hpp
   src/help.cpp
   src/item.cpp
-  src/item.h
-  src/itype.h
+  src/item.hpp
+  src/itype.hpp
   src/itypedef.cpp
   src/iuse.cpp
-  src/iuse.h
+  src/iuse.hpp
   src/keypress.cpp
-  src/keypress.h
+  src/keypress.hpp
   src/line.cpp
-  src/line.h
+  src/line.hpp
   src/map.cpp
-  src/map.h
-  src/mapdata.h
+  src/map.hpp
+  src/mapdata.hpp
   src/mapgen.cpp
-  src/mapitems.h
+  src/mapitems.hpp
   src/mapitemsdef.cpp
-  src/mission.h
+  src/mission.hpp
   src/monattack.cpp
-  src/monattack.h
+  src/monattack.hpp
   src/mondeath.cpp
-  src/mondeath.h
-  src/mongroup.h
+  src/mondeath.hpp
+  src/mongroup.hpp
   src/mongroupdef.cpp
   src/monitemsdef.cpp
   src/monmove.cpp
   src/monster.cpp
-  src/monster.h
-  src/mtype.h
+  src/monster.hpp
+  src/mtype.hpp
   src/mtypedef.cpp
   src/newcharacter.cpp
   src/npc.cpp
-  src/npc.h
+  src/npc.hpp
   src/npcmove.cpp
   src/npctalk.cpp
-  src/omdata.h
+  src/omdata.hpp
   src/output.cpp
-  src/output.h
+  src/output.hpp
   src/overmap.cpp
-  src/overmap.h
+  src/overmap.hpp
   src/player.cpp
-  src/player.h
-  src/pldata.h
+  src/player.hpp
+  src/pldata.hpp
   src/rng.cpp
-  src/rng.h
+  src/rng.hpp
   src/settlement.cpp
-  src/settlement.h
+  src/settlement.hpp
   src/setvector.cpp
-  src/setvector.h
+  src/setvector.hpp
   src/skill.cpp
-  src/skill.h
-  src/trap.h
+  src/skill.hpp
+  src/trap.hpp
   src/trapdef.cpp
   src/trapfunc.cpp
-  src/tutorial.h
-  src/window.h
+  src/tutorial.hpp
   src/wish.cpp)
 
 target_compile_features(oocdda_lib PUBLIC cxx_std_20)

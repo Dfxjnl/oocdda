@@ -1,13 +1,13 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "faction.h"
+#include "faction.hpp"
 
-#include "enums.h"
-#include "facdata.h"
-#include "game.h"
-#include "omdata.h"
-#include "rng.h"
+#include "enums.hpp"
+#include "facdata.hpp"
+#include "game.hpp"
+#include "omdata.hpp"
+#include "rng.hpp"
 
 std::string invent_name();
 std::string invent_adj();

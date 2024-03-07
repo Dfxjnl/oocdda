@@ -9,7 +9,7 @@
 
 #include <ncurses/curses.h>
 
-#include "game.h"
+#include "game.hpp"
 
 // FUNCTIONS
 void do_colors();
