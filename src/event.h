@@ -5,30 +5,28 @@
 
 class game;
 
-enum event_type {
- EVENT_NULL,
- EVENT_HELP,
- NUM_EVENT_TYPES
-};
+enum event_type { EVENT_NULL, EVENT_HELP, NUM_EVENT_TYPES };
 
 struct event {
- event_type type;
- int turn;
- faction* relevant_faction;
+    event_type type;
+    int turn;
+    faction* relevant_faction;
 
- event() {
-  type = EVENT_NULL;
-  turn = 0;
-  relevant_faction = NULL;
- }
+    event()
+    {
+        type = EVENT_NULL;
+        turn = 0;
+        relevant_faction = NULL;
+    }
 
- event(event_type e_t, int t, faction* r_f) {
-  type = e_t;
-  turn = t;
-  relevant_faction = r_f;
- }
+    event(event_type e_t, int t, faction* r_f)
+    {
+        type = e_t;
+        turn = t;
+        relevant_faction = r_f;
+    }
 
- void actualize(game *g);
+    void actualize(game* g);
 };
 
 #endif
