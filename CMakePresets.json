@@ -1,0 +1,194 @@
+{
+  "version": 7,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 27,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "std",
+      "hidden": true,
+      "description": "set the appropriate standard",
+      "cacheVariables": {
+        "CMAKE_CXX_EXTENSIONS": "OFF",
+        "CMAKE_CXX_STANDARD": "20",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON"
+      }
+    },
+    {
+      "name": "ccache-env",
+      "hidden": true,
+      "description": "build using ccache",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache"
+      },
+      "environment": {
+        "CCACHE_BASEDIR": "${sourceDir}"
+      }
+    },
+    {
+      "name": "clang-tidy-env",
+      "hidden": true,
+      "description": "build using clang-tidy as precompile step",
+      "cacheVariables": {
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy"
+      }
+    },
+    {
+      "name": "cppcheck-env",
+      "hidden": true,
+      "description": "build using cppcheck as precompile step",
+      "cacheVariables": {
+        "CMAKE_CXX_CPPCHECK": "cppcheck;--inline-suppr"
+      }
+    },
+    {
+      "name": "include-what-you-use-env",
+      "hidden": true,
+      "description": "build using include-what-you-use as precompile step",
+      "cacheVariables": {
+        "CMAKE_CXX_INCLUDE_WHAT_YOU_USE": "include-what-you-use;-Xiwyu;--cxx17ns"
+      }
+    },
+    {
+      "name": "vcpkg",
+      "hidden": true,
+      "description": "setup using vcpkg toolchain",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_MANIFEST_FEATURES": "test"
+      }
+    },
+    {
+      "name": "flags-gcc-clang",
+      "hidden": true,
+      "description": "these flags are supported by both gcc and Clang",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wcast-qual -Wformat=2 -Wundef -Werror=float-equal -Wshadow -Wcast-align -Wunused -Wnull-dereference -Wdouble-promotion -Wimplicit-fallthrough -Wextra-semi -Woverloaded-virtual -Wnon-virtual-dtor -Wold-style-cast"
+      }
+    },
+    {
+      "name": "ninja",
+      "hidden": true,
+      "description": "build using Ninja generator",
+      "inherits": [
+        "std",
+        "ccache-env",
+        "vcpkg",
+        "flags-gcc-clang"
+      ],
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
+      "inherits": [
+        "ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "binaryDir": "${sourceDir}/build/ninja-debug"
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
+      "inherits": [
+        "clang-tidy-env",
+        "cppcheck-env",
+        "include-what-you-use-env",
+        "ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      },
+      "binaryDir": "${sourceDir}/build/ninja-release"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "ninja-debug",
+      "displayName": "Ninja Debug",
+      "configurePreset": "ninja-debug",
+      "configuration": "Debug",
+      "jobs": 12
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Ninja Release",
+      "configurePreset": "ninja-release",
+      "configuration": "Release",
+      "jobs": 12
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-common",
+      "description": "Test CMake settings that apply to all configurations",
+      "hidden": true,
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true,
+        "jobs": 12
+      }
+    },
+    {
+      "name": "ninja-debug",
+      "displayName": "Strict",
+      "description": "Enable output and stop on failure",
+      "inherits": "test-common",
+      "configurePreset": "ninja-debug"
+    },
+    {
+      "name": "ninja-release",
+      "displayName": "Strict",
+      "description": "Enable output and stop on failure",
+      "inherits": "test-common",
+      "configurePreset": "ninja-release"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "ninja-debug",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ninja-debug"
+        },
+        {
+          "type": "build",
+          "name": "ninja-debug"
+        },
+        {
+          "type": "test",
+          "name": "ninja-debug"
+        }
+      ]
+    },
+    {
+      "name": "ninja-release",
+      "steps": [
+        {
+          "name": "ninja-release",
+          "type": "configure"
+        },
+        {
+          "name": "ninja-release",
+          "type": "build"
+        },
+        {
+          "name": "ninja-release",
+          "type": "test"
+        }
+      ]
+    }
+  ]
+}

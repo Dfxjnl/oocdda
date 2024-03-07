@@ -1,0 +1,32 @@
+---
+Language: Cpp
+BasedOnStyle: WebKit
+AlignArrayOfStructures: Left
+BraceWrapping:
+    AfterFunction: true
+BreakBeforeBraces: Custom
+BreakBeforeInheritanceComma: true
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: 100
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^<[a-z_]+>'
+    Priority: -1
+  - Regex: '^<.+\.h(pp)?>'
+    Priority: 1
+  - Regex: '^<.*'
+    Priority: 2
+  - Regex: '.*'
+    Priority: 3
+IndentPPDirectives: AfterHash
+IndentRequiresClause: false
+NamespaceIndentation: None
+QualifierAlignment: Left
+RemoveSemicolon: true
+RequiresClausePosition: WithFollowing
+RequiresExpressionIndentation: OuterScope
+ShortNamespaceLines: 0
+SortIncludes: CaseSensitive
+SpaceAfterTemplateKeyword: false
+...

@@ -1,7 +1,7 @@
 #ifndef _MAP_H_
 #define _MAP_H_
 
-#include <ncurses.h>
+#include <ncurses/curses.h>
 #include <stdlib.h>
 #include <vector>
 #include <string>
