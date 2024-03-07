@@ -236,19 +236,19 @@ std::string item::info(bool showtext)
     } else if (is_armor()) {
         it_armor* armor = dynamic_cast<it_armor*>(type);
         dump << " Covers: ";
-        if (armor->covers & mfb(bp_head))
+        if (armor->covers & flag_to_bit_position(bp_head))
             dump << "The head. ";
-        if (armor->covers & mfb(bp_eyes))
+        if (armor->covers & flag_to_bit_position(bp_eyes))
             dump << "The eyes. ";
-        if (armor->covers & mfb(bp_mouth))
+        if (armor->covers & flag_to_bit_position(bp_mouth))
             dump << "The mouth. ";
-        if (armor->covers & mfb(bp_torso))
+        if (armor->covers & flag_to_bit_position(bp_torso))
             dump << "The torso. ";
-        if (armor->covers & mfb(bp_hands))
+        if (armor->covers & flag_to_bit_position(bp_hands))
             dump << "The hands. ";
-        if (armor->covers & mfb(bp_legs))
+        if (armor->covers & flag_to_bit_position(bp_legs))
             dump << "The legs. ";
-        if (armor->covers & mfb(bp_feet))
+        if (armor->covers & flag_to_bit_position(bp_feet))
             dump << "The feet. ";
         dump << "\n Encumberment: " << int(armor->encumber)
              << "\n Bashing protection: " << int(armor->dmg_resist)

@@ -3163,10 +3163,10 @@ void game::pickup(int posx, int posy, int min)
             else {
                 item water = m.water_from(posx, posy);
                 it_container* cont_type = dynamic_cast<it_container*>(cont->type);
-                if (!cont_type->flags & mfb(con_wtight)) {
+                if (!cont_type->flags & flag_to_bit_position(con_wtight)) {
                     add_msg("That %s isn't watertight!", cont->tname().c_str());
                     return;
-                } else if (!cont_type->flags & mfb(con_seals)) {
+                } else if (!cont_type->flags & flag_to_bit_position(con_seals)) {
                     if (query_yn("Can't transport water in a %s.  Drink it now?",
                             cont->tname().c_str())) {
                         cont->put_in(water);
@@ -4382,16 +4382,19 @@ void game::butcher()
             pieces += int(skill_shift);
             if (skill_shift < 3)
                 pelts += int(skill_shift - 3);
-            if ((corpse->flags & mfb(MF_FUR) || corpse->flags & mfb(MF_LEATHER)) && pelts > 0) {
+            if ((corpse->flags & flag_to_bit_position(MF_FUR)
+                    || corpse->flags & flag_to_bit_position(MF_LEATHER))
+                && pelts > 0) {
                 add_msg("You manage to skin the %s!", corpse->name.c_str());
                 for (int i = 0; i < pelts; i++) {
                     itype* pelt;
-                    if (corpse->flags & mfb(MF_FUR) && corpse->flags & mfb(MF_LEATHER)) {
+                    if (corpse->flags & flag_to_bit_position(MF_FUR)
+                        && corpse->flags & flag_to_bit_position(MF_LEATHER)) {
                         if (one_in(2))
                             pelt = itypes[itm_fur];
                         else
                             pelt = itypes[itm_leather];
-                    } else if (corpse->flags & mfb(MF_FUR))
+                    } else if (corpse->flags & flag_to_bit_position(MF_FUR))
                         pelt = itypes[itm_fur];
                     else
                         pelt = itypes[itm_leather];
@@ -4402,7 +4405,7 @@ void game::butcher()
                 add_msg("Your clumsy butchering destroys the meat!");
             else {
                 itype* meat;
-                if (corpse->flags & mfb(MF_POISON)) {
+                if (corpse->flags & flag_to_bit_position(MF_POISON)) {
                     if (rng(3, 10) < skill_shift) {
                         add_msg("Your skillful butchering eliminates the poison!");
                         if (corpse->mat == FLESH)

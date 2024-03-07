@@ -1,5 +1,6 @@
 #ifndef _OVERMAP_H_
 #define _OVERMAP_H_
+
 #include <vector>
 
 #include <ncurses/curses.h>

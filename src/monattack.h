@@ -4,6 +4,7 @@
 // #include "game.h"
 
 class game;
+class monster;
 
 class mattack {
 public:

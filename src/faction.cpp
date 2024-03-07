@@ -57,7 +57,7 @@ void faction::randomize()
     do {
         int v = rng(1, NUM_FACVALS - 1);
         if (!has_value(faction_value(v)) && matches_us(faction_value(v))) {
-            values |= mfb(v);
+            values |= flag_to_bit_position(v);
             tries = 0;
             num_values++;
             good += facval_data[v].good;
@@ -148,27 +148,27 @@ void faction::make_army()
     job1 = FACJOB_MERCENARIES;
     job2 = FACJOB_NULL;
     if (one_in(4))
-        values |= mfb(FACVAL_CHARITABLE);
+        values |= flag_to_bit_position(FACVAL_CHARITABLE);
     if (!one_in(4))
-        values |= mfb(FACVAL_EXPLORATION);
+        values |= flag_to_bit_position(FACVAL_EXPLORATION);
     if (one_in(3))
-        values |= mfb(FACVAL_BIONICS);
+        values |= flag_to_bit_position(FACVAL_BIONICS);
     if (one_in(3))
-        values |= mfb(FACVAL_ROBOTS);
+        values |= flag_to_bit_position(FACVAL_ROBOTS);
     if (one_in(4))
-        values |= mfb(FACVAL_TREACHERY);
+        values |= flag_to_bit_position(FACVAL_TREACHERY);
     if (one_in(4))
-        values |= mfb(FACVAL_STRAIGHTEDGE);
+        values |= flag_to_bit_position(FACVAL_STRAIGHTEDGE);
     if (!one_in(3))
-        values |= mfb(FACVAL_LAWFUL);
+        values |= flag_to_bit_position(FACVAL_LAWFUL);
     if (one_in(8))
-        values |= mfb(FACVAL_CRUELTY);
+        values |= flag_to_bit_position(FACVAL_CRUELTY);
     id = 0;
 }
 
 bool faction::has_job(faction_job j) { return (job1 == j || job2 == j); }
 
-bool faction::has_value(faction_value v) { return values & mfb(v); }
+bool faction::has_value(faction_value v) { return values & flag_to_bit_position(v); }
 
 bool faction::matches_us(faction_value v)
 {

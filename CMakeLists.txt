@@ -103,6 +103,12 @@ set_target_properties(oocdda_exe PROPERTIES OUTPUT_NAME oocdda)
 target_compile_features(oocdda_exe PRIVATE cxx_std_20)
 target_link_libraries(oocdda_exe PRIVATE oocdda_lib)
 
+include(CTest)
+
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif()
+
 add_custom_target(
   run-exe
   COMMAND oocdda_exe

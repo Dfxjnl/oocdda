@@ -12,11 +12,6 @@
 #include "pldata.h"
 #include "skill.h"
 
-// mfb(n) converts a flag to its appropriate position in covers's bitfield
-#ifndef mfb
-#    define mfb(n) int(pow(2, (int)n))
-#endif
-
 enum itype_id {
     itm_null = 0,
     itm_corpse,

@@ -86,7 +86,7 @@ bool map::trans(int x, int y)
     // this check in the ray loop.
     if ((x >= SEEX * 3) || (x < 0) || (y >= SEEY * 3) || (y < 0))
         return true;
-    return terlist[ter(x, y)].flags & mfb(transparent)
+    return terlist[ter(x, y)].flags & flag_to_bit_position(transparent)
         && (field_at(x, y).type == 0
             || fieldlist[field_at(x, y).type].transparent[field_at(x, y).density - 1]);
 }
@@ -95,10 +95,13 @@ bool map::has_flag(t_flag flag, int x, int y)
 {
     if (x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3)
         return (flag == diggable ? true : false); // For the sake of worms, etc.
-    return terlist[ter(x, y)].flags & mfb(flag);
+    return terlist[ter(x, y)].flags & flag_to_bit_position(flag);
 }
 
-bool map::is_destructable(int x, int y) { return !(terlist[ter(x, y)].flags & mfb(swimmable)); }
+bool map::is_destructable(int x, int y)
+{
+    return !(terlist[ter(x, y)].flags & flag_to_bit_position(swimmable));
+}
 
 bool map::bash(int x, int y, int str, std::string& sound)
 {
@@ -720,7 +723,7 @@ void map::drawsq(WINDOW* w, player& u, int x, int y, bool invert, bool show_item
     }
     // If there's items here, draw those instead
     if (show_items && i_at(x, y).size() > 0 && field_at(x, y).is_null()) {
-        if ((terlist[ter(x, y)].flags & mfb(container)))
+        if ((terlist[ter(x, y)].flags & flag_to_bit_position(container)))
             hi = true;
         else {
             tercol = i_at(x, y)[i_at(x, y).size() - 1].color();

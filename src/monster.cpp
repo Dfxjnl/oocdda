@@ -161,7 +161,7 @@ void monster::draw(WINDOW* w, int plx, int ply, bool inv)
         mvwputch(w, y, x, color, type->sym);
 }
 
-bool monster::has_flag(m_flags f) { return type->flags & mfb(f); }
+bool monster::has_flag(m_flags f) { return type->flags & flag_to_bit_position(f); }
 
 bool monster::made_of(material m)
 {

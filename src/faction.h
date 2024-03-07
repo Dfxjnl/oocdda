@@ -7,10 +7,6 @@
 // TODO: Redefine?
 #define MAX_FAC_NAME_SIZE 40
 
-#ifndef mfb
-#    define mfb(n) int(pow(2, (int)n))
-#endif
-
 std::string fac_ranking_text(int val);
 std::string fac_respect_text(int val);
 

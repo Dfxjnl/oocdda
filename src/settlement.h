@@ -3,7 +3,6 @@
 
 #include "faction.h"
 #include "npc.h"
-#include "overmap.h"
 
 struct settlement {
     settlement();

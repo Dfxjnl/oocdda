@@ -96,16 +96,17 @@ bool map::process_fields(game* g)
                     }
                 }
                 // Consume the terrain we're on
-                if (terlist[ter(x, y)].flags & mfb(flammable) && one_in(8 - cur->density)) {
+                if (terlist[ter(x, y)].flags & flag_to_bit_position(flammable)
+                    && one_in(8 - cur->density)) {
                     cur->age -= cur->density * cur->density * 40;
                     if (cur->density == 3)
                         ter(x, y) = t_rubble;
-                } else if (terlist[ter(x, y)].flags & mfb(explodes)) {
+                } else if (terlist[ter(x, y)].flags & flag_to_bit_position(explodes)) {
                     ter(x, y) = t_gas_pump_smashed;
                     cur->age = 0;
                     cur->density = 3;
                     g->explosion(x, y, 40, 0, true);
-                } else if (terlist[ter(x, y)].flags & mfb(swimmable))
+                } else if (terlist[ter(x, y)].flags & flag_to_bit_position(swimmable))
                     cur->age += 800; // Flames die quickly on water
                 // If we consumed a lot, the flames grow higher
                 while (cur->density < 3 && cur->age < 0) {

@@ -3618,8 +3618,8 @@ void map::place_items(
             px = rng(x1, x2);
             py = rng(y1, y2);
             // Only place on valid terrain
-        } while (
-            (terlist[ter(px, py)].movecost == 0 && !(terlist[ter(px, py)].flags & mfb(container)))
+        } while ((terlist[ter(px, py)].movecost == 0
+                     && !(terlist[ter(px, py)].flags & flag_to_bit_position(container)))
             || (!ongrass && (ter(px, py) == t_dirt || ter(px, py) == t_grass)));
         add_item(px, py, (*itypes)[eligible[selection]], turn);
         // Guns in the home and behind counters are generated with their ammo

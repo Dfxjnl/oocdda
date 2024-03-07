@@ -92,10 +92,6 @@ enum m_size {
 // Feel free to add to m_flags.  Order shouldn't matter, just keep it tidy!
 // There is a maximum number of 32 flags, including MF_MAX, so...
 // And comment them well. ;)
-// mfb(n) converts a flag to its appropriate position in mtype's bitfield
-#ifndef mfb
-#    define mfb(n) int(pow(2, (int)n))
-#endif
 enum m_flags {
     MF_SEES, // It can see you (and will run/follow)
     MF_HEARS, // It can hear you

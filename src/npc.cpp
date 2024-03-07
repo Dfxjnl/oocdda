@@ -79,7 +79,7 @@ void npc::randomize(game* g, npc_class type)
         per_max += rng(0, 1) * rng(0, 1);
         personality.aggression -= rng(0, 4);
         if (one_in(4))
-            flags |= mfb(NF_DRUGGIE);
+            flags |= flag_to_bit_position(NF_DRUGGIE);
         cash += 100 * rng(0, 3) * rng(0, 3);
         break;
     case NC_TRADER:
@@ -125,9 +125,9 @@ void npc::randomize(game* g, npc_class type)
         sklevel[sk_electronics] += rng(1, 3);
         sklevel[sk_firstaid] += rng(0, 1);
         if (one_in(4))
-            flags |= mfb(NF_TECHNOPHILE);
+            flags |= flag_to_bit_position(NF_TECHNOPHILE);
         if (one_in(3))
-            flags |= mfb(NF_BOOKWORM);
+            flags |= flag_to_bit_position(NF_BOOKWORM);
         str_max -= rng(1, 3);
         dex_max -= rng(0, 1);
         int_max += rng(2, 5);
@@ -930,7 +930,8 @@ bool npc::wear_if_wanted(item it)
     int max_encumb[num_bp] = { 2, 3, 3, 4, 3, 3, 3, 2 };
     bool encumb_ok = true;
     for (int i = 0; i < num_bp && encumb_ok; i++) {
-        if (armor->covers & mfb(i) && encumb(body_part(i)) + armor->encumber > max_encumb[i])
+        if (armor->covers & flag_to_bit_position(i)
+            && encumb(body_part(i)) + armor->encumber > max_encumb[i])
             encumb_ok = false;
     }
     if (encumb_ok) {
@@ -941,7 +942,8 @@ bool npc::wear_if_wanted(item it)
     std::vector<int> removal;
     for (int i = 0; i < worn.size(); i++) {
         for (int j = 0; j < num_bp; j++) {
-            if (armor->covers & mfb(j) && dynamic_cast<it_armor*>(worn[i].type)->covers & mfb(j)) {
+            if (armor->covers & flag_to_bit_position(j)
+                && dynamic_cast<it_armor*>(worn[i].type)->covers & flag_to_bit_position(j)) {
                 removal.push_back(i);
                 j = num_bp;
             }

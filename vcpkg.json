@@ -3,5 +3,13 @@
   "dependencies": [
     "ncurses"
   ],
+  "features": {
+    "test": {
+      "description": "Dependencies for testing",
+      "dependencies": [
+        "gtest"
+      ]
+    }
+  },
   "builtin-baseline": "d8160798747ac9953d3374f9473393868d76dfe6"
 }

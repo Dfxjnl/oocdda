@@ -7,7 +7,7 @@
 #include "faction.h"
 #include "item.h"
 #include "monster.h"
-#include "overmap.h"
+#include "omdata.h"
 #include "player.h"
 
 #define NPC_LOW_VALUE 5

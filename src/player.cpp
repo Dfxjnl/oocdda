@@ -1515,7 +1515,8 @@ void player::mutate(game* g)
                     g->add_msg("Your hands and feet develop a thick webbing!");
                     // Force off any gloves
                     for (int i = 0; i < worn.size(); i++) {
-                        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & mfb(bp_hands)) {
+                        if ((dynamic_cast<it_armor*>(worn[i].type))->covers
+                            & flag_to_bit_position(bp_hands)) {
                             g->add_msg("Your %s are pushed off!", worn[i].tname().c_str());
                             g->m.add_item(posx, posy, worn[i]);
                             worn.erase(worn.begin() + i);
@@ -1536,7 +1537,8 @@ void player::mutate(game* g)
                     }
                     // Force off and damage any mouthwear
                     for (int i = 0; i < worn.size(); i++) {
-                        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & mfb(bp_mouth)) {
+                        if ((dynamic_cast<it_armor*>(worn[i].type))->covers
+                            & flag_to_bit_position(bp_mouth)) {
                             worn[i].damage += 2;
                             if (worn[i].damage >= 5)
                                 g->add_msg("Your %s is destroyed!", worn[i].tname().c_str());
@@ -3498,15 +3500,15 @@ bool player::wear(game* g, char let)
         g->add_msg("You can't wear that, it's made of wool!");
         return false;
     }
-    if (armor->covers & mfb(bp_head) && encumb(bp_head) != 0) {
+    if (armor->covers & flag_to_bit_position(bp_head) && encumb(bp_head) != 0) {
         g->add_msg("You can't wear a%s helmet!", wearing_something_on(bp_head) ? "nother" : "");
         return false;
     }
-    if (armor->covers & mfb(bp_hands) && has_trait(PF_WEBBED)) {
+    if (armor->covers & flag_to_bit_position(bp_hands) && has_trait(PF_WEBBED)) {
         g->add_msg("You cannot put %s over your webbed hands.", armor->name.c_str());
         return false;
     }
-    if (armor->covers & mfb(bp_feet) && wearing_something_on(bp_feet)) {
+    if (armor->covers & flag_to_bit_position(bp_feet) && wearing_something_on(bp_feet)) {
         g->add_msg("You're already wearing footwear!");
         return false;
     }
@@ -3595,7 +3597,7 @@ void player::use(game* g, char let)
             g->add_msg("That %s cannot be attached to a rifle.", used->tname().c_str());
             return;
         } else if (mod->acceptible_ammo_types != 0
-            && !(mfb(guntype->ammo) & mod->acceptible_ammo_types)) {
+            && !(flag_to_bit_position(guntype->ammo) & mod->acceptible_ammo_types)) {
             g->add_msg("That %s cannot be used on a %s gun.", used->tname().c_str(),
                 ammo_name(guntype->ammo).c_str());
             return;
@@ -3714,7 +3716,7 @@ int player::warmth(body_part bp)
 {
     int ret = 0;
     for (int i = 0; i < worn.size(); i++) {
-        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & mfb(bp))
+        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & flag_to_bit_position(bp))
             ret += (dynamic_cast<it_armor*>(worn[i].type))->warmth;
     }
     return ret;
@@ -3730,7 +3732,8 @@ int player::encumb(body_part bp)
             debugmsg("%s::encumb hit a non-armor item at worn[%d] (%s)", name.c_str(), i,
                 worn[i].tname().c_str());
         armor = dynamic_cast<it_armor*>(worn[i].type);
-        if (armor->covers & mfb(bp) || (bp == bp_torso && (armor->covers & mfb(bp_arms)))) {
+        if (armor->covers & flag_to_bit_position(bp)
+            || (bp == bp_torso && (armor->covers & flag_to_bit_position(bp_arms)))) {
             ret += armor->encumber;
             if (armor->encumber > 0 || bp != bp_torso)
                 layers++;
@@ -3753,7 +3756,7 @@ int player::armor_bash(body_part bp)
     it_armor* armor;
     for (int i = 0; i < worn.size(); i++) {
         armor = dynamic_cast<it_armor*>(worn[i].type);
-        if (armor->covers & mfb(bp))
+        if (armor->covers & flag_to_bit_position(bp))
             ret += armor->dmg_resist;
     }
     if (has_bionic(bio_carbon))
@@ -3779,7 +3782,7 @@ int player::armor_cut(body_part bp)
     it_armor* armor;
     for (int i = 0; i < worn.size(); i++) {
         armor = dynamic_cast<it_armor*>(worn[i].type);
-        if (armor->covers & mfb(bp))
+        if (armor->covers & flag_to_bit_position(bp))
             ret += armor->cut_resist;
     }
     if (has_bionic(bio_carbon))
@@ -3823,7 +3826,7 @@ void player::absorb(game* g, body_part bp, int& dam, int& cut)
     //  their T shirt, for example.  TODO: don't assume! ASS out of U & ME, etc.
     for (int i = worn.size() - 1; i >= 0; i--) {
         tmp = dynamic_cast<it_armor*>(worn[i].type);
-        if ((tmp->covers & mfb(bp)) && tmp->storage < 20) {
+        if ((tmp->covers & flag_to_bit_position(bp)) && tmp->storage < 20) {
             arm_bash = tmp->dmg_resist;
             arm_cut = tmp->cut_resist;
             switch (worn[i].damage) {
@@ -3899,7 +3902,7 @@ int player::resist(body_part bp)
 {
     int ret = 0;
     for (int i = 0; i < worn.size(); i++) {
-        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & mfb(bp))
+        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & flag_to_bit_position(bp))
             ret += (dynamic_cast<it_armor*>(worn[i].type))->env_resist;
     }
     if (bp == bp_mouth && has_bionic(bio_purifier) && ret < 5) {
@@ -3913,7 +3916,7 @@ int player::resist(body_part bp)
 bool player::wearing_something_on(body_part bp)
 {
     for (int i = 0; i < worn.size(); i++) {
-        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & mfb(bp))
+        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & flag_to_bit_position(bp))
             return true;
     }
     return false;
