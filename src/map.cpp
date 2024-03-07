@@ -1,14 +1,25 @@
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <fstream>
 
 #include "map.h"
 
-#include <stdlib.h>
+#include <ncurses/curses.h>
 
+#include "bionics.h"
+#include "bodypart.h"
+#include "color.h"
 #include "game.h"
+#include "iuse.h"
 #include "line.h"
+#include "monster.h"
 #include "output.h"
+#include "overmap.h"
+#include "player.h"
+#include "pldata.h"
 #include "rng.h"
+#include "skill.h"
 
 // " ...|-+%|-"
 // Null Dirt Grass floor Wall-V Wall-H O-door B-door C-door-V C-door-H

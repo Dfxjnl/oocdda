@@ -4,16 +4,19 @@
 #include <string>
 #include <vector>
 
+#include <ncurses/curses.h>
+
 #include "bionics.h"
+#include "bodypart.h"
+#include "color.h"
 #include "item.h"
-#include "monster.h"
+#include "itype.h"
 #include "pldata.h"
 #include "skill.h"
-#include "trap.h"
 
-class monster;
 class game;
-class trap;
+class monster;
+struct trap;
 
 class player {
 public:

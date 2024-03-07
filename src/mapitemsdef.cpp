@@ -1,8 +1,8 @@
-#include <cstdarg>
+#include <cstddef>
 
 #include "game.h"
 #include "itype.h"
-#include "omdata.h"
+#include "mapitems.h"
 #include "setvector.h"
 
 void game::init_mapitems()

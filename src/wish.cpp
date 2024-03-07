@@ -1,5 +1,14 @@
+#include <string>
+#include <vector>
+
+#include <ncurses/curses.h>
+
+#include "color.h"
 #include "game.h"
+#include "item.h"
+#include "itype.h"
 #include "output.h"
+#include "player.h"
 
 #define LESS(a, b) ((a) < (b) ? (a) : (b))
 

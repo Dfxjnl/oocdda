@@ -1,15 +1,18 @@
 #ifndef _MONSTER_H_
 #define _MONSTER_H_
 
+#include <string>
 #include <vector>
 
+#include <ncurses/curses.h>
+
+#include "bodypart.h"
 #include "enums.h"
 #include "mtype.h"
-#include "player.h"
 
+class game;
 class map;
 class player;
-class game;
 
 class monster {
 public:

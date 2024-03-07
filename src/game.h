@@ -1,27 +1,32 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 
+#include <string>
 #include <vector>
 
+#include <ncurses/curses.h>
+
 #include "crafting.h"
+#include "enums.h"
 #include "event.h"
 #include "faction.h"
+#include "itype.h"
 #include "map.h"
+#include "mapdata.h"
 #include "mapitems.h"
+#include "mongroup.h"
 #include "monster.h"
 #include "mtype.h"
 #include "npc.h"
 #include "omdata.h"
 #include "overmap.h"
 #include "player.h"
-#include "trap.h"
 #include "tutorial.h"
 
-enum tut_type { TUT_NULL, TUT_BASIC, TUT_COMBAT, TUT_MAX };
+class item;
+struct trap;
 
-struct mtype;
-class map;
-class player;
+enum tut_type { TUT_NULL, TUT_BASIC, TUT_COMBAT, TUT_MAX };
 
 class game {
 public:

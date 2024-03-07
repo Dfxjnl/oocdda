@@ -1,6 +1,6 @@
-#include "rng.h"
+#include <cstdlib>
 
-#include "output.h"
+#include "rng.h"
 
 long rng(long low, long high)
 {

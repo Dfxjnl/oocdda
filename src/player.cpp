@@ -1,15 +1,26 @@
+#include <cmath>
+#include <cstdlib>
 #include <sstream>
 
 #include "player.h"
 
 #include <ncurses/curses.h>
-#include <stdlib.h>
 
 #include "addiction.h"
 #include "bionics.h"
 #include "disease.h"
+#include "enums.h"
 #include "game.h"
+#include "iuse.h"
 #include "keypress.h"
+#include "map.h"
+#include "mapdata.h"
+#include "monster.h"
+#include "mtype.h"
+#include "npc.h"
+#include "output.h"
+#include "rng.h"
+#include "trap.h"
 
 nc_color encumb_color(int level);
 

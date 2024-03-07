@@ -1,13 +1,34 @@
+#include <cstddef>
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include "iuse.h"
 
+#include <ncurses/curses.h>
+
+#include "bodypart.h"
+#include "color.h"
+#include "enums.h"
+#include "event.h"
+#include "faction.h"
 #include "game.h"
+#include "item.h"
+#include "itype.h"
 #include "keypress.h"
 #include "line.h"
+#include "map.h"
 #include "mapdata.h"
+#include "monster.h"
+#include "mtype.h"
+#include "npc.h"
 #include "output.h"
+#include "overmap.h"
+#include "player.h"
+#include "pldata.h"
 #include "rng.h"
+#include "skill.h"
+#include "trap.h"
 
 void iuse::royal_jelly(game* g, item* it, bool t)
 {

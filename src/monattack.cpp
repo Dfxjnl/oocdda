@@ -1,9 +1,24 @@
+#include <cmath>
+#include <string>
+#include <vector>
+
+#include "monattack.h"
+
 #include "bodypart.h"
+#include "enums.h"
 #include "game.h"
+#include "item.h"
+#include "itype.h"
 #include "line.h"
-#include "mondeath.h"
+#include "map.h"
+#include "mapdata.h"
 #include "monster.h"
+#include "mtype.h"
+#include "npc.h"
+#include "player.h"
+#include "pldata.h"
 #include "rng.h"
+#include "skill.h"
 
 void mattack::antqueen(game* g, monster* z)
 {

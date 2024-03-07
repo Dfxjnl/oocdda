@@ -1,5 +1,17 @@
+#include <cstddef>
+#include <string>
+#include <vector>
+
+#include "bionics.h"
+#include "bodypart.h"
+#include "color.h"
+#include "enums.h"
 #include "game.h"
 #include "itype.h"
+#include "iuse.h"
+#include "output.h"
+#include "pldata.h"
+#include "skill.h"
 
 // GENERAL GUIDELINES
 // When adding a new item, you MUST REMEMBER to insert it in the itype_id enum

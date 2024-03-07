@@ -1,17 +1,20 @@
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <fstream>
 #include <vector>
 
 #include "overmap.h"
 
-#include <math.h>
 #include <ncurses/curses.h>
-#include <stdlib.h>
-#include <time.h>
 
-#include "game.h"
+#include "faction.h"
 #include "line.h"
+#include "output.h"
 #include "rng.h"
 #include "settlement.h"
+
+class game;
 
 #define STREETCHANCE 2
 #define NUM_FOREST 250

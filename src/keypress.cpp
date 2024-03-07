@@ -1,5 +1,7 @@
 #include "keypress.h"
 
+#include <ncurses/curses.h>
+
 long input()
 {
     long ch = getch();

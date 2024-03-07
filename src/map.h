@@ -5,18 +5,19 @@
 #include <vector>
 
 #include <ncurses/curses.h>
-#include <stdlib.h>
 
+#include "enums.h"
 #include "item.h"
+#include "itype.h"
 #include "mapdata.h"
 #include "mapitems.h"
-#include "monster.h"
-#include "npc.h"
-#include "overmap.h"
-
+#include "mtype.h"
+#include "omdata.h"
+#include "trap.h"
+class game;
+class monster;
+class overmap;
 class player;
-class item;
-struct itype;
 
 class map {
 public:

@@ -1,4 +1,8 @@
+#include <cstddef>
+
 #include "game.h"
+#include "mongroup.h"
+#include "mtype.h"
 #include "setvector.h"
 
 void game::init_moncats()

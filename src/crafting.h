@@ -1,11 +1,9 @@
 #ifndef _CRAFTING_H_
 #define _CRAFTING_H_
 
-#include <string>
 #include <vector>
 
 #include "itype.h"
-#include "rng.h"
 #include "skill.h"
 
 enum craft_cat { CC_NULL = 0, CC_WEAPON, CC_FOOD, CC_ELECTRONIC, CC_ARMOR, CC_MISC, NUM_CC };

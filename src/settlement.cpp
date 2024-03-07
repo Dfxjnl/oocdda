@@ -1,7 +1,5 @@
 #include "settlement.h"
 
-#include "game.h"
-#include "line.h"
 #include "output.h"
 #include "rng.h"
 

@@ -1,13 +1,26 @@
+#include <cmath>
+#include <cstdlib>
 #include <fstream>
 #include <sstream>
 
 #include "npc.h"
 
+#include <ncurses/curses.h>
+
 #include "bodypart.h"
+#include "color.h"
+#include "enums.h"
 #include "game.h"
-#include "line.h"
+#include "item.h"
+#include "itype.h"
 #include "map.h"
+#include "mapdata.h"
+#include "mapitems.h"
+#include "monster.h"
+#include "mtype.h"
 #include "output.h"
+#include "overmap.h"
+#include "pldata.h"
 #include "rng.h"
 #include "skill.h"
 

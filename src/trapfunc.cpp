@@ -1,5 +1,18 @@
+#include <vector>
+
+#include "bodypart.h"
+#include "enums.h"
 #include "game.h"
+#include "itype.h"
+#include "map.h"
+#include "mapdata.h"
+#include "monster.h"
+#include "mtype.h"
+#include "output.h"
+#include "player.h"
+#include "pldata.h"
 #include "rng.h"
+#include "skill.h"
 #include "trap.h"
 
 void trapfunc::bubble(game* g, int x, int y)

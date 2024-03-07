@@ -1,7 +1,26 @@
+#include <cmath>
+#include <cstdlib>
+#include <string>
+#include <vector>
+
+#include "bodypart.h"
+#include "enums.h"
+#include "faction.h"
 #include "game.h"
+#include "item.h"
+#include "itype.h"
 #include "line.h"
+#include "map.h"
+#include "mapdata.h"
+#include "monster.h"
 #include "npc.h"
+#include "omdata.h"
+#include "output.h"
+#include "overmap.h"
+#include "player.h"
+#include "pldata.h"
 #include "rng.h"
+#include "skill.h"
 
 std::string npc_action_name(npc_action action);
 

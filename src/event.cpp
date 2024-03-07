@@ -1,7 +1,11 @@
+#include <vector>
+
 #include "event.h"
 
 #include "game.h"
+#include "mapdata.h"
 #include "npc.h"
+#include "player.h"
 #include "rng.h"
 
 void event::actualize(game* g)

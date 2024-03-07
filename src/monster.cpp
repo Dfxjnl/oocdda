@@ -1,14 +1,22 @@
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <sstream>
 
 #include "monster.h"
 
 #include <ncurses/curses.h>
-#include <stdlib.h>
 
+#include "color.h"
 #include "game.h"
+#include "itype.h"
 #include "map.h"
+#include "mapdata.h"
+#include "mapitems.h"
 #include "mondeath.h"
 #include "output.h"
+#include "player.h"
+#include "pldata.h"
 #include "rng.h"
 
 #define SGN(a) (((a) < 0) ? -1 : 1)

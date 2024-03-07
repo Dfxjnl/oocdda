@@ -4,18 +4,22 @@
 #include <string>
 #include <vector>
 
+#include <ncurses/curses.h>
+
 #include "faction.h"
-#include "item.h"
-#include "monster.h"
 #include "omdata.h"
 #include "player.h"
+#include "skill.h"
+
+class game;
+class item;
+class monster;
+class overmap;
+struct point;
 
 #define NPC_LOW_VALUE 5
 #define NPC_HI_VALUE 8
 #define NPC_VERY_HI_VALUE 15
-
-class item;
-class overmap;
 
 /*
  * Talk: Trust midlow->high, fear low->mid, need doesn't matter

@@ -2,6 +2,7 @@
 #define _OUTPUT_H_
 
 #include <cstdarg>
+#include <cstdio>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -9,7 +10,6 @@
 #include "output.h"
 
 #include <ncurses/curses.h>
-#include <stdlib.h>
 
 #include "color.h"
 #include "keypress.h"

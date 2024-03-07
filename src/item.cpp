@@ -1,10 +1,14 @@
+#include <cstddef>
 #include <sstream>
 
 #include "item.h"
 
 #include <ncurses/curses.h>
 
+#include "bionics.h"
+#include "bodypart.h"
 #include "game.h"
+#include "mtype.h"
 #include "output.h"
 #include "player.h"
 #include "skill.h"

@@ -4,12 +4,14 @@
 #include <string>
 #include <vector>
 
+#include "color.h"
+#include "enums.h"
 #include "itype.h"
-#include "mtype.h"
-// #include "npc.h"
+#include "skill.h"
 
+class game;
 class player;
-class npc;
+struct mtype;
 
 class item {
 public:

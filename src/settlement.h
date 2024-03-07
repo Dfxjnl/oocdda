@@ -2,7 +2,9 @@
 #define _SETTLEMENT_H_
 
 #include "faction.h"
-#include "npc.h"
+#include "omdata.h"
+
+class game;
 
 struct settlement {
     settlement();

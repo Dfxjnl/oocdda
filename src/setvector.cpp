@@ -1,4 +1,9 @@
+#include <cstdarg>
+
 #include "setvector.h"
+
+#include "crafting.h"
+#include "mapitems.h"
 
 void setvector(std::vector<itype_id>& vec, ...)
 {

@@ -1,4 +1,10 @@
+#include <cstddef>
+#include <vector>
+
+#include "color.h"
 #include "game.h"
+#include "itype.h"
+#include "trap.h"
 
 void game::init_traps()
 {

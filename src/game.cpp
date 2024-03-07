@@ -1,17 +1,27 @@
+#include <cmath>
+#include <cstdarg>
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
 #include <fstream>
 #include <sstream>
 
 #include "game.h"
 
 #include <dirent.h>
-#include <math.h>
-#include <unistd.h>
+#include <ncurses/curses.h>
 
+#include "bionics.h"
+#include "bodypart.h"
+#include "color.h"
+#include "item.h"
 #include "keypress.h"
 #include "line.h"
 #include "output.h"
+#include "pldata.h"
 #include "rng.h"
 #include "skill.h"
+#include "trap.h"
 
 #define LONG_RANGE 10
 #define BLINK_SPEED 300

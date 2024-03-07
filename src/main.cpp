@@ -4,6 +4,7 @@
  * Who knows
  */
 
+#include <cstdlib>
 #include <ctime>
 
 #include <ncurses/curses.h>

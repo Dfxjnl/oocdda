@@ -1,14 +1,29 @@
+#include <cmath>
+#include <cstdarg>
+#include <cstdlib>
 #include <sstream>
 #include <string>
 #include <vector>
 
+#include <ncurses/curses.h>
+
+#include "color.h"
 #include "dialogue.h"
+#include "enums.h"
+#include "faction.h"
 #include "game.h"
+#include "item.h"
+#include "itype.h"
 #include "keypress.h"
 #include "line.h"
+#include "map.h"
 #include "npc.h"
+#include "omdata.h"
 #include "output.h"
+#include "overmap.h"
+#include "player.h"
 #include "rng.h"
+#include "skill.h"
 
 void say_hello(game* g, dialogue& d);
 void say_ask_for(game* g, dialogue& d, npc_need need);

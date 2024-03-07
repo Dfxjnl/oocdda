@@ -1,9 +1,10 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
-#include "faction.h"
+#include <cstddef>
 
 class game;
+struct faction;
 
 enum event_type { EVENT_NULL, EVENT_HELP, NUM_EVENT_TYPES };
 

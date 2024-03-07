@@ -1,10 +1,21 @@
-#include "game.h"
+#include <cmath>
+#include <vector>
+
+#include "enums.h"
+#include "item.h"
+#include "itype.h"
 #include "line.h"
 #include "map.h"
+#include "mapdata.h"
 #include "mapitems.h"
+#include "mtype.h"
 #include "omdata.h"
 #include "output.h"
+#include "overmap.h"
 #include "rng.h"
+#include "trap.h"
+
+class game;
 
 #ifndef sgn
 #    define sgn(x) (((x) < 0) ? -1 : 1)

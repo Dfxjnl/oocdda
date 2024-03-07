@@ -1,18 +1,16 @@
 #ifndef _OVERMAP_H_
 #define _OVERMAP_H_
 
+#include <string>
 #include <vector>
-
-#include <ncurses/curses.h>
 
 #include "enums.h"
 #include "mongroup.h"
 #include "npc.h"
 #include "omdata.h"
 #include "settlement.h"
-#include "string.h"
 
-struct settlement;
+class game;
 
 struct city {
     int x;

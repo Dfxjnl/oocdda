@@ -1,10 +1,19 @@
-#include <unistd.h>
+#include <string>
+#include <vector>
 
+#include <ncurses/curses.h>
+
+#include "bionics.h"
+#include "color.h"
 #include "game.h"
+#include "item.h"
+#include "itype.h"
 #include "keypress.h"
 #include "output.h"
 #include "player.h"
+#include "pldata.h"
 #include "rng.h"
+#include "skill.h"
 
 #define LINE_XOXO 4194424
 #define LINE_OXOX 4194417
