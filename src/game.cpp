@@ -3763,7 +3763,8 @@ void game::throw_item(player& p, int tarx, int tary, item& thrown, std::vector<p
         deviation += rng(0, 1 + (thrown.volume() - 5) / 4);
     if (thrown.volume() == 0)
         deviation += rng(0, 3);
-    deviation += rng(0, 1 + abs(p.str_cur - thrown.weight()));
+
+    deviation += rng(0, 1 + std::abs(p.str_cur - static_cast<int>(thrown.weight())));
 
     double missed_by = .01 * deviation * trange;
     bool missed = false;
