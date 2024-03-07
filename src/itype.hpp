@@ -584,7 +584,7 @@ struct it_comest : public itype {
 
     virtual bool is_food() { return true; }
 
-    void (iuse::*use)(game*, item*, bool); // Special effects of use
+    void (iuse::*use)(Game*, item*, bool); // Special effects of use
     add_type add; // Effects of addiction
 
     it_comest(unsigned short pid, unsigned char prarity, unsigned int pprice, std::string pname,
@@ -594,7 +594,7 @@ struct it_comest : public itype {
 
         signed char pquench, unsigned char pnutr, signed char pspoils, signed char pstim,
         signed char phealthy, unsigned char paddict, unsigned char pcharges, signed char pfun,
-        itype_id pcontainer, itype_id ptool, void (iuse::*puse)(game*, item*, bool), add_type padd)
+        itype_id pcontainer, itype_id ptool, void (iuse::*puse)(Game*, item*, bool), add_type padd)
         : itype(pid, prarity, pprice, pname, pdes, psym, pcolor, pm1, MNULL, pvolume, pweight,
             pmelee_dam, pmelee_cut, pm_to_hit)
     {
@@ -799,7 +799,7 @@ struct it_tool : public itype {
     unsigned char charges_per_use;
     unsigned char charges_per_sec;
     itype_id revert_to;
-    void (iuse::*use)(game*, item*, bool);
+    void (iuse::*use)(Game*, item*, bool);
     virtual bool is_tool() { return true; }
     it_tool(unsigned short pid, unsigned char prarity, unsigned int pprice, std::string pname,
         std::string pdes, char psym, nc_color pcolor, material pm1, material pm2,
@@ -808,7 +808,7 @@ struct it_tool : public itype {
 
         unsigned int pmax_charges, unsigned int pdef_charges, unsigned char pcharges_per_use,
         unsigned char pcharges_per_sec, ammotype pammo, itype_id prevert_to,
-        void (iuse::*puse)(game*, item*, bool))
+        void (iuse::*puse)(Game*, item*, bool))
         : itype(pid, prarity, pprice, pname, pdes, psym, pcolor, pm1, pm2, pvolume, pweight,
             pmelee_dam, pmelee_cut, pm_to_hit)
     {

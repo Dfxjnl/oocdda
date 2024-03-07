@@ -19,7 +19,7 @@ namespace oocdda {
 //  at the top of itype.h!
 //  Additionally, you should check mapitemsdef.cpp and insert the new item in
 //  any appropriate lists.
-void game::init_itypes()
+void Game::init_itypes()
 {
     // First, the null object.  NOT REALLY AN OBJECT AT ALL.  More of a concept.
     itypes.push_back(new itype(0, 0, 0, "none", "", '#', c_white, MNULL, MNULL, 0, 0, 0, 0, 0));

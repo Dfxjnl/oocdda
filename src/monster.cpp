@@ -104,7 +104,7 @@ monster::~monster() { }
 
 std::string monster::name() { return type->name; }
 
-void monster::print_info(game* g, WINDOW* w)
+void monster::print_info(Game* g, WINDOW* w)
 {
     // First line of w is the border; the next two are terrain info, and after that
     // is a blank line. w is 13 characters tall, and we can't use the last one
@@ -307,7 +307,7 @@ int monster::hit(player& p, body_part& bp_hit)
     return ret;
 }
 
-void monster::hit_monster(game* g, int i)
+void monster::hit_monster(Game* g, int i)
 {
     int junk;
     monster* target = &(g->z[i]);
@@ -355,7 +355,7 @@ int monster::armor()
     return int(type->armor);
 }
 
-void monster::die(game* g)
+void monster::die(Game* g)
 {
     // Drop goodies
     int total_chance = 0, total_it_chance, cur_chance, selected_location, selected_item;
@@ -395,7 +395,7 @@ void monster::die(game* g)
     (md.*type->dies)(g, this);
 }
 
-bool monster::make_fungus(game* g)
+bool monster::make_fungus(Game* g)
 {
     switch (mon_id(type->id)) {
     case mon_ant:

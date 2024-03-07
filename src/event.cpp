@@ -9,7 +9,7 @@
 #include "rng.hpp"
 
 namespace oocdda {
-void event::actualize(game* g)
+void event::actualize(Game* g)
 {
     npc tmp;
     switch (type) {

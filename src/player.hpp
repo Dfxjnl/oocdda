@@ -15,7 +15,7 @@
 #include "skill.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 class monster;
 struct trap;
 
@@ -23,17 +23,17 @@ class player {
 public:
     player();
     ~player();
-    bool create(game* g, character_type type);
+    bool create(Game* g, character_type type);
     int random_good_trait(character_type type);
     int random_bad_trait(character_type type);
-    void normalize(game* g); // Starting set up of HP and inventory
+    void normalize(Game* g); // Starting set up of HP and inventory
 
     virtual bool is_npc() { return false; }
     nc_color color(); // What color to draw us as
 
     void load_info(std::string data); // Load from file matching name
     std::string save_info(); // Save to file matching name
-    void disp_info(game* g); // '@' key; extending character info
+    void disp_info(Game* g); // '@' key; extending character info
     void disp_status(WINDOW* w); // The constant data in the lower right
 
     void reset(); // Resets movement points, stats, and applies pain, effects, etc
@@ -47,20 +47,20 @@ public:
     bool has_active_bionic(bionic_id b);
     void add_bionic(bionic_id b);
     void charge_power(int amount);
-    void power_bionics(game* g);
-    void activate_bionic(int b, game* g);
+    void power_bionics(Game* g);
+    void activate_bionic(int b, Game* g);
 
-    void mutate(game* g);
+    void mutate(Game* g);
 
     int sight_range(int light_level);
-    bool is_in_sunlight(game* g);
+    bool is_in_sunlight(Game* g);
     bool has_two_arms();
     bool can_wear_boots();
     bool is_armed(); // Whether we're wielding something; true for bionics
     bool avoid_trap(trap* tr);
 
     void pause(); // '.' command; pauses & reduces recoil
-    int hit_mon(game* g, monster* z); // Handles hitting a monster up to its death
+    int hit_mon(Game* g, monster* z); // Handles hitting a monster up to its death
     // hit_player returns false on a miss, and modifies bp, hitdam, and hitcut
     bool hit_player(player& p, body_part& bp, int& hitdam, int& hitcut);
     int dodge(); // Returns the players's dodge, modded by clothing etc
@@ -68,11 +68,11 @@ public:
 
     // Converts bphurt to a hp_part (if side == 0, the left), then does/heals dam
     // hit() processes damage through armor
-    void hit(game* g, body_part bphurt, int side, int dam, int cut);
+    void hit(Game* g, body_part bphurt, int side, int dam, int cut);
     // absorb() reduces dam and cut by your armor (and bionics, traits, etc)
-    void absorb(game* g, body_part bp, int& dam, int& cut);
+    void absorb(Game* g, body_part bp, int& dam, int& cut);
     // hurt() doesn't--effects of disease, what have you
-    void hurt(game* g, body_part bphurt, int side, int dam);
+    void hurt(Game* g, body_part bphurt, int side, int dam);
 
     void heal(body_part bpheal, int side, int dam);
     void healall(int dam);
@@ -80,11 +80,11 @@ public:
 
     int hp_percentage(); // % of HP remaining, overall
 
-    void get_sick(game* g); // Process diseases
+    void get_sick(Game* g); // Process diseases
     // infect() gives us a chance to save (mostly from armor)
-    void infect(dis_type type, body_part vector, int strength, int duration, game* g);
+    void infect(dis_type type, body_part vector, int strength, int duration, Game* g);
     // add_disease() does NOT give us a chance to save
-    void add_disease(dis_type type, int duration, game* g);
+    void add_disease(dis_type type, int duration, Game* g);
     void rem_disease(dis_type type);
     bool has_disease(dis_type type);
     int disease_level(dis_type type);
@@ -94,17 +94,17 @@ public:
     void rem_addiction(add_type type);
     int addiction_level(add_type type);
 
-    void suffer(game* g);
-    void vomit(game* g);
+    void suffer(Game* g);
+    void vomit(Game* g);
 
-    bool eat(game* g, char let); // Eat item; returns false on fail
-    bool wield(game* g, char let); // Wield item; returns false on fail
-    bool wear(game* g, char let); // Wear item; returns false on fail
-    bool takeoff(game* g, char let); // Take off item; returns false on fail
-    void use(game* g, char let); // Use a tool
-    void read(game* g, char let); // Read a book
-    void try_to_sleep(game* g); // '$' command; adds DIS_LYING_DOWN
-    bool can_sleep(game* g); // Checked each turn during DIS_LYING_DOWN
+    bool eat(Game* g, char let); // Eat item; returns false on fail
+    bool wield(Game* g, char let); // Wield item; returns false on fail
+    bool wear(Game* g, char let); // Wear item; returns false on fail
+    bool takeoff(Game* g, char let); // Take off item; returns false on fail
+    void use(Game* g, char let); // Use a tool
+    void read(Game* g, char let); // Read a book
+    void try_to_sleep(Game* g); // '$' command; adds DIS_LYING_DOWN
+    bool can_sleep(Game* g); // Checked each turn during DIS_LYING_DOWN
 
     int warmth(body_part bp); // Warmth provided by armor &c
     int encumb(body_part bp); // Encumberance from armor &c
@@ -126,7 +126,7 @@ public:
 
     void i_add(item it);
     bool has_active_item(itype_id id);
-    void process_active_items(game* g);
+    void process_active_items(Game* g);
     item i_rem(char let); // Remove item from inventory; returns ret_null on fail
     item i_rem(itype_id type); // Remove first item w/ this type; fail is ret_null
     item remove_weapon();

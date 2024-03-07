@@ -6,7 +6,7 @@
 #include "setvector.hpp"
 
 namespace oocdda {
-void game::init_moncats()
+void Game::init_moncats()
 {
     setvector(moncats[mcat_forest], mon_squirrel, mon_rabbit, mon_deer, mon_wolf, mon_bear, NULL);
     setvector(moncats[mcat_ant], mon_ant_larva, mon_ant, mon_ant_soldier, NULL);

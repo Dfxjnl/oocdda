@@ -8,7 +8,7 @@
 #include "rng.hpp"
 
 namespace oocdda {
-void dis_msg(game* g, dis_type type)
+void dis_msg(Game* g, dis_type type)
 {
     switch (type) {
     case DI_HEATSTROKE:
@@ -61,7 +61,7 @@ void dis_msg(game* g, dis_type type)
     }
 }
 
-void dis_effect(game* g, player& p, disease& dis)
+void dis_effect(Game* g, player& p, disease& dis)
 {
     int bonus;
     int junk;

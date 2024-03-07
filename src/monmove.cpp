@@ -71,7 +71,7 @@ void monster::wander_to(int x, int y, int f)
         wandf *= 6;
 }
 
-void monster::plan(game* g)
+void monster::plan(Game* g)
 {
     int sightrange = g->light_level();
     int closest = -1;
@@ -145,7 +145,7 @@ void monster::plan(game* g)
 // 2) Sight-based tracking
 // 3) Scent-based tracking
 // 4) Sound-based tracking
-void monster::move(game* g)
+void monster::move(Game* g)
 {
     // We decrement wandf no matter what.  We'll save our wander_to plans until
     // after we finish out set_dest plans, UNLESS they time out first.
@@ -240,7 +240,7 @@ void monster::move(game* g)
         stumble(g, moved);
 }
 
-void monster::friendly_move(game* g)
+void monster::friendly_move(Game* g)
 {
     point next;
     bool moved = false;
@@ -275,7 +275,7 @@ void monster::friendly_move(game* g)
     }
 }
 
-point monster::scent_move(game* g)
+point monster::scent_move(Game* g)
 {
     plans.clear();
     std::vector<point> smoves;
@@ -314,7 +314,7 @@ point monster::scent_move(game* g)
     return next;
 }
 
-point monster::sound_move(game* g)
+point monster::sound_move(Game* g)
 {
     plans.clear();
     point next;
@@ -391,7 +391,7 @@ point monster::sound_move(game* g)
     return next;
 }
 
-void monster::hit_player(game* g, player& p)
+void monster::hit_player(Game* g, player& p)
 {
     if (type->melee_dice == 0) // We don't attack, so just return
         return;
@@ -448,7 +448,7 @@ void monster::hit_player(game* g, player& p)
     }
 }
 
-void monster::move_to(game* g, int x, int y)
+void monster::move_to(Game* g, int x, int y)
 {
     int mondex = g->mon_at(x, y);
     if (mondex == -1) { //...assuming there's no monster there
@@ -482,7 +482,7 @@ void monster::move_to(game* g, int x, int y)
  * Most of the time (out in the open) this effect is insignificant compared to
  * the negative effects, but in a hallway it's perfectly even
  */
-void monster::stumble(game* g, bool moved)
+void monster::stumble(Game* g, bool moved)
 {
     std::vector<point> valid_stumbles;
     for (int i = -1; i <= 1; i++) {

@@ -38,7 +38,7 @@ int random_good_trait(character_type type);
 int random_bad_trait(character_type type);
 int random_skill(character_type type);
 
-bool player::create(game* g, character_type type)
+bool player::create(Game* g, character_type type)
 {
     WINDOW* w = newwin(25, 80, 0, 0);
     int tab = 0, points = 36;

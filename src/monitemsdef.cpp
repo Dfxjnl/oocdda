@@ -7,7 +7,7 @@
 #include "setvector.hpp"
 
 namespace oocdda {
-void game::init_monitems()
+void Game::init_monitems()
 {
     setvector(monitems[mon_ant], mi_ants, 1, NULL);
     monitems[mon_ant_soldier] = monitems[mon_ant];

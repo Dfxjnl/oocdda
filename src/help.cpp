@@ -20,7 +20,7 @@ namespace oocdda {
 #    define LINE_XXXX 4194414
 #endif
 
-void game::help()
+void Game::help()
 {
     char ch;
     do {

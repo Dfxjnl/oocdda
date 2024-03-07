@@ -13,7 +13,7 @@
 namespace oocdda {
 #define LESS(a, b) ((a) < (b) ? (a) : (b))
 
-void game::wish()
+void Game::wish()
 {
     int a = 0, shift = 0;
     int line;

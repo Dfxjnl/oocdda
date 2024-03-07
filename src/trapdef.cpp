@@ -7,7 +7,7 @@
 #include "trap.hpp"
 
 namespace oocdda {
-void game::init_traps()
+void Game::init_traps()
 {
     int id = -1;
 #define TRAP(name, sym, color, visibility, avoidance, difficulty, action, ...)                     \

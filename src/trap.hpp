@@ -35,43 +35,43 @@ enum trap_id {
 struct trap;
 
 struct trapfunc {
-    void none(game* g, int x, int y) {};
-    void bubble(game* g, int x, int y);
-    void beartrap(game* g, int x, int y);
-    void snare(game* g, int x, int y) {};
-    void board(game* g, int x, int y);
-    void tripwire(game* g, int x, int y);
-    void crossbow(game* g, int x, int y);
-    void shotgun(game* g, int x, int y);
-    void blade(game* g, int x, int y);
-    void landmine(game* g, int x, int y);
-    void telepad(game* g, int x, int y);
-    void goo(game* g, int x, int y);
-    void dissector(game* g, int x, int y);
-    void sinkhole(game* g, int x, int y);
-    void pit(game* g, int x, int y);
-    void pit_spikes(game* g, int x, int y);
-    void portal(game* g, int x, int y) {};
+    void none(Game* g, int x, int y) {};
+    void bubble(Game* g, int x, int y);
+    void beartrap(Game* g, int x, int y);
+    void snare(Game* g, int x, int y) {};
+    void board(Game* g, int x, int y);
+    void tripwire(Game* g, int x, int y);
+    void crossbow(Game* g, int x, int y);
+    void shotgun(Game* g, int x, int y);
+    void blade(Game* g, int x, int y);
+    void landmine(Game* g, int x, int y);
+    void telepad(Game* g, int x, int y);
+    void goo(Game* g, int x, int y);
+    void dissector(Game* g, int x, int y);
+    void sinkhole(Game* g, int x, int y);
+    void pit(Game* g, int x, int y);
+    void pit_spikes(Game* g, int x, int y);
+    void portal(Game* g, int x, int y) {};
 };
 
 struct trapfuncm {
-    void none(game* g, monster* z, int x, int y) {};
-    void bubble(game* g, monster* z, int x, int y);
-    void beartrap(game* g, monster* z, int x, int y);
-    void board(game* g, monster* z, int x, int y);
-    void tripwire(game* g, monster* z, int x, int y);
-    void crossbow(game* g, monster* z, int x, int y);
-    void shotgun(game* g, monster* z, int x, int y);
-    void blade(game* g, monster* z, int x, int y);
-    void snare(game* g, monster* z, int x, int y) {};
-    void landmine(game* g, monster* z, int x, int y);
-    void telepad(game* g, monster* z, int x, int y);
-    void goo(game* g, monster* z, int x, int y);
-    void dissector(game* g, monster* z, int x, int y);
-    void sinkhole(game* g, monster* z, int x, int y) {};
-    void pit(game* g, monster* z, int x, int y);
-    void pit_spikes(game* g, monster* z, int x, int y);
-    void portal(game* g, monster* z, int x, int y) {};
+    void none(Game* g, monster* z, int x, int y) {};
+    void bubble(Game* g, monster* z, int x, int y);
+    void beartrap(Game* g, monster* z, int x, int y);
+    void board(Game* g, monster* z, int x, int y);
+    void tripwire(Game* g, monster* z, int x, int y);
+    void crossbow(Game* g, monster* z, int x, int y);
+    void shotgun(Game* g, monster* z, int x, int y);
+    void blade(Game* g, monster* z, int x, int y);
+    void snare(Game* g, monster* z, int x, int y) {};
+    void landmine(Game* g, monster* z, int x, int y);
+    void telepad(Game* g, monster* z, int x, int y);
+    void goo(Game* g, monster* z, int x, int y);
+    void dissector(Game* g, monster* z, int x, int y);
+    void sinkhole(Game* g, monster* z, int x, int y) {};
+    void pit(Game* g, monster* z, int x, int y);
+    void pit_spikes(Game* g, monster* z, int x, int y);
+    void portal(Game* g, monster* z, int x, int y) {};
 };
 
 struct trap {
@@ -86,13 +86,13 @@ struct trap {
     std::vector<itype_id> components; // For disassembly?
 
     // You stepped on it
-    void (trapfunc::*act)(game*, int x, int y);
+    void (trapfunc::*act)(Game*, int x, int y);
     // Monster stepped on it
-    void (trapfuncm::*actm)(game*, monster*, int x, int y);
+    void (trapfuncm::*actm)(Game*, monster*, int x, int y);
 
     trap(int pid, char psym, nc_color pcolor, std::string pname, int pvisibility, int pavoidance,
-        int pdifficulty, void (trapfunc::*pact)(game*, int x, int y),
-        void (trapfuncm::*pactm)(game*, monster*, int x, int y), ...)
+        int pdifficulty, void (trapfunc::*pact)(Game*, int x, int y),
+        void (trapfuncm::*pactm)(Game*, monster*, int x, int y), ...)
     {
         id = pid;
         sym = psym;

@@ -26,7 +26,7 @@ namespace oocdda {
 //
 // Well, because like diseases, which are also in a Big Switch, bionics don't
 // share functions....
-void player::activate_bionic(int b, game* g)
+void player::activate_bionic(int b, Game* g)
 {
     bionic bio = my_bionics[b];
     if (power_level < bionics[bio.id].power_cost) {

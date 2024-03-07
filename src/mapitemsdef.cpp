@@ -6,7 +6,7 @@
 #include "setvector.hpp"
 
 namespace oocdda {
-void game::init_mapitems()
+void Game::init_mapitems()
 {
     setvector(mapitems[mi_field], itm_rock, itm_strawberries, NULL);
     setvector(mapitems[mi_forest], itm_rock, itm_stick, itm_mushroom, itm_mushroom_poison,

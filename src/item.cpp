@@ -108,7 +108,7 @@ void item::make_corpse(itype* it, mtype* mt, unsigned int turn)
     bday = turn;
 }
 
-item::item(std::string itemdata, game* g) { load_info(itemdata, g); }
+item::item(std::string itemdata, Game* g) { load_info(itemdata, g); }
 
 item::~item() { }
 
@@ -152,7 +152,7 @@ std::string item::save_info()
     return dump.str();
 }
 
-void item::load_info(std::string data, game* g)
+void item::load_info(std::string data, Game* g)
 {
     std::stringstream dump;
     dump << data;

@@ -15,7 +15,7 @@ namespace oocdda {
 //                  will simply kill the monster
 //  * mongroupdef.cpp - void init_moncats() should be edited, so the monster
 //                      spawns with the proper group
-void game::init_mtypes()
+void Game::init_mtypes()
 {
     int id = 0;
     // Null monster named "None".

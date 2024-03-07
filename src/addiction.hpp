@@ -7,7 +7,7 @@
 #include "rng.hpp"
 
 namespace oocdda {
-void addict_effect(game* g, addiction& add)
+void addict_effect(Game* g, addiction& add)
 {
     int in = add.intensity;
 

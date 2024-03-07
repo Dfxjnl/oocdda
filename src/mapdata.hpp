@@ -10,7 +10,7 @@
 #include "trap.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 class monster;
 
 #ifndef SEEX // SEEX is how far the player can see in the X direction (at

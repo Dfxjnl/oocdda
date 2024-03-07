@@ -31,7 +31,7 @@
 #include "trap.hpp"
 
 namespace oocdda {
-void iuse::royal_jelly(game* g, item* it, bool t)
+void iuse::royal_jelly(Game* g, item* it, bool t)
 {
     // TODO: Add other diseases here; royal jelly is a cure-all!
     g->u.pkill += 5;
@@ -54,7 +54,7 @@ void iuse::royal_jelly(game* g, item* it, bool t)
     }
 }
 
-void iuse::bandage(game* g, item* it, bool t)
+void iuse::bandage(Game* g, item* it, bool t)
 {
     int bonus = g->u.sklevel[sk_firstaid];
     WINDOW* w = newwin(10, 20, 8, 1);
@@ -156,7 +156,7 @@ void iuse::bandage(game* g, item* it, bool t)
     refresh();
 }
 
-void iuse::firstaid(game* g, item* it, bool t)
+void iuse::firstaid(Game* g, item* it, bool t)
 {
     int bonus = g->u.sklevel[sk_firstaid] * 2;
     WINDOW* w = newwin(10, 20, 8, 1);
@@ -259,7 +259,7 @@ void iuse::firstaid(game* g, item* it, bool t)
 }
 
 // Aspirin
-void iuse::pkill_1(game* g, item* it, bool t)
+void iuse::pkill_1(Game* g, item* it, bool t)
 {
     if (!g->u.has_disease(DI_PKILL1))
         g->u.add_disease(DI_PKILL1, 120, g);
@@ -273,22 +273,22 @@ void iuse::pkill_1(game* g, item* it, bool t)
     }
 }
 
-void iuse::pkill_2(game* g, item* it, bool t) { g->u.add_disease(DI_PKILL2, 100, g); }
+void iuse::pkill_2(Game* g, item* it, bool t) { g->u.add_disease(DI_PKILL2, 100, g); }
 
-void iuse::pkill_3(game* g, item* it, bool t) { g->u.add_disease(DI_PKILL2, 200, g); }
+void iuse::pkill_3(Game* g, item* it, bool t) { g->u.add_disease(DI_PKILL2, 200, g); }
 
-void iuse::pkill_4(game* g, item* it, bool t)
+void iuse::pkill_4(Game* g, item* it, bool t)
 {
     g->u.add_disease(DI_PKILL3, 80, g);
     g->u.add_disease(DI_PKILL2, 400, g);
 }
 
-void iuse::pkill_l(game* g, item* it, bool t)
+void iuse::pkill_l(Game* g, item* it, bool t)
 {
     g->u.add_disease(DI_PKILL_L, rng(12, 18) * 300, g);
 }
 
-void iuse::xanax(game* g, item* it, bool t)
+void iuse::xanax(Game* g, item* it, bool t)
 {
     if (!g->u.has_disease(DI_TOOK_XANAX))
         g->u.add_disease(DI_TOOK_XANAX, 900, g);
@@ -296,13 +296,13 @@ void iuse::xanax(game* g, item* it, bool t)
         g->u.add_disease(DI_TOOK_XANAX, 200, g);
 }
 
-void iuse::caff(game* g, item* it, bool t)
+void iuse::caff(Game* g, item* it, bool t)
 {
     it_comest* food = dynamic_cast<it_comest*>(it->type);
     g->u.fatigue -= food->stim * 3;
 }
 
-void iuse::alcohol(game* g, item* it, bool t)
+void iuse::alcohol(Game* g, item* it, bool t)
 {
     int duration = 680 - (10 * g->u.str_max); // Weaker characters are cheap drunks
     if (g->u.has_trait(PF_LIGHTWEIGHT))
@@ -311,7 +311,7 @@ void iuse::alcohol(game* g, item* it, bool t)
     g->u.add_disease(DI_DRUNK, duration, g);
 }
 
-void iuse::cig(game* g, item* it, bool t)
+void iuse::cig(Game* g, item* it, bool t)
 {
     g->add_msg("You light a cigarette and smoke it.");
     g->u.add_disease(DI_CIG, 90, g);
@@ -321,7 +321,7 @@ void iuse::cig(game* g, item* it, bool t)
     }
 }
 
-void iuse::weed(game* g, item* it, bool t)
+void iuse::weed(Game* g, item* it, bool t)
 {
     int duration = 60;
     if (g->u.has_trait(PF_LIGHTWEIGHT))
@@ -332,7 +332,7 @@ void iuse::weed(game* g, item* it, bool t)
     g->u.add_disease(DI_HIGH, duration, g);
 }
 
-void iuse::coke(game* g, item* it, bool t)
+void iuse::coke(Game* g, item* it, bool t)
 {
     int duration = 21 - g->u.str_cur;
     if (g->u.has_trait(PF_LIGHTWEIGHT))
@@ -342,7 +342,7 @@ void iuse::coke(game* g, item* it, bool t)
     g->u.add_disease(DI_HIGH, duration, g);
 }
 
-void iuse::meth(game* g, item* it, bool t)
+void iuse::meth(Game* g, item* it, bool t)
 {
     int duration = 10 * (40 - g->u.str_cur);
     if (g->u.has_amount(itm_lighter, 1)) {
@@ -357,11 +357,11 @@ void iuse::meth(game* g, item* it, bool t)
     g->u.add_disease(DI_METH, duration, g);
 }
 
-void iuse::poison(game* g, item* it, bool t) { g->u.add_disease(DI_POISON, 100, g); }
+void iuse::poison(Game* g, item* it, bool t) { g->u.add_disease(DI_POISON, 100, g); }
 
-void iuse::hallu(game* g, item* it, bool t) { g->u.add_disease(DI_HALLU, 3600, g); }
+void iuse::hallu(Game* g, item* it, bool t) { g->u.add_disease(DI_HALLU, 3600, g); }
 
-void iuse::thorazine(game* g, item* it, bool t)
+void iuse::thorazine(Game* g, item* it, bool t)
 {
     g->add_msg("You feel somewhat sedated.");
     g->u.rem_disease(DI_HALLU);
@@ -370,7 +370,7 @@ void iuse::thorazine(game* g, item* it, bool t)
     g->u.fatigue += 15;
 }
 
-void iuse::prozac(game* g, item* it, bool t)
+void iuse::prozac(Game* g, item* it, bool t)
 {
     if (!g->u.has_disease(DI_TOOK_PROZAC) && g->u.morale < 0) {
         g->u.add_disease(DI_TOOK_PROZAC, 7200, g);
@@ -383,32 +383,32 @@ void iuse::prozac(game* g, item* it, bool t)
     }
 }
 
-void iuse::sleep(game* g, item* it, bool t)
+void iuse::sleep(Game* g, item* it, bool t)
 {
     g->add_msg("You feel very sleepy...");
     g->u.fatigue += 40;
 }
 
-void iuse::flumed(game* g, item* it, bool t) { g->u.add_disease(DI_TOOK_FLUMED, 6000, g); }
+void iuse::flumed(Game* g, item* it, bool t) { g->u.add_disease(DI_TOOK_FLUMED, 6000, g); }
 
-void iuse::flusleep(game* g, item* it, bool t)
+void iuse::flusleep(Game* g, item* it, bool t)
 {
     g->u.add_disease(DI_TOOK_FLUMED, 7200, g);
     g->add_msg("You feel very sleepy...");
     g->u.fatigue += 30;
 }
 
-void iuse::inhaler(game* g, item* it, bool t) { g->u.rem_disease(DI_ASTHMA); }
+void iuse::inhaler(Game* g, item* it, bool t) { g->u.rem_disease(DI_ASTHMA); }
 
-void iuse::blech(game* g, item* it, bool t)
+void iuse::blech(Game* g, item* it, bool t)
 {
     g->add_msg("Blech, that burns your throat!");
     // TODO: Add more effects?
 }
 
-void iuse::mutagen(game* g, item* it, bool t) { g->u.mutate(g); }
+void iuse::mutagen(Game* g, item* it, bool t) { g->u.mutate(g); }
 
-void iuse::purifier(game* g, item* it, bool t)
+void iuse::purifier(Game* g, item* it, bool t)
 {
     std::vector<pl_flag> valid; // Which flags the player has
     for (pl_flag i = pl_flag(0); i < PF_MAX2; i = pl_flag(i + 1)) {
@@ -448,7 +448,7 @@ void iuse::purifier(game* g, item* it, bool t)
     }
 }
 
-void iuse::lighter(game* g, item* it, bool t)
+void iuse::lighter(Game* g, item* it, bool t)
 {
     int dirx, diry;
     g->draw();
@@ -464,7 +464,7 @@ void iuse::lighter(game* g, item* it, bool t)
         g->m.field_at(dirx, diry).age = 1400;
 }
 
-void iuse::sew(game* g, item* it, bool t)
+void iuse::sew(Game* g, item* it, bool t)
 {
     char ch = g->inv("Repair what?");
     item* fix = &(g->u.i_at(ch));
@@ -548,7 +548,7 @@ void iuse::sew(game* g, item* it, bool t)
     }
 }
 
-void iuse::scissors(game* g, item* it, bool t)
+void iuse::scissors(Game* g, item* it, bool t)
 {
     char ch = g->inv("Chop up what?");
     item* cut = &(g->u.i_at(ch));
@@ -612,7 +612,7 @@ void iuse::scissors(game* g, item* it, bool t)
     }
 }
 
-void iuse::extinguisher(game* g, item* it, bool t)
+void iuse::extinguisher(Game* g, item* it, bool t)
 {
     g->draw();
     mvprintz(0, 0, c_red, "Pick a direction to spray:");
@@ -659,7 +659,7 @@ void iuse::extinguisher(game* g, item* it, bool t)
     }
 }
 
-void iuse::hammer(game* g, item* it, bool t)
+void iuse::hammer(Game* g, item* it, bool t)
 {
     mvprintz(0, 0, c_red, "Pick a direction in which to construct:");
     int dirx, diry;
@@ -740,7 +740,7 @@ void iuse::hammer(game* g, item* it, bool t)
     delwin(w);
 }
 
-void iuse::light_off(game* g, item* it, bool t)
+void iuse::light_off(Game* g, item* it, bool t)
 {
     if (it->charges == 0)
         g->add_msg("The flaslight's batteries are dead.");
@@ -751,7 +751,7 @@ void iuse::light_off(game* g, item* it, bool t)
     }
 }
 
-void iuse::light_on(game* g, item* it, bool t)
+void iuse::light_on(Game* g, item* it, bool t)
 {
     if (t) { // Normal use
         if (g->turn % 20 == 0)
@@ -763,7 +763,7 @@ void iuse::light_on(game* g, item* it, bool t)
     }
 }
 
-void iuse::water_purifier(game* g, item* it, bool t)
+void iuse::water_purifier(Game* g, item* it, bool t)
 {
     char ch = g->inv("Purify what?");
     if (!g->u.has_item(ch)) {
@@ -783,7 +783,7 @@ void iuse::water_purifier(game* g, item* it, bool t)
     pure->make(g->itypes[itm_water]);
 }
 
-void iuse::two_way_radio(game* g, item* it, bool t)
+void iuse::two_way_radio(Game* g, item* it, bool t)
 {
     WINDOW* w = newwin(6, 36, 9, 5);
     wborder(
@@ -856,7 +856,7 @@ void iuse::two_way_radio(game* g, item* it, bool t)
     refresh();
 }
 
-void iuse::radio_off(game* g, item* it, bool t)
+void iuse::radio_off(Game* g, item* it, bool t)
 {
     if (it->charges == 0)
         g->add_msg("It's dead.");
@@ -867,7 +867,7 @@ void iuse::radio_off(game* g, item* it, bool t)
     }
 }
 
-void iuse::radio_on(game* g, item* it, bool t)
+void iuse::radio_on(Game* g, item* it, bool t)
 {
     if (t) { // Normal use
         if (g->turn % 12 == 0)
@@ -902,7 +902,7 @@ void iuse::radio_on(game* g, item* it, bool t)
     }
 }
 
-void iuse::crowbar(game* g, item* it, bool t)
+void iuse::crowbar(Game* g, item* it, bool t)
 {
     int dirx, diry;
     g->draw();
@@ -937,7 +937,7 @@ void iuse::crowbar(game* g, item* it, bool t)
         g->add_msg("There's nothing to pry there.");
 }
 
-void iuse::makemound(game* g, item* it, bool t)
+void iuse::makemound(Game* g, item* it, bool t)
 {
     if (g->m.has_flag(diggable, g->u.posx, g->u.posy)) {
         g->add_msg("You churn up the earth here.");
@@ -948,7 +948,7 @@ void iuse::makemound(game* g, item* it, bool t)
     }
 }
 
-void iuse::dig(game* g, item* it, bool t)
+void iuse::dig(Game* g, item* it, bool t)
 {
     int dirx, diry;
     g->draw();
@@ -966,7 +966,7 @@ void iuse::dig(game* g, item* it, bool t)
             "You can't dig through %d!", g->m.tername(g->u.posx + dirx, g->u.posy + diry).c_str());
 }
 
-void iuse::chainsaw_off(game* g, item* it, bool t)
+void iuse::chainsaw_off(Game* g, item* it, bool t)
 {
     g->u.moves -= 120;
     if (rng(0, 10) - it->damage > 5 && it->charges > 0) {
@@ -977,7 +977,7 @@ void iuse::chainsaw_off(game* g, item* it, bool t)
         g->add_msg("You yank the cord, but nothing happens.");
 }
 
-void iuse::chainsaw_on(game* g, item* it, bool t)
+void iuse::chainsaw_on(Game* g, item* it, bool t)
 {
     if (t) { // Effects while simply on
         if (one_in(15))
@@ -989,7 +989,7 @@ void iuse::chainsaw_on(game* g, item* it, bool t)
     }
 }
 
-void iuse::jackhammer(game* g, item* it, bool t)
+void iuse::jackhammer(Game* g, item* it, bool t)
 {
     int dirx, diry;
     g->draw();
@@ -1011,7 +1011,7 @@ void iuse::jackhammer(game* g, item* it, bool t)
     }
 }
 
-void iuse::set_trap(game* g, item* it, bool t)
+void iuse::set_trap(Game* g, item* it, bool t)
 {
     int dirx, diry;
     g->draw();
@@ -1119,7 +1119,7 @@ That trap needs a 3x3 space to be clear, centered two tiles from you.");
     g->u.i_rem(it->invlet);
 }
 
-void iuse::geiger(game* g, item* it, bool t)
+void iuse::geiger(Game* g, item* it, bool t)
 {
     WINDOW* w = newwin(6, 16, 8, 1);
     wborder(
@@ -1141,9 +1141,9 @@ void iuse::geiger(game* g, item* it, bool t)
     } while (ch < '1' || ch > '3');
 }
 
-void iuse::teleport(game* g, item* it, bool t) { g->teleport(); }
+void iuse::teleport(Game* g, item* it, bool t) { g->teleport(); }
 
-void iuse::can_goo(game* g, item* it, bool t)
+void iuse::can_goo(Game* g, item* it, bool t)
 {
     int tries = 0, goox, gooy, junk;
     do {
@@ -1183,7 +1183,7 @@ void iuse::can_goo(game* g, item* it, bool t)
     }
 }
 
-void iuse::grenade(game* g, item* it, bool t)
+void iuse::grenade(Game* g, item* it, bool t)
 {
     g->add_msg("You pull the pin on the grenade.");
     it->make(g->itypes[itm_grenade_act]);
@@ -1191,7 +1191,7 @@ void iuse::grenade(game* g, item* it, bool t)
     it->active = true;
 }
 
-void iuse::grenade_act(game* g, item* it, bool t)
+void iuse::grenade_act(Game* g, item* it, bool t)
 {
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
@@ -1202,7 +1202,7 @@ void iuse::grenade_act(game* g, item* it, bool t)
         g->explosion(pos.x, pos.y, 12, 16, false);
 }
 
-void iuse::gasbomb(game* g, item* it, bool t)
+void iuse::gasbomb(Game* g, item* it, bool t)
 {
     g->add_msg("You pull the pin on the teargas canister.");
     it->make(g->itypes[itm_gasbomb_act]);
@@ -1210,7 +1210,7 @@ void iuse::gasbomb(game* g, item* it, bool t)
     it->active = true;
 }
 
-void iuse::gasbomb_act(game* g, item* it, bool t)
+void iuse::gasbomb_act(Game* g, item* it, bool t)
 {
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
@@ -1232,7 +1232,7 @@ void iuse::gasbomb_act(game* g, item* it, bool t)
         it->make(g->itypes[itm_canister_empty]);
 }
 
-void iuse::smokebomb(game* g, item* it, bool t)
+void iuse::smokebomb(Game* g, item* it, bool t)
 {
     g->add_msg("You pull the pin on the smoke bomb.");
     it->make(g->itypes[itm_smokebomb_act]);
@@ -1240,7 +1240,7 @@ void iuse::smokebomb(game* g, item* it, bool t)
     it->active = true;
 }
 
-void iuse::smokebomb_act(game* g, item* it, bool t)
+void iuse::smokebomb_act(Game* g, item* it, bool t)
 {
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
@@ -1262,7 +1262,7 @@ void iuse::smokebomb_act(game* g, item* it, bool t)
         it->make(g->itypes[itm_canister_empty]);
 }
 
-void iuse::molotov(game* g, item* it, bool t)
+void iuse::molotov(Game* g, item* it, bool t)
 {
     if (!g->u.has_amount(itm_lighter, 1)) {
         g->add_msg("You need a lighter!");
@@ -1276,7 +1276,7 @@ void iuse::molotov(game* g, item* it, bool t)
     it->active = true;
 }
 
-void iuse::molotov_lit(game* g, item* it, bool t)
+void iuse::molotov_lit(Game* g, item* it, bool t)
 {
     if (!g->u.has_item(it)) {
         point pos = g->find_item(it);
@@ -1290,7 +1290,7 @@ void iuse::molotov_lit(game* g, item* it, bool t)
     }
 }
 
-void iuse::dynamite(game* g, item* it, bool t)
+void iuse::dynamite(Game* g, item* it, bool t)
 {
     if (!g->u.has_amount(itm_lighter, 1)) {
         g->add_msg("You need a lighter!");
@@ -1303,7 +1303,7 @@ void iuse::dynamite(game* g, item* it, bool t)
     it->active = true;
 }
 
-void iuse::dynamite_act(game* g, item* it, bool t)
+void iuse::dynamite_act(Game* g, item* it, bool t)
 {
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
@@ -1314,7 +1314,7 @@ void iuse::dynamite_act(game* g, item* it, bool t)
         g->explosion(pos.x, pos.y, 60, 0, false);
 }
 
-void iuse::mininuke(game* g, item* it, bool t)
+void iuse::mininuke(Game* g, item* it, bool t)
 {
     g->add_msg("You activate the mininuke.");
     it->make(g->itypes[itm_mininuke_act]);
@@ -1322,7 +1322,7 @@ void iuse::mininuke(game* g, item* it, bool t)
     it->active = true;
 }
 
-void iuse::mininuke_act(game* g, item* it, bool t)
+void iuse::mininuke_act(Game* g, item* it, bool t)
 {
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
@@ -1342,7 +1342,7 @@ void iuse::mininuke_act(game* g, item* it, bool t)
     }
 }
 
-void iuse::pheromone(game* g, item* it, bool t)
+void iuse::pheromone(Game* g, item* it, bool t)
 {
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
@@ -1370,7 +1370,7 @@ void iuse::pheromone(game* g, item* it, bool t)
         g->add_msg("...and several nearby zombies turn friendly!");
 }
 
-void iuse::portal(game* g, item* it, bool t)
+void iuse::portal(Game* g, item* it, bool t)
 {
     g->m.add_trap(g->u.posx + rng(-2, 2), g->u.posy + rng(-2, 2), tr_portal);
 }

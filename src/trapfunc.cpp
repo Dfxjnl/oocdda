@@ -16,20 +16,20 @@
 #include "trap.hpp"
 
 namespace oocdda {
-void trapfunc::bubble(game* g, int x, int y)
+void trapfunc::bubble(Game* g, int x, int y)
 {
     g->add_msg("You step on some bubblewrap!");
     g->sound(x, y, 18, "Pop!");
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfuncm::bubble(game* g, monster* z, int x, int y)
+void trapfuncm::bubble(Game* g, monster* z, int x, int y)
 {
     g->sound(x, y, 18, "Pop!");
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfunc::beartrap(game* g, int x, int y)
+void trapfunc::beartrap(Game* g, int x, int y)
 {
     g->add_msg("A bear trap closes on your foot!");
     g->sound(x, y, 8, "SNAP!");
@@ -39,7 +39,7 @@ void trapfunc::beartrap(game* g, int x, int y)
     g->m.add_item(x, y, g->itypes[itm_beartrap], g->turn);
 }
 
-void trapfuncm::beartrap(game* g, monster* z, int x, int y)
+void trapfuncm::beartrap(Game* g, monster* z, int x, int y)
 {
     g->sound(x, y, 8, "SNAP!");
     if (z->hurt(35))
@@ -50,14 +50,14 @@ void trapfuncm::beartrap(game* g, monster* z, int x, int y)
     g->m.add_item(x, y, g->itypes[itm_beartrap], g->turn);
 }
 
-void trapfunc::board(game* g, int x, int y)
+void trapfunc::board(Game* g, int x, int y)
 {
     g->add_msg("You step on a spiked board!");
     g->u.hit(g, bp_feet, 0, 0, rng(6, 10));
     g->u.hit(g, bp_feet, 1, 0, rng(6, 10));
 }
 
-void trapfuncm::board(game* g, monster* z, int x, int y)
+void trapfuncm::board(Game* g, monster* z, int x, int y)
 {
     int t;
     if (g->u_see(z, t))
@@ -68,7 +68,7 @@ void trapfuncm::board(game* g, monster* z, int x, int y)
         z->moves -= 80;
 }
 
-void trapfunc::tripwire(game* g, int x, int y)
+void trapfunc::tripwire(Game* g, int x, int y)
 {
     g->add_msg("You trip over a tripwire!");
     std::vector<point> valid;
@@ -88,7 +88,7 @@ void trapfunc::tripwire(game* g, int x, int y)
         g->u.hurtall(rng(1, 4));
 }
 
-void trapfuncm::tripwire(game* g, monster* z, int x, int y)
+void trapfuncm::tripwire(Game* g, monster* z, int x, int y)
 {
     int t;
     if (g->u_see(z, t))
@@ -98,7 +98,7 @@ void trapfuncm::tripwire(game* g, monster* z, int x, int y)
         g->kill_mon(g->mon_at(z->posx, z->posy));
 }
 
-void trapfunc::crossbow(game* g, int x, int y)
+void trapfunc::crossbow(Game* g, int x, int y)
 {
     bool add_bolt = true;
     g->add_msg("You trigger a crossbow trap!");
@@ -133,7 +133,7 @@ void trapfunc::crossbow(game* g, int x, int y)
         g->m.add_item(x, y, g->itypes[itm_bolt_steel], 0);
 }
 
-void trapfuncm::crossbow(game* g, monster* z, int x, int y)
+void trapfuncm::crossbow(Game* g, monster* z, int x, int y)
 {
     int t;
     bool add_bolt = true;
@@ -152,7 +152,7 @@ void trapfuncm::crossbow(game* g, monster* z, int x, int y)
         g->m.add_item(x, y, g->itypes[itm_bolt_steel], 0);
 }
 
-void trapfunc::shotgun(game* g, int x, int y)
+void trapfunc::shotgun(Game* g, int x, int y)
 {
     g->add_msg("You trigger a shotgun trap!");
     int shots = (one_in(8) || one_in(20 - g->u.str_max) ? 2 : 1);
@@ -189,7 +189,7 @@ void trapfunc::shotgun(game* g, int x, int y)
         g->m.tr_at(x, y) = tr_shotgun_1;
 }
 
-void trapfuncm::shotgun(game* g, monster* z, int x, int y)
+void trapfuncm::shotgun(Game* g, monster* z, int x, int y)
 {
     int t;
     bool seen = g->u_see(z, t);
@@ -221,13 +221,13 @@ void trapfuncm::shotgun(game* g, monster* z, int x, int y)
         g->m.tr_at(x, y) == tr_shotgun_1;
 }
 
-void trapfunc::blade(game* g, int x, int y)
+void trapfunc::blade(Game* g, int x, int y)
 {
     g->add_msg("A machete swings out and hacks your torso!");
     g->u.hit(g, bp_torso, 0, 12, 30);
 }
 
-void trapfuncm::blade(game* g, monster* z, int x, int y)
+void trapfuncm::blade(Game* g, monster* z, int x, int y)
 {
     int t;
     if (g->u_see(z, t))
@@ -239,14 +239,14 @@ void trapfuncm::blade(game* g, monster* z, int x, int y)
         g->kill_mon(g->mon_at(x, y));
 }
 
-void trapfunc::landmine(game* g, int x, int y)
+void trapfunc::landmine(Game* g, int x, int y)
 {
     g->add_msg("You trigger a landmine!");
     g->explosion(x, y, 20, 24, false);
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfuncm::landmine(game* g, monster* z, int x, int y)
+void trapfuncm::landmine(Game* g, monster* z, int x, int y)
 {
     int t;
     if (g->u_see(x, y, t))
@@ -255,14 +255,14 @@ void trapfuncm::landmine(game* g, monster* z, int x, int y)
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfunc::telepad(game* g, int x, int y)
+void trapfunc::telepad(Game* g, int x, int y)
 {
     g->sound(x, y, 6, "vvrrrRRMM*POP!*");
     g->add_msg("The air shimmers around you...");
     g->teleport();
 }
 
-void trapfuncm::telepad(game* g, monster* z, int x, int y)
+void trapfuncm::telepad(Game* g, monster* z, int x, int y)
 {
     g->sound(x, y, 6, "vvrrrRRMM*POP!*");
     int j;
@@ -274,7 +274,7 @@ void trapfuncm::telepad(game* g, monster* z, int x, int y)
     } while (g->m.move_cost(z->posx, z->posy) == 0);
 }
 
-void trapfunc::goo(game* g, int x, int y)
+void trapfunc::goo(Game* g, int x, int y)
 {
     g->add_msg("You step in a puddle of thick goo.");
     g->u.infect(DI_SLIMED, bp_feet, 6, 20, g);
@@ -286,7 +286,7 @@ void trapfunc::goo(game* g, int x, int y)
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfuncm::goo(game* g, monster* z, int x, int y)
+void trapfuncm::goo(Game* g, monster* z, int x, int y)
 {
     if (z->type->id == mon_blob) {
         z->speed += 15;
@@ -299,7 +299,7 @@ void trapfuncm::goo(game* g, monster* z, int x, int y)
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfunc::dissector(game* g, int x, int y)
+void trapfunc::dissector(Game* g, int x, int y)
 {
     g->add_msg("Electrical beams emit from the floor and slice your flesh!");
     g->sound(x, y, 10, "BRZZZAP!");
@@ -315,14 +315,14 @@ void trapfunc::dissector(game* g, int x, int y)
     g->u.hit(g, bp_feet, 1, 0, 10);
 }
 
-void trapfuncm::dissector(game* g, monster* z, int x, int y)
+void trapfuncm::dissector(Game* g, monster* z, int x, int y)
 {
     g->sound(x, y, 10, "BRZZZAP!");
     if (z->hurt(60))
         g->kill_mon(g->mon_at(x, y));
 }
 
-void trapfunc::pit(game* g, int x, int y)
+void trapfunc::pit(Game* g, int x, int y)
 {
     g->add_msg("You fall in a pit!");
     int dodge = g->u.dodge();
@@ -337,7 +337,7 @@ void trapfunc::pit(game* g, int x, int y)
     g->u.add_disease(DI_IN_PIT, -1, g);
 }
 
-void trapfuncm::pit(game* g, monster* z, int x, int y)
+void trapfuncm::pit(Game* g, monster* z, int x, int y)
 {
     int junk;
     if (g->u_see(x, y, junk))
@@ -348,7 +348,7 @@ void trapfuncm::pit(game* g, monster* z, int x, int y)
         z->moves = -1000;
 }
 
-void trapfunc::pit_spikes(game* g, int x, int y)
+void trapfunc::pit_spikes(Game* g, int x, int y)
 {
     g->add_msg("You fall in a pit!");
     int dodge = g->u.dodge();
@@ -380,7 +380,7 @@ void trapfunc::pit_spikes(game* g, int x, int y)
     g->u.add_disease(DI_IN_PIT, -1, g);
 }
 
-void trapfuncm::pit_spikes(game* g, monster* z, int x, int y)
+void trapfuncm::pit_spikes(Game* g, monster* z, int x, int y)
 {
     int junk;
     if (g->u_see(z, junk))
@@ -391,7 +391,7 @@ void trapfuncm::pit_spikes(game* g, monster* z, int x, int y)
         z->moves = -1000;
 }
 
-void trapfunc::sinkhole(game* g, int x, int y)
+void trapfunc::sinkhole(Game* g, int x, int y)
 {
     g->add_msg("You step into a sinkhole, and start to sink down!");
     if (g->u.has_amount(itm_rope_30, 1) && query_yn("Throw your rope to try to catch soemthing?")) {

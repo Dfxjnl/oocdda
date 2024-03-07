@@ -11,7 +11,7 @@
 #include "settlement.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 
 struct city {
     int x;
@@ -56,12 +56,12 @@ struct radio_tower {
 class overmap {
 public:
     overmap();
-    overmap(game* g, int x, int y, int z);
+    overmap(Game* g, int x, int y, int z);
     ~overmap();
     void save();
     void save(int x, int y, int z);
-    void open(game* g, int x, int y, int z);
-    void generate(game* g, overmap* north, overmap* east, overmap* south, overmap* west);
+    void open(Game* g, int x, int y, int z);
+    void generate(Game* g, overmap* north, overmap* east, overmap* south, overmap* west);
     void generate_sub(overmap* above);
     void make_tutorial();
 
@@ -92,7 +92,7 @@ private:
     // Overall terrain
     void place_river(point pa, point pb);
     void place_forest();
-    void place_settlements(game* g);
+    void place_settlements(Game* g);
     void settlement_building(settlement& set, int x, int y);
     // City Building
     void place_cities(std::vector<city>& cities, int min);
@@ -117,7 +117,7 @@ private:
     // Monsters, radios, etc.
     void place_mongroups();
     void place_radios();
-    void place_NPCs(game* g);
+    void place_NPCs(Game* g);
     // File I/O
 };
 } // namespace oocdda

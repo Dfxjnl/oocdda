@@ -12,7 +12,7 @@
 #include "skill.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 class item;
 class monster;
 class overmap;
@@ -131,35 +131,35 @@ public:
     npc();
     ~npc();
     virtual bool is_npc() { return true; }
-    void randomize(game* g, npc_class type = NC_NONE);
-    void randomize_from_fact(game* g, faction* fac);
-    void make_shopkeep(game* g, oter_id type);
+    void randomize(Game* g, npc_class type = NC_NONE);
+    void randomize_from_fact(Game* g, faction* fac);
+    void make_shopkeep(Game* g, oter_id type);
     void set_name();
     void spawn_at(overmap* o, int posx, int posy);
     skill best_skill();
-    void starting_weapon(game* g);
+    void starting_weapon(Game* g);
     bool wear_if_wanted(item it);
 
-    void perform_mission(game* g);
-    int minutes_to_u(game* g);
+    void perform_mission(Game* g);
+    int minutes_to_u(Game* g);
     bool fac_has_value(faction_value value);
     bool fac_has_job(faction_job job);
 
     void form_opinion(player* u);
     void decide_needs();
-    void talk_to_u(game* g);
-    void say(game* g, std::string line);
+    void talk_to_u(Game* g);
+    void say(Game* g, std::string line);
     void init_selling(std::vector<int>& indices, std::vector<int>& prices);
     void init_buying(std::vector<item> you, std::vector<int>& indices, std::vector<int>& prices);
     int value(item& it);
 
     bool is_friend();
     bool is_following();
-    int danger_assessment(game* g);
+    int danger_assessment(Game* g);
     bool bravery_check(int diff);
-    void told_to_help(game* g);
-    void told_to_wait(game* g);
-    void told_to_leave(game* g);
+    void told_to_help(Game* g);
+    void told_to_wait(Game* g);
+    void told_to_leave(Game* g);
 
     // Display
     void draw(WINDOW* w, int plx, int ply, bool inv);
@@ -169,39 +169,39 @@ public:
                                 // Updates current pos AND our plans
 
     // The following are defined in npcmove.cpp
-    void move(game* g); // Actual movement; depends on target and attitude
+    void move(Game* g); // Actual movement; depends on target and attitude
     int confident_range(); // Range at which we have 50% chance of a shot hitting
-    bool wont_shoot_friend(game* g); // Confident that we won't shoot a friend
-    monster* choose_monster_target(game* g); // Most often, the closest to us
-    bool want_to_attack_player(game* g);
+    bool wont_shoot_friend(Game* g); // Confident that we won't shoot a friend
+    monster* choose_monster_target(Game* g); // Most often, the closest to us
+    bool want_to_attack_player(Game* g);
     int follow_distance(); // How closely do we follow the player?
     bool can_reload();
     bool fetching_item(); // Are we in the process of fetching a particular item?
     bool saw_player_recently(); // Do we have an idea of where u are?
     bool has_destination(); // Do we have a long-term destination?
     bool alt_attack_available(); // Do we have grenades, molotov, etc?
-    npc_action method_of_attacking_player(game* g, std::vector<point>& path);
-    npc_action method_of_attacking_monster(game* g, std::vector<point>& path);
-    npc_action long_term_goal_action(game* g, std::vector<point>& path);
-    void set_destination(game* g); // Pick a place to go
-    void go_to_destination(game* g);
+    npc_action method_of_attacking_player(Game* g, std::vector<point>& path);
+    npc_action method_of_attacking_monster(Game* g, std::vector<point>& path);
+    npc_action long_term_goal_action(Game* g, std::vector<point>& path);
+    void set_destination(Game* g); // Pick a place to go
+    void go_to_destination(Game* g);
 
-    bool can_move_to(game* g, int x, int y);
-    void move_to(game* g, int x, int y);
-    void move_away_from(game* g, int x, int y);
+    bool can_move_to(Game* g, int x, int y);
+    void move_to(Game* g, int x, int y);
+    void move_away_from(Game* g, int x, int y);
     void move_pause();
-    void melee_monster(game* g, monster* m);
-    void alt_attack(game* g, monster* m, player* p);
-    void find_items(game* g);
-    void pickup_items(game* g);
-    void melee_player(game* g, player& foe);
-    void alt_attack_player(game* g, player& foe);
-    void heal_player(game* g, player& patient);
-    void mug_player(game* g, player& mark);
-    void look_for_player(game* g);
+    void melee_monster(Game* g, monster* m);
+    void alt_attack(Game* g, monster* m, player* p);
+    void find_items(Game* g);
+    void pickup_items(Game* g);
+    void melee_player(Game* g, player& foe);
+    void alt_attack_player(Game* g, player& foe);
+    void heal_player(Game* g, player& patient);
+    void mug_player(Game* g, player& mark);
+    void look_for_player(Game* g);
     // The preceding are in npcmove.cpp
 
-    void die(game* g);
+    void die(Game* g);
 
     monster* target; // Current monster we want to kill
     npc_attitude attitude; // What we want to do to the player

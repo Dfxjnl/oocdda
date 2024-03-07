@@ -18,7 +18,7 @@
 namespace oocdda {
 bool vector_has(std::vector<item> vec, itype_id type);
 
-bool map::process_fields(game* g)
+bool map::process_fields(Game* g)
 {
     bool found_field = false;
     field* cur;
@@ -339,7 +339,7 @@ bool map::process_fields(game* g)
     return found_field;
 }
 
-void map::step_in_field(int x, int y, game* g)
+void map::step_in_field(int x, int y, Game* g)
 {
     field* cur = &field_at(x, y);
     switch (cur->type) {
@@ -412,7 +412,7 @@ void map::step_in_field(int x, int y, game* g)
     }
 }
 
-void map::mon_in_field(int x, int y, game* g, monster* z)
+void map::mon_in_field(int x, int y, Game* g, monster* z)
 {
     if (z->has_flag(MF_DIGS))
         return; // Digging monsters are immune to fields

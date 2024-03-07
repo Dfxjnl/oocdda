@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace oocdda {
-class game;
+class Game;
 
 // TODO: Redefine?
 #define MAX_FAC_NAME_SIZE 40
@@ -75,7 +75,7 @@ struct faction {
     bool matches_us(faction_value v);
     std::string describe();
 
-    int response_time(game* g); // Time it takes for them to get to u
+    int response_time(Game* g); // Time it takes for them to get to u
 
     std::string name;
     unsigned values : NUM_FACVALS; // Bitfield of values

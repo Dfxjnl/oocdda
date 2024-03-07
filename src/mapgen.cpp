@@ -16,7 +16,7 @@
 #include "trap.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 
 #ifndef sgn
 #    define sgn(x) (((x) < 0) ? -1 : 1)
@@ -54,7 +54,7 @@ void science_room(map* m, int x1, int y1, int x2, int y2, int rotate);
 
 void set_science_room(map* m, int x1, int y1, bool faces_right, int turn);
 
-void map::generate(game* g, overmap* om, int x, int y, int turn)
+void map::generate(Game* g, overmap* om, int x, int y, int turn)
 {
     oter_id terrain_type, t_north, t_east, t_south, t_west, t_above;
     int overx = x / 2;

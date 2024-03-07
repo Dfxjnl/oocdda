@@ -29,10 +29,10 @@ struct trap;
 
 enum tut_type { TUT_NULL, TUT_BASIC, TUT_COMBAT, TUT_MAX };
 
-class game {
+class Game {
 public:
-    game();
-    ~game();
+    Game();
+    ~Game();
     bool do_turn();
     void tutorial_message(tut_lesson lesson);
     void draw();

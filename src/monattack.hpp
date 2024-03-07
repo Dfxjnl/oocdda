@@ -2,30 +2,30 @@
 #define OOCDDA_MONATTACK_HPP
 
 namespace oocdda {
-class game;
+class Game;
 class monster;
 
 class mattack {
 public:
-    void none(game* g, monster* z) {};
-    void antqueen(game* g, monster* z);
-    void shriek(game* g, monster* z);
-    void acid(game* g, monster* z);
-    void shockstorm(game* g, monster* z);
-    void boomer(game* g, monster* z);
-    void resurrect(game* g, monster* z);
-    void growplants(game* g, monster* z);
-    void fungus(game* g, monster* z);
-    void plant(game* g, monster* z);
-    void disappear(game* g, monster* z);
-    void formblob(game* g, monster* z);
-    void gene_sting(game* g, monster* z);
-    void stare(game* g, monster* z);
-    void photograph(game* g, monster* z) {}; // TODO: needs faction
-    void tazer(game* g, monster* z);
-    void smg(game* g, monster* z);
-    void flamethrower(game* g, monster* z);
-    void multi_robot(game* g, monster* z); // Pick from tazer, smg, flame
+    void none(Game* g, monster* z) {};
+    void antqueen(Game* g, monster* z);
+    void shriek(Game* g, monster* z);
+    void acid(Game* g, monster* z);
+    void shockstorm(Game* g, monster* z);
+    void boomer(Game* g, monster* z);
+    void resurrect(Game* g, monster* z);
+    void growplants(Game* g, monster* z);
+    void fungus(Game* g, monster* z);
+    void plant(Game* g, monster* z);
+    void disappear(Game* g, monster* z);
+    void formblob(Game* g, monster* z);
+    void gene_sting(Game* g, monster* z);
+    void stare(Game* g, monster* z);
+    void photograph(Game* g, monster* z) {}; // TODO: needs faction
+    void tazer(Game* g, monster* z);
+    void smg(Game* g, monster* z);
+    void flamethrower(Game* g, monster* z);
+    void multi_robot(Game* g, monster* z); // Pick from tazer, smg, flame
 };
 } // namespace oocdda
 

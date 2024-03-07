@@ -150,8 +150,8 @@ struct mtype {
     int hp;
 
     unsigned char sp_freq; // How long sp_attack takes to charge
-    void (mdeath::*dies)(game*, monster*); // What happens when this monster dies
-    void (mattack::*sp_attack)(game*, monster*); // This monster's special attack
+    void (mdeath::*dies)(Game*, monster*); // What happens when this monster dies
+    void (mattack::*sp_attack)(Game*, monster*); // This monster's special attack
 
     // Default constructor
     mtype()
@@ -186,7 +186,7 @@ struct mtype {
         unsigned int pspeed, unsigned char pml_skill, unsigned char pml_dice,
         unsigned char pml_sides, unsigned char pml_cut, unsigned char pdodge, unsigned char parmor,
         unsigned char pitem_chance, int php, unsigned char psp_freq,
-        void (mdeath::*pdies)(game*, monster*), void (mattack::*psp_attack)(game*, monster*),
+        void (mdeath::*pdies)(Game*, monster*), void (mattack::*psp_attack)(Game*, monster*),
         std::string pdescription)
     {
         id = pid;

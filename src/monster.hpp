@@ -11,7 +11,7 @@
 #include "mtype.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 class map;
 class player;
 
@@ -26,7 +26,7 @@ public:
 
     // Access
     std::string name(); // Returns the monster's formal name
-    void print_info(game* g, WINDOW* w); // Prints information to w.
+    void print_info(Game* g, WINDOW* w); // Prints information to w.
     char symbol(); // Just our type's symbol; no context
     void draw(WINDOW* w, int plx, int ply, bool inv);
     // Inverts color if inv==true
@@ -46,26 +46,26 @@ public:
                                          // t determines WHICH Bresenham line
     void wander_to(int x, int y, int f); // Try to get to (x, y), we don't know
                                          // the route.  Give up after f steps.
-    void plan(game* g);
-    void move(game* g); // Actual movement
-    void friendly_move(game* g);
+    void plan(Game* g);
+    void move(Game* g); // Actual movement
+    void friendly_move(Game* g);
 
-    point scent_move(game* g);
-    point sound_move(game* g);
-    void hit_player(game* g, player& p);
-    void move_to(game* g, int x, int y);
-    void stumble(game* g, bool moved);
+    point scent_move(Game* g);
+    point sound_move(Game* g);
+    void hit_player(Game* g, player& p);
+    void move_to(Game* g, int x, int y);
+    void stumble(Game* g, bool moved);
 
     // Combat
     bool is_fleeing(player& u); // True if we're fleeing
     int hit(player& p, body_part& bp_hit); // Returns a damage
-    void hit_monster(game* g, int i);
+    void hit_monster(Game* g, int i);
     bool hurt(int dam); // Deals this dam damage; returns true if we dead
     int armor(); // Natural armor, plus any worn armor
-    void die(game* g);
+    void die(Game* g);
 
     // Other
-    bool make_fungus(game* g); // Makes this monster into a fungus version
+    bool make_fungus(Game* g); // Makes this monster into a fungus version
                                // Returns false if no such monster exists
     void make_friendly();
     int posx, posy;

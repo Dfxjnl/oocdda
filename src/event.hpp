@@ -4,7 +4,7 @@
 #include <cstddef>
 
 namespace oocdda {
-class game;
+class Game;
 struct faction;
 
 enum event_type { EVENT_NULL, EVENT_HELP, NUM_EVENT_TYPES };
@@ -28,7 +28,7 @@ struct event {
         relevant_faction = r_f;
     }
 
-    void actualize(game* g);
+    void actualize(Game* g);
 };
 } // namespace oocdda
 

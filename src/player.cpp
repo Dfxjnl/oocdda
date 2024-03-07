@@ -63,7 +63,7 @@ player::player()
 
 player::~player() { }
 
-void player::normalize(game* g)
+void player::normalize(Game* g)
 {
     ret_null = item(g->itypes[0], 0);
     weapon = item(g->itypes[0], 0);
@@ -301,7 +301,7 @@ std::string player::save_info()
     return dump.str();
 }
 
-void player::disp_info(game* g)
+void player::disp_info(Game* g)
 {
     int line;
     std::vector<std::string> effect_name;
@@ -1106,7 +1106,7 @@ void player::charge_power(int amount)
         power_level = 0;
 }
 
-void player::power_bionics(game* g)
+void player::power_bionics(Game* g)
 {
     WINDOW* wBio = newwin(25, 80, 0, 0);
     werase(wBio);
@@ -1208,7 +1208,7 @@ You can not activate %s!  To read a description of\
     erase();
 }
 
-void player::mutate(game* g)
+void player::mutate(Game* g)
 {
     while (true) { // Infinite loop until a mutation forms.
         // GOOD mutations are a 2 in 5 chance, unless you have robust genetics (in which
@@ -1635,7 +1635,7 @@ int player::sight_range(int light_level)
     return ret;
 }
 
-bool player::is_in_sunlight(game* g)
+bool player::is_in_sunlight(Game* g)
 {
     if (g->light_level() >= 40 && g->m.ter(posx, posy) != t_floor)
         return true;
@@ -1679,7 +1679,7 @@ void player::pause()
     }
 }
 
-int player::hit_mon(game* g, monster* z)
+int player::hit_mon(Game* g, monster* z)
 {
     bool is_u = (this == &(g->u)); // Affects how we'll display messages
     int j;
@@ -2118,7 +2118,7 @@ int player::throw_range(char ch)
     return ret;
 }
 
-void player::hit(game* g, body_part bphurt, int side, int dam, int cut)
+void player::hit(Game* g, body_part bphurt, int side, int dam, int cut)
 {
     int painadd = 0;
     if (has_disease(DI_SLEEP)) {
@@ -2203,7 +2203,7 @@ void player::hit(game* g, body_part bphurt, int side, int dam, int cut)
         add_disease(DI_ADRENALINE, 600, g);
 }
 
-void player::hurt(game* g, body_part bphurt, int side, int dam)
+void player::hurt(Game* g, body_part bphurt, int side, int dam)
 {
     int painadd = 0;
     if (has_disease(DI_SLEEP) && rng(0, dam) > 2) {
@@ -2345,7 +2345,7 @@ int player::hp_percentage()
     return (100 * total_cur) / total_max;
 }
 
-void player::get_sick(game* g)
+void player::get_sick(Game* g)
 {
     if (one_in(3))
         health -= rng(0, 2);
@@ -2353,13 +2353,13 @@ void player::get_sick(game* g)
         debugmsg("Health: %d", health);
 }
 
-void player::infect(dis_type type, body_part vector, int strength, int duration, game* g)
+void player::infect(dis_type type, body_part vector, int strength, int duration, Game* g)
 {
     if (dice(strength, 3) > dice(resist(vector), 3))
         add_disease(type, duration, g);
 }
 
-void player::add_disease(dis_type type, int duration, game* g)
+void player::add_disease(dis_type type, int duration, Game* g)
 {
     bool found = false;
     int i = 0;
@@ -2462,7 +2462,7 @@ int player::addiction_level(add_type type)
     return 0;
 }
 
-void player::suffer(game* g)
+void player::suffer(Game* g)
 {
     for (int i = 0; i < my_bionics.size(); i++) {
         if (my_bionics[i].powered)
@@ -2689,7 +2689,7 @@ void player::suffer(game* g)
         int_cur = 0;
 }
 
-void player::vomit(game* g)
+void player::vomit(Game* g)
 {
     g->add_msg("You throw up heavily!");
     hunger += 50;
@@ -2848,7 +2848,7 @@ bool player::has_active_item(itype_id id)
     return false;
 }
 
-void player::process_active_items(game* g)
+void player::process_active_items(Game* g)
 {
     it_tool* tmp;
     iuse use;
@@ -3267,7 +3267,7 @@ bool player::has_item(item* it)
     return false;
 }
 
-bool player::eat(game* g, char let)
+bool player::eat(Game* g, char let)
 {
     it_comest* tmp = NULL;
     item* eaten = NULL;
@@ -3421,7 +3421,7 @@ bool player::eat(game* g, char let)
     return true;
 }
 
-bool player::wield(game* g, char let)
+bool player::wield(Game* g, char let)
 {
     if (weapon.type->id == itm_bio_claws) {
         g->add_msg("You cannot unwield your claws!  Withdraw them with 'p'.");
@@ -3478,7 +3478,7 @@ bool player::wield(game* g, char let)
     return false;
 }
 
-bool player::wear(game* g, char let)
+bool player::wear(Game* g, char let)
 {
     item* to_wear = NULL;
     int index = -1;
@@ -3541,7 +3541,7 @@ bool player::wear(game* g, char let)
     return true;
 }
 
-bool player::takeoff(game* g, char let)
+bool player::takeoff(Game* g, char let)
 {
     for (int i = 0; i < worn.size(); i++) {
         if (worn[i].invlet == let) {
@@ -3564,7 +3564,7 @@ bool player::takeoff(game* g, char let)
     return false;
 }
 
-void player::use(game* g, char let)
+void player::use(Game* g, char let)
 {
     item* used = &(i_at(let));
     if (used->type->id == 0) {
@@ -3651,7 +3651,7 @@ press 'U' while wielding the unloaded gun.",
     return;
 }
 
-void player::read(game* g, char ch)
+void player::read(Game* g, char ch)
 {
     int index = -1;
     if (weapon.invlet == ch)
@@ -3701,9 +3701,9 @@ void player::read(game* g, char ch)
     moves = 0;
 }
 
-void player::try_to_sleep(game* g) { add_disease(DI_LYING_DOWN, 300, g); }
+void player::try_to_sleep(Game* g) { add_disease(DI_LYING_DOWN, 300, g); }
 
-bool player::can_sleep(game* g)
+bool player::can_sleep(Game* g)
 {
     int sleepy = 0;
     if (has_addiction(ADD_SLEEP))
@@ -3816,7 +3816,7 @@ int player::armor_cut(body_part bp)
     return ret;
 }
 
-void player::absorb(game* g, body_part bp, int& dam, int& cut)
+void player::absorb(Game* g, body_part bp, int& dam, int& cut)
 {
     it_armor* tmp;
     int arm_bash = 0, arm_cut = 0;

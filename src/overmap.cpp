@@ -15,7 +15,7 @@
 #include "settlement.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 
 #define STREETCHANCE 2
 #define NUM_FOREST 250
@@ -151,7 +151,7 @@ overmap::overmap()
         debugmsg("More than 256 oterid!  Saving won't work!");
 }
 
-overmap::overmap(game* g, int x, int y, int z)
+overmap::overmap(Game* g, int x, int y, int z)
 {
     if (num_ter_types > 256)
         debugmsg("More than 256 oterid!  Saving won't work!");
@@ -212,7 +212,7 @@ void overmap::add_note(int x, int y, std::string message)
         notes.push_back(om_note(x, y, notes.size(), message));
 }
 
-void overmap::generate(game* g, overmap* north, overmap* east, overmap* south, overmap* west)
+void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, overmap* west)
 {
     erase();
     clear();
@@ -670,7 +670,7 @@ void overmap::place_forest()
     }
 }
 
-void overmap::place_settlements(game* g)
+void overmap::place_settlements(Game* g)
 {
     int num_settlements = dice(SETTLE_DICE, SETTLE_SIDES);
     for (int i = 0; i < num_settlements; i++) {
@@ -756,7 +756,7 @@ void overmap::place_settlements(game* g)
     }
 }
 
-void overmap::place_NPCs(game* g)
+void overmap::place_NPCs(Game* g)
 {
     npc shopkeep;
     shopkeep.omx = posx;
@@ -1740,7 +1740,7 @@ void overmap::save(int x, int y, int z)
     fout.close();
 }
 
-void overmap::open(game* g, int x, int y, int z)
+void overmap::open(Game* g, int x, int y, int z)
 {
     char buff[32];
     char line[OMAPX];

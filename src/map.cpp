@@ -251,7 +251,7 @@ bool map::bash(int x, int y, int str, std::string& sound)
 }
 
 // map::destroy is only called (?) if the terrain is NOT bashable.
-void map::destroy(game* g, int x, int y, bool makesound)
+void map::destroy(Game* g, int x, int y, bool makesound)
 {
     switch (ter(x, y)) {
     case t_gas_pump:
@@ -298,7 +298,7 @@ void map::destroy(game* g, int x, int y, bool makesound)
         g->sound(x, y, 40, "SMASH!!");
 }
 
-void map::shoot(game* g, int x, int y, int& dam, bool hit_items)
+void map::shoot(Game* g, int x, int y, int& dam, bool hit_items)
 {
     switch (ter(x, y)) {
     case t_door_c:
@@ -541,7 +541,7 @@ void map::add_item(int x, int y, item new_item)
     grid[nonant].itm[x][y].push_back(new_item);
 }
 
-void map::process_active_items(game* g)
+void map::process_active_items(Game* g)
 {
     it_tool* tmp;
     iuse use;
@@ -597,7 +597,7 @@ void map::add_trap(int x, int y, trap_id t)
     */
 }
 
-void map::disarm_trap(game* g, int x, int y)
+void map::disarm_trap(Game* g, int x, int y)
 {
     if (tr_at(x, y) == tr_null) {
         debugmsg("Tried to disarm a trap where there was none (%d %d)", x, y);
@@ -635,7 +635,7 @@ field& map::field_at(int x, int y)
     return grid[nonant].fld[x][y];
 }
 
-bool map::add_field(game* g, int x, int y, field_id t, unsigned char density)
+bool map::add_field(Game* g, int x, int y, field_id t, unsigned char density)
 {
     if (!field_at(x, y).is_null()) // Blood & bile are null too
         return false;
@@ -667,7 +667,7 @@ void map::debug()
     getch();
 }
 
-void map::draw(game* g, WINDOW* w)
+void map::draw(Game* g, WINDOW* w)
 {
     int t = 0;
     int light = g->u.sight_range(g->light_level());
@@ -832,7 +832,7 @@ void map::save(overmap* om, unsigned int turn, int x, int y)
     }
 }
 
-void map::init(game* g, int x, int y)
+void map::init(Game* g, int x, int y)
 {
     for (int gridx = 0; gridx < 3; gridx++) {
         for (int gridy = 0; gridy < 3; gridy++) {
@@ -842,7 +842,7 @@ void map::init(game* g, int x, int y)
     }
 }
 
-void map::load(game* g, int wx, int wy)
+void map::load(Game* g, int wx, int wy)
 {
     for (int gridx = 0; gridx < 3; gridx++) {
         for (int gridy = 0; gridy < 3; gridy++) {
@@ -852,7 +852,7 @@ void map::load(game* g, int wx, int wy)
     }
 }
 
-void map::shift(game* g, int wx, int wy, int sx, int sy)
+void map::shift(Game* g, int wx, int wy, int sx, int sy)
 {
     // Shift the map sx submaps to the right and sy submaps down.
     // sx and sy should never be bigger than +/-1.
@@ -953,7 +953,7 @@ void map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
 // 0,0  1,0  2,0
 // 0,1  1,1  2,1
 // 0,2  1,2  2,2
-bool map::loadn(game* g, int worldx, int worldy, int gridx, int gridy)
+bool map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
 {
     char fname[32];
     char line[SEEX];
@@ -1052,7 +1052,7 @@ bool map::loadn(game* g, int worldx, int worldy, int gridx, int gridy)
     return true;
 }
 
-void map::spawn_monsters(game* g)
+void map::spawn_monsters(Game* g)
 {
     for (int gx = 0; gx < 3; gx++) {
         for (int gy = 0; gy < 3; gy++) {

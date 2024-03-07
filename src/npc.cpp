@@ -25,8 +25,8 @@
 #include "skill.hpp"
 
 namespace oocdda {
-std::vector<item> starting_clothes(npc_class type, bool male, game* g);
-std::vector<item> starting_inv(npc* me, npc_class type, game* g);
+std::vector<item> starting_clothes(npc_class type, bool male, Game* g);
+std::vector<item> starting_inv(npc* me, npc_class type, Game* g);
 
 npc::npc()
 {
@@ -54,7 +54,7 @@ npc::npc()
 
 npc::~npc() { }
 
-void npc::randomize(game* g, npc_class type)
+void npc::randomize(Game* g, npc_class type)
 {
     str_max = dice(4, 3);
     dex_max = dice(4, 3);
@@ -170,7 +170,7 @@ void npc::randomize(game* g, npc_class type)
     inv = starting_inv(this, type, g);
 }
 
-void npc::randomize_from_fact(game* g, faction* fac)
+void npc::randomize_from_fact(Game* g, faction* fac)
 {
     // Personality = aggression, bravery, altruism, collector
     my_fac = fac;
@@ -409,7 +409,7 @@ void npc::randomize_from_fact(game* g, faction* fac)
     }
 }
 
-void npc::make_shopkeep(game* g, oter_id type)
+void npc::make_shopkeep(Game* g, oter_id type)
 {
     randomize(g, NC_TRADER);
     itype_id item_type;
@@ -479,7 +479,7 @@ void npc::make_shopkeep(game* g, oter_id type)
     mission = MISSION_SHOPKEEP;
 }
 
-std::vector<item> starting_clothes(npc_class type, bool male, game* g)
+std::vector<item> starting_clothes(npc_class type, bool male, Game* g)
 {
     std::vector<item> ret;
     itype_id pants, shoes, shirt, gloves, coat, mask, glasses, hat;
@@ -719,7 +719,7 @@ std::vector<item> starting_clothes(npc_class type, bool male, game* g)
     return ret;
 }
 
-std::vector<item> starting_inv(npc* me, npc_class type, game* g)
+std::vector<item> starting_inv(npc* me, npc_class type, Game* g)
 {
     int total_space = me->volume_capacity() - 2;
     std::vector<item> ret;
@@ -859,7 +859,7 @@ skill npc::best_skill()
     return skill(best_skills[index]);
 }
 
-void npc::starting_weapon(game* g)
+void npc::starting_weapon(Game* g)
 {
     skill best = best_skill();
     int index;
@@ -974,7 +974,7 @@ bool npc::wear_if_wanted(item it)
     return false;
 }
 
-void npc::perform_mission(game* g)
+void npc::perform_mission(Game* g)
 {
     switch (mission) {
     case MISSION_RESCUE_U:
@@ -1086,7 +1086,7 @@ void npc::form_opinion(player* u)
         attitude = NPCATT_FLEE;
 }
 
-int npc::minutes_to_u(game* g)
+int npc::minutes_to_u(Game* g)
 {
     int ret = abs(mapx - g->levx);
     if (abs(mapy - g->levy) < ret)
@@ -1167,7 +1167,7 @@ void npc::decide_needs()
     }
 }
 
-void npc::say(game* g, std::string line)
+void npc::say(Game* g, std::string line)
 {
     int junk;
     if (g->u_see(posx, posy, junk)) {
@@ -1294,7 +1294,7 @@ bool npc::is_following()
     }
 }
 
-int npc::danger_assessment(game* g)
+int npc::danger_assessment(Game* g)
 {
     int ret = 0;
     int sightdist = g->light_level(), junk;
@@ -1324,7 +1324,7 @@ int npc::danger_assessment(game* g)
 
 bool npc::bravery_check(int diff) { return (dice(personality.bravery, 10) >= dice(diff, 10)); }
 
-void npc::told_to_help(game* g)
+void npc::told_to_help(Game* g)
 {
     if (!is_following() && personality.altruism < 0) {
         say(g, "Screw you!");
@@ -1343,7 +1343,7 @@ void npc::told_to_help(game* g)
     }
 }
 
-void npc::told_to_wait(game* g)
+void npc::told_to_wait(Game* g)
 {
     if (!is_following()) {
         debugmsg("%s told to wait, but isn't following", name.c_str());
@@ -1361,7 +1361,7 @@ void npc::told_to_wait(game* g)
     }
 }
 
-void npc::told_to_leave(game* g)
+void npc::told_to_leave(Game* g)
 {
     if (!is_following()) {
         debugmsg("%s told to leave, but isn't following", name.c_str());
@@ -1482,9 +1482,9 @@ int npc::confident_range()
     return int(180 / deviation);
 }
 
-bool npc::wont_shoot_friend(game* g) { return true; }
+bool npc::wont_shoot_friend(Game* g) { return true; }
 
-void npc::die(game* g)
+void npc::die(Game* g)
 {
     g->add_msg("%s dies!", name.c_str());
     item my_body;

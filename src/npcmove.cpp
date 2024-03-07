@@ -25,7 +25,7 @@
 namespace oocdda {
 std::string npc_action_name(npc_action action);
 
-void npc::move(game* g)
+void npc::move(Game* g)
 {
     int light = g->light_level();
     int linet;
@@ -176,7 +176,7 @@ void npc::move(game* g)
     }
 }
 
-monster* npc::choose_monster_target(game* g)
+monster* npc::choose_monster_target(Game* g)
 {
     int closest = 1000, plclosest = 1000, lowHP = 10000, pllowHP = 10000;
     int index = -1, plindex = -1;
@@ -223,7 +223,7 @@ monster* npc::choose_monster_target(game* g)
     return NULL;
 }
 
-void npc::find_items(game* g)
+void npc::find_items(Game* g)
 {
     int dist = g->light_level();
     int linet, top_value = 0;
@@ -261,7 +261,7 @@ void npc::find_items(game* g)
     }
 }
 
-void npc::pickup_items(game* g)
+void npc::pickup_items(Game* g)
 {
     int light = g->light_level(), dist = rl_dist(posx, posy, itx, ity), linet;
     bool debug = g->debugmon;
@@ -308,7 +308,7 @@ void npc::pickup_items(game* g)
     }
 }
 
-bool npc::want_to_attack_player(game* g)
+bool npc::want_to_attack_player(Game* g)
 {
     int j;
     if ((attitude == NPCATT_KILL || attitude == NPCATT_FLEE)
@@ -327,7 +327,7 @@ int npc::follow_distance()
     return (ret < 2 ? 2 : ret);
 }
 
-npc_action npc::method_of_attacking_player(game* g, std::vector<point>& path)
+npc_action npc::method_of_attacking_player(Game* g, std::vector<point>& path)
 {
     if (g->debugmon)
         debugmsg("method_of_attacking_player()");
@@ -384,7 +384,7 @@ npc_action npc::method_of_attacking_player(game* g, std::vector<point>& path)
     }
 }
 
-npc_action npc::method_of_attacking_monster(game* g, std::vector<point>& path)
+npc_action npc::method_of_attacking_monster(Game* g, std::vector<point>& path)
 {
     if (target == NULL) {
         debugmsg("Tried to figure out how to attack a null monster!");
@@ -470,7 +470,7 @@ bool npc::alt_attack_available()
     return false;
 }
 
-npc_action npc::long_term_goal_action(game* g, std::vector<point>& path)
+npc_action npc::long_term_goal_action(Game* g, std::vector<point>& path)
 {
     if (g->debugmon)
         debugmsg("long_term_goal_action()");
@@ -508,7 +508,7 @@ npc_action npc::long_term_goal_action(game* g, std::vector<point>& path)
     }
 }
 
-void npc::set_destination(game* g)
+void npc::set_destination(Game* g)
 {
     decide_needs();
     if (needs[0] == need_none) { // We don't really need anything in particular
@@ -575,7 +575,7 @@ void npc::set_destination(game* g)
     }
 }
 
-void npc::go_to_destination(game* g)
+void npc::go_to_destination(Game* g)
 {
     int sx = (goalx > mapx ? 1 : -1), sy = (goaly > mapy ? 1 : -1);
     if (goalx == mapx && goaly == mapy)
@@ -605,14 +605,14 @@ void npc::go_to_destination(game* g)
     }
 }
 
-bool npc::can_move_to(game* g, int x, int y)
+bool npc::can_move_to(Game* g, int x, int y)
 {
     if (g->m.move_cost(x, y) > 0 || g->m.has_flag(bashable, x, y) && rl_dist(posx, posy, x, y) <= 1)
         return true;
     return false;
 }
 
-void npc::move_to(game* g, int x, int y)
+void npc::move_to(Game* g, int x, int y)
 {
     if (recoil > 0) { // Start by dropping recoil a little
         if (int(str_cur / 2) + sklevel[sk_gun] >= recoil)
@@ -652,7 +652,7 @@ void npc::move_to(game* g, int x, int y)
     }
 }
 
-void npc::move_away_from(game* g, int x, int y)
+void npc::move_away_from(Game* g, int x, int y)
 {
     int sx = (x > posx ? -1 : 1), sy = (y > posy ? -1 : 1);
     int dx = abs(posx - x), dy = abs(posy - y);
@@ -691,7 +691,7 @@ void npc::move_pause()
     recoil = 0;
 }
 
-void npc::melee_monster(game* g, monster* m)
+void npc::melee_monster(Game* g, monster* m)
 {
     int dam = hit_mon(g, target);
     if (target->hurt(dam)) {
@@ -700,7 +700,7 @@ void npc::melee_monster(game* g, monster* m)
     }
 }
 
-void npc::alt_attack(game* g, monster* m, player* p)
+void npc::alt_attack(Game* g, monster* m, player* p)
 {
     // In order of importance
     itype_id options[8] = { itm_mininuke_act, itm_dynamite_act, itm_grenade_act, itm_gasbomb_act,
@@ -781,7 +781,7 @@ void npc::alt_attack(game* g, monster* m, player* p)
     }
 }
 
-void npc::melee_player(game* g, player& foe)
+void npc::melee_player(Game* g, player& foe)
 {
     moves -= 80 + weapon.volume() * 2 + weapon.weight() + encumb(bp_torso);
     body_part bphit;
@@ -796,7 +796,7 @@ void npc::melee_player(game* g, player& foe)
             weapname(false).c_str());
 }
 
-void npc::heal_player(game* g, player& patient)
+void npc::heal_player(Game* g, player& patient)
 {
     int low_health = 400;
     hp_part worst;
@@ -862,7 +862,7 @@ void npc::heal_player(game* g, player& patient)
     }
 }
 
-void npc::mug_player(game* g, player& mark)
+void npc::mug_player(Game* g, player& mark)
 {
     int linet;
     if (mark.cash > 0) {
@@ -918,7 +918,7 @@ void npc::mug_player(game* g, player& mark)
     }
 }
 
-void npc::look_for_player(game* g)
+void npc::look_for_player(Game* g)
 {
     if (g->turn % 6 == 0 && one_in(2)) {
         // Call out to the player

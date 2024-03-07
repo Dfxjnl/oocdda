@@ -26,17 +26,17 @@
 #include "skill.hpp"
 
 namespace oocdda {
-void say_hello(game* g, dialogue& d);
-void say_ask_for(game* g, dialogue& d, npc_need need);
-void say_put_em_up(game* g, dialogue& d);
-void say_listen(game* g, dialogue& d);
-void say_listen_need(game* g, dialogue& d);
-void say_listen_about(game* g, dialogue& d);
-void say_why_join(game* g, dialogue& d);
+void say_hello(Game* g, dialogue& d);
+void say_ask_for(Game* g, dialogue& d, npc_need need);
+void say_put_em_up(Game* g, dialogue& d);
+void say_listen(Game* g, dialogue& d);
+void say_listen_need(Game* g, dialogue& d);
+void say_listen_about(Game* g, dialogue& d);
+void say_why_join(Game* g, dialogue& d);
 
-bool trade(game* g, dialogue& d, int cost, std::string deal);
+bool trade(Game* g, dialogue& d, int cost, std::string deal);
 
-void npc::talk_to_u(game* g)
+void npc::talk_to_u(Game* g)
 {
     moves -= 100;
     dialogue d;
@@ -71,7 +71,7 @@ void npc::talk_to_u(game* g)
     g->refresh_all();
 }
 
-void say_hello(game* g, dialogue& d)
+void say_hello(Game* g, dialogue& d)
 {
     // int opt = d.opt(talk_greeting_gen[rng(0, 9)],
     int opt
@@ -97,7 +97,7 @@ void say_hello(game* g, dialogue& d)
 // need is what we have determined to be our dearest need at the moment.
 // This is determined in npc::decide_needs(), found in npc.cpp
 // See dialogue.h for the strings talk_needs
-void say_ask_for(game* g, dialogue& d, npc_need need)
+void say_ask_for(Game* g, dialogue& d, npc_need need)
 {
     int opt = d.opt(talk_needs[need][rng(0, 4)], "\"Okay, let's trade.\"",
         "&\"Follow me, we'll search together.\"", "\"I don't have any, but...\"", "Ignore them",
@@ -125,7 +125,7 @@ void say_ask_for(game* g, dialogue& d, npc_need need)
     }
 }
 
-void say_put_em_up(game* g, dialogue& d)
+void say_put_em_up(Game* g, dialogue& d)
 {
     int opt;
     if (d.alpha->weapon.type->id == 0) {
@@ -156,7 +156,7 @@ void say_put_em_up(game* g, dialogue& d)
     }
 }
 
-void say_listen(game* g, dialogue& d)
+void say_listen(Game* g, dialogue& d)
 {
     if (d.beta->is_following()) {
         int opt = d.opt("Yes?", "\"I need...", "\"Tell me about...", "\"Let's do some trading.\"",
@@ -225,7 +225,7 @@ void say_listen(game* g, dialogue& d)
     }
 }
 
-void say_listen_need(game* g, dialogue& d)
+void say_listen_need(Game* g, dialogue& d)
 {
     std::string response;
     point lookp;
@@ -330,7 +330,7 @@ void say_listen_need(game* g, dialogue& d)
     }
 }
 
-void say_listen_about(game* g, dialogue& d)
+void say_listen_about(Game* g, dialogue& d)
 {
     int opt = d.opt("About what?", "\"About you.\"", "\"About your faction.\"",
         "\"About other factions.\"", "\"Never mind.\"", "\"Never mind, bye.\"", NULL);
@@ -368,7 +368,7 @@ void say_listen_about(game* g, dialogue& d)
     }
 }
 
-void say_why_join(game* g, dialogue& d)
+void say_why_join(Game* g, dialogue& d)
 {
     int opt = d.opt("Why should I travel with you?", "\"We'll be safer together.\"",
         "\"I'll pay you.\"", "!\"I'll kill you if you don't.\"", "\"Never mind.  Bye.\"", NULL);
@@ -602,7 +602,7 @@ int dialogue::opt(std::string challenge, ...)
     return ch;
 }
 
-bool trade(game* g, dialogue& d, int cost, std::string deal)
+bool trade(Game* g, dialogue& d, int cost, std::string deal)
 {
     WINDOW* w_head = newwin(4, 80, 0, 0);
     WINDOW* w_them = newwin(21, 40, 4, 0);

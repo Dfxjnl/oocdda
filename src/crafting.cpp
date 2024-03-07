@@ -21,7 +21,7 @@
 namespace oocdda {
 void draw_recipe_tabs(WINDOW* w, craft_cat tab);
 
-void game::init_recipes()
+void Game::init_recipes()
 {
     int id = -1;
     int tl, cl;
@@ -401,7 +401,7 @@ void game::init_recipes()
     COMP(itm_plut_cell, 1, NULL);
 }
 
-void game::craft()
+void Game::craft()
 {
     WINDOW* w_head = newwin(3, 80, 0, 0);
     WINDOW* w_data = newwin(22, 80, 3, 0);
@@ -686,7 +686,7 @@ void draw_recipe_tabs(WINDOW* w, craft_cat tab)
     wrefresh(w);
 }
 
-void game::pick_recipes(std::vector<recipe*>& current, std::vector<bool>& available, craft_cat tab)
+void Game::pick_recipes(std::vector<recipe*>& current, std::vector<bool>& available, craft_cat tab)
 {
     bool have_tool[5], have_comp[5];
     current.clear();
@@ -737,13 +737,13 @@ void game::pick_recipes(std::vector<recipe*>& current, std::vector<bool>& availa
     }
 }
 
-void game::make_craft(recipe* making)
+void Game::make_craft(recipe* making)
 {
     u.activity = player_activity(ACT_CRAFT, making->time, making->id);
     u.moves = 0;
 }
 
-void game::complete_craft()
+void Game::complete_craft()
 {
     std::vector<component> will_use;
     recipe making = recipes[u.activity.index];

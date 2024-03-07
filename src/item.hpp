@@ -10,7 +10,7 @@
 #include "skill.hpp"
 
 namespace oocdda {
-class game;
+class Game;
 class player;
 struct mtype;
 
@@ -20,7 +20,7 @@ public:
     item(itype* it, unsigned int turn);
     item(itype* it, unsigned int turn, char let);
     void make_corpse(itype* it, mtype* mt, unsigned int turn); // Corpse
-    item(std::string itemdata, game* g);
+    item(std::string itemdata, Game* g);
     ~item();
     void make(itype* it);
     // returns the default container of this item, with this item in it
@@ -42,7 +42,7 @@ public:
     bool reload(player& u, int index);
 
     std::string save_info(); // Formatted for save files
-    void load_info(std::string data, game* g);
+    void load_info(std::string data, Game* g);
     std::string info(bool showtext = false); // Formatted for human viewing
     char symbol();
     nc_color color();
