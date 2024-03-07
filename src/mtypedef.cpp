@@ -3,8 +3,8 @@
 #include "color.hpp"
 #include "enums.hpp"
 #include "game.hpp"
-#include "monattack.hpp"
 #include "mondeath.hpp"
+#include "monster_attack.hpp"
 #include "mtype.hpp"
 
 namespace oocdda {

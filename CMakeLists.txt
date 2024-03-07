@@ -49,8 +49,6 @@ add_library(
   src/mapitems.hpp
   src/mapitemsdef.cpp
   src/mission.hpp
-  src/monattack.cpp
-  src/monattack.hpp
   src/mondeath.cpp
   src/mondeath.hpp
   src/mongroup.hpp
@@ -59,6 +57,8 @@ add_library(
   src/monmove.cpp
   src/monster.cpp
   src/monster.hpp
+  src/monster_attack.cpp
+  src/monster_attack.hpp
   src/mtype.hpp
   src/mtypedef.cpp
   src/newcharacter.cpp

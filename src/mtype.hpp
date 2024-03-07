@@ -8,8 +8,8 @@
 
 #include "color.hpp"
 #include "enums.hpp"
-#include "monattack.hpp"
 #include "mondeath.hpp"
+#include "monster_attack.hpp"
 
 namespace oocdda {
 class mdeath;

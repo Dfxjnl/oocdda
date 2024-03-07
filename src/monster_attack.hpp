@@ -1,5 +1,5 @@
-#ifndef OOCDDA_MONATTACK_HPP
-#define OOCDDA_MONATTACK_HPP
+#ifndef OOCDDA_MONSTER_ATTACK_HPP
+#define OOCDDA_MONSTER_ATTACK_HPP
 
 namespace oocdda {
 class Game;
@@ -29,4 +29,4 @@ public:
 };
 } // namespace oocdda
 
-#endif // OOCDDA_MONATTACK_HPP
+#endif // OOCDDA_MONSTER_ATTACK_HPP
