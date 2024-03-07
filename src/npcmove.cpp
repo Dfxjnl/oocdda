@@ -363,13 +363,13 @@ npc_action npc::method_of_attacking_player(Game* g, std::vector<point>& path)
                     return npc_melee_player;
                 else if (can_reload() && !g->u.weapon.is_gun()
                     && (dist >= weapon.reload_time(*this) || g->u.hp_percentage() <= 25))
-                    return npc_reload; // If we have time to reload OR you're almost dead
+                    return npc_reload;           // If we have time to reload OR you're almost dead
                 else if (alt_attack_available()) // Grenades, etc.
                     return npc_alt_attack_player;
                 else
                     return npc_flee_player; // Get away, then maybe reload
             }
-        } else { // Our weapon is not a gun
+        } else {                                           // Our weapon is not a gun
             if (path.size() <= 4 || !g->u.weapon.is_gun()) // Safe to attack
                 return npc_melee_player;
             else if (alt_attack_available()) // Grenades, etc.
@@ -434,8 +434,8 @@ npc_action npc::method_of_attacking_monster(Game* g, std::vector<point>& path)
             else
                 return long_term_goal_action(g, path); // Ignore the monster
         }
-    } else { // Our weapon isn't a gun
-        if ((rldist * 100) / target->speed <= 6) { // Close enough to care
+    } else {                                                    // Our weapon isn't a gun
+        if ((rldist * 100) / target->speed <= 6) {              // Close enough to care
             if (hp_percentage() + sklevel[sk_melee] * 10 >= 80) // We're confident
                 return npc_melee_monster;
             else
@@ -551,7 +551,7 @@ void npc::set_destination(Game* g)
            goaly = p.y;
           }
         */
-    } else { // We do have at least one pressing need
+    } else {                         // We do have at least one pressing need
         oter_id dest_type = ot_null; // Type of terrain we're looking for
         switch (needs[0]) {
         case need_ammo:

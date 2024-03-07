@@ -32,13 +32,13 @@ public:
     nc_color color(); // What color to draw us as
 
     void load_info(std::string data); // Load from file matching name
-    std::string save_info(); // Save to file matching name
-    void disp_info(Game* g); // '@' key; extending character info
-    void disp_status(WINDOW* w); // The constant data in the lower right
+    std::string save_info();          // Save to file matching name
+    void disp_info(Game* g);          // '@' key; extending character info
+    void disp_status(WINDOW* w);      // The constant data in the lower right
 
-    void reset(); // Resets movement points, stats, and applies pain, effects, etc
+    void reset();        // Resets movement points, stats, and applies pain, effects, etc
     int current_speed(); // Returns the number of movement points we get each turn
-    int swim_speed(); // Our speed when swimming
+    int swim_speed();    // Our speed when swimming
 
     bool has_trait(int flag);
     void toggle_trait(int flag);
@@ -59,11 +59,11 @@ public:
     bool is_armed(); // Whether we're wielding something; true for bionics
     bool avoid_trap(trap* tr);
 
-    void pause(); // '.' command; pauses & reduces recoil
+    void pause();                     // '.' command; pauses & reduces recoil
     int hit_mon(Game* g, monster* z); // Handles hitting a monster up to its death
     // hit_player returns false on a miss, and modifies bp, hitdam, and hitcut
     bool hit_player(player& p, body_part& bp, int& hitdam, int& hitcut);
-    int dodge(); // Returns the players's dodge, modded by clothing etc
+    int dodge();              // Returns the players's dodge, modded by clothing etc
     int throw_range(char ch); // Range of throwing item; -1:DNE 0:Can't throw
 
     // Converts bphurt to a hp_part (if side == 0, the left), then does/heals dam
@@ -97,20 +97,20 @@ public:
     void suffer(Game* g);
     void vomit(Game* g);
 
-    bool eat(Game* g, char let); // Eat item; returns false on fail
-    bool wield(Game* g, char let); // Wield item; returns false on fail
-    bool wear(Game* g, char let); // Wear item; returns false on fail
+    bool eat(Game* g, char let);     // Eat item; returns false on fail
+    bool wield(Game* g, char let);   // Wield item; returns false on fail
+    bool wear(Game* g, char let);    // Wear item; returns false on fail
     bool takeoff(Game* g, char let); // Take off item; returns false on fail
-    void use(Game* g, char let); // Use a tool
-    void read(Game* g, char let); // Read a book
-    void try_to_sleep(Game* g); // '$' command; adds DIS_LYING_DOWN
-    bool can_sleep(Game* g); // Checked each turn during DIS_LYING_DOWN
+    void use(Game* g, char let);     // Use a tool
+    void read(Game* g, char let);    // Read a book
+    void try_to_sleep(Game* g);      // '$' command; adds DIS_LYING_DOWN
+    bool can_sleep(Game* g);         // Checked each turn during DIS_LYING_DOWN
 
-    int warmth(body_part bp); // Warmth provided by armor &c
-    int encumb(body_part bp); // Encumberance from armor &c
-    int armor_bash(body_part bp); // Bashing resistance
-    int armor_cut(body_part bp); // Cutting  resistance
-    int resist(body_part bp); // Infection &c resistance
+    int warmth(body_part bp);                // Warmth provided by armor &c
+    int encumb(body_part bp);                // Encumberance from armor &c
+    int armor_bash(body_part bp);            // Bashing resistance
+    int armor_cut(body_part bp);             // Cutting  resistance
+    int resist(body_part bp);                // Infection &c resistance
     bool wearing_something_on(body_part bp); // True if wearing something on bp
 
     void practice(skill s, int amount); // Practice a skill
@@ -127,17 +127,17 @@ public:
     void i_add(item it);
     bool has_active_item(itype_id id);
     void process_active_items(Game* g);
-    item i_rem(char let); // Remove item from inventory; returns ret_null on fail
+    item i_rem(char let);      // Remove item from inventory; returns ret_null on fail
     item i_rem(itype_id type); // Remove first item w/ this type; fail is ret_null
     item remove_weapon();
-    item i_remn(int index); // Remove item from inventory; returns ret_null on fail
-    item& i_at(char let); // Returns the item with inventory letter let
-    item& i_of_type(itype_id type); // Returns the first item with this type
-    std::vector<item> inv_dump(); // Dumps full item list (e.g. at death)
+    item i_remn(int index);                 // Remove item from inventory; returns ret_null on fail
+    item& i_at(char let);                   // Returns the item with inventory letter let
+    item& i_of_type(itype_id type);         // Returns the first item with this type
+    std::vector<item> inv_dump();           // Dumps full item list (e.g. at death)
     void use_up(itype_id it, int quantity); // Uses up items OR charges if a tool
-    void use_amount(itype_id it, int quantity); // Uses up items
+    void use_amount(itype_id it, int quantity);  // Uses up items
     void use_charges(itype_id it, int quantity); // Uses up charges
-    int butcher_factor(); // Automatically picks our best butchering tool
+    int butcher_factor();                        // Automatically picks our best butchering tool
 
     bool is_wearing(itype_id it); // Are we wearing a specific itype?
     // has_amount works for quantity, OR charges if it is a tool.
@@ -146,8 +146,8 @@ public:
     bool has_number(itype_id it, int quantity);
     // has_charges works ONLY for charges.
     bool has_charges(itype_id it, int quantity);
-    bool has_item(char let); // Has an item with invlet let
-    bool has_item(item* it); // Has a specific item
+    bool has_item(char let);                // Has an item with invlet let
+    bool has_item(item* it);                // Has a specific item
     std::vector<int> has_ammo(ammotype at); // Returns a list of indices of the ammo
 
     // ---------------VALUES-----------------

@@ -498,15 +498,15 @@ std::string ammo_name(ammotype t);
 itype_id default_ammo(ammotype guntype);
 
 struct itype {
-    unsigned int id; // ID # that matches its place in master itype list
-                     // Used for save files; aligns to itype_id above.
+    unsigned int id;      // ID # that matches its place in master itype list
+                          // Used for save files; aligns to itype_id above.
     unsigned char rarity; // How often it's found
-    unsigned int price; // Its value
+    unsigned int price;   // Its value
 
-    std::string name; // Proper name
+    std::string name;        // Proper name
     std::string description; // Flavor text
 
-    char sym; // Symbol on the map
+    char sym;       // Symbol on the map
     nc_color color; // Color on the map (color.h)
 
     material m1; // Main material
@@ -518,7 +518,7 @@ struct itype {
 
     signed char melee_dam; // Bonus for melee damage; may be a penalty
     signed char melee_cut; // Cutting damage in melee
-    signed char m_to_hit; // To-hit bonus for melee combat; -5 to 5 is reasonable
+    signed char m_to_hit;  // To-hit bonus for melee combat; -5 to 5 is reasonable
 
     virtual bool is_food() { return false; }
     virtual bool is_ammo() { return false; }
@@ -569,10 +569,10 @@ struct itype {
 
 // Includes food drink and drugs
 struct it_comest : public itype {
-    signed char quench; // Many things make you thirstier!
-    unsigned char nutr; // Nutrition imparted
-    signed char spoils; // How long it takes to spoil (hours / 600 turns)
-    unsigned char addict; // Addictiveness potential
+    signed char quench;    // Many things make you thirstier!
+    unsigned char nutr;    // Nutrition imparted
+    signed char spoils;    // How long it takes to spoil (hours / 600 turns)
+    unsigned char addict;  // Addictiveness potential
     unsigned char charges; // Defaults # of charges (drugs, loaf of bread? etc)
     signed char stim;
     signed char healthy;
@@ -580,12 +580,12 @@ struct it_comest : public itype {
     signed char fun; // How fun its use is
 
     itype_id container; // The container it comes in
-    itype_id tool; // Tool needed to consume (e.g. lighter for cigarettes)
+    itype_id tool;      // Tool needed to consume (e.g. lighter for cigarettes)
 
     virtual bool is_food() { return true; }
 
     void (iuse::*use)(Game*, item*, bool); // Special effects of use
-    add_type add; // Effects of addiction
+    add_type add;                          // Effects of addiction
 
     it_comest(unsigned short pid, unsigned char prarity, unsigned int pprice, std::string pname,
         std::string pdes, char psym, nc_color pcolor, material pm1, unsigned char pvolume,
@@ -745,13 +745,13 @@ struct it_armor : public itype {
 };
 
 struct it_book : public itype {
-    skill type; // Which skill it upgrades
+    skill type;          // Which skill it upgrades
     unsigned char level; // The value it takes the skill to
-    unsigned char req; // The skill level required to understand it
-    signed char fun; // How fun reading this is
+    unsigned char req;   // The skill level required to understand it
+    signed char fun;     // How fun reading this is
     unsigned char intel; // Intelligence required to read, at all
-    unsigned char time; // How long, in 10-turns (aka minutes), it takes to read
-                        // "To read" means getting 1 skill point, not all of em
+    unsigned char time;  // How long, in 10-turns (aka minutes), it takes to read
+                         // "To read" means getting 1 skill point, not all of em
     virtual bool is_book() { return true; }
     it_book(unsigned short pid, unsigned char prarity, unsigned int pprice, std::string pname,
         std::string pdes, char psym, nc_color pcolor, material pm1, material pm2,

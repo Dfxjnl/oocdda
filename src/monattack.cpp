@@ -24,7 +24,7 @@ namespace oocdda {
 void mattack::antqueen(Game* g, monster* z)
 {
     std::vector<point> egg_points;
-    z->moves = -200; // It takes a while
+    z->moves = -200;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
     for (int x = z->posx - 1; x <= z->posx + 1; x++) {
         for (int y = z->posy - 1; y <= z->posy + 1; y++) {
@@ -61,8 +61,8 @@ void mattack::shriek(Game* g, monster* z)
 {
     int j;
     if (rl_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 4 || !g->sees_u(z->posx, z->posy, j))
-        return; // Out of range
-    z->moves = -240; // It takes a while
+        return;                       // Out of range
+    z->moves = -240;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
     g->sound(z->posx, z->posy, 100, "a terrible shriek!");
 }
@@ -71,8 +71,8 @@ void mattack::acid(Game* g, monster* z)
 {
     int junk;
     if (rl_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 12 || !g->sees_u(z->posx, z->posy, junk))
-        return; // Out of range
-    z->moves = -300; // It takes a while
+        return;                       // Out of range
+    z->moves = -300;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
     g->sound(z->posx, z->posy, 4, "a spitting noise.");
     int hitx = g->u.posx + rng(-2, 2), hity = g->u.posy + rng(-2, 2);
@@ -95,8 +95,8 @@ void mattack::shockstorm(Game* g, monster* z)
 {
     int t;
     if (!g->sees_u(z->posx, z->posy, t))
-        return; // Can't see you, no attack
-    z->moves = -50; // It takes a while
+        return;                       // Can't see you, no attack
+    z->moves = -50;                   // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
     g->add_msg("A bolt of electricity arcs towards you!");
     int tarx = g->u.posx + rng(-3, 3), tary = g->u.posy + rng(-3, 3);
@@ -123,7 +123,7 @@ void mattack::boomer(Game* g, monster* z)
         return; // Out of range
     std::vector<point> line = line_to(z->posx, z->posy, g->u.posx, g->u.posy, j);
     z->sp_timeout = z->type->sp_freq; // Reset timer
-    z->moves = -250; // It takes a while
+    z->moves = -250;                  // It takes a while
     bool u_see = g->u_see(z->posx, z->posy, j);
     for (int i = 0; i < line.size(); i++) {
         if (g->m.field_at(line[i].x, line[i].y).type == fd_blood) {
@@ -163,7 +163,7 @@ void mattack::resurrect(Game* g, monster* z)
     if (sees_necromancer)
         g->add_msg("The %s throws its arms wide...", z->name().c_str());
     z->sp_timeout = z->type->sp_freq; // Reset timer
-    z->moves = -500; // It takes a while
+    z->moves = -500;                  // It takes a while
     int raised = 0;
     for (int i = 0; i < corpses.size(); i++) {
         int x = corpses[i].x, y = corpses[i].y;
@@ -298,7 +298,7 @@ void mattack::growplants(Game* g, monster* z)
 
 void mattack::fungus(Game* g, monster* z)
 {
-    z->moves = -200; // It takes a while
+    z->moves = -200;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
     monster spore(g->mtypes[mon_spore]);
     int sporex, sporey;
@@ -341,7 +341,7 @@ void mattack::plant(Game* g, monster* z)
         if (g->u_see(z->posx, z->posy, j))
             g->add_msg("The %s takes seed and becomes a fungaloid!", z->name().c_str());
         z->poly(g->mtypes[mon_fungaloid]);
-        z->moves = -1000; // It takes a while
+        z->moves = -1000;                 // It takes a while
         z->sp_timeout = z->type->sp_freq; // Reset timer
     }
 }
@@ -431,9 +431,9 @@ void mattack::tazer(Game* g, monster* z)
     int j;
     if (abs(g->u.posx - z->posx) > 2 || abs(g->u.posy - z->posy) > 2
         || !g->sees_u(z->posx, z->posy, j))
-        return; // Out of range
+        return;                       // Out of range
     z->sp_timeout = z->type->sp_freq; // Reset timer
-    z->moves = -200; // It takes a while
+    z->moves = -200;                  // It takes a while
     g->add_msg("The %s shocks you!", z->name().c_str());
     int shock = rng(1, 5);
     g->u.hurt(g, bp_torso, 0, shock * rng(1, 3));
@@ -446,7 +446,7 @@ void mattack::smg(Game* g, monster* z)
     if (trig_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 12 || !g->sees_u(z->posx, z->posy, t))
         return;
     z->sp_timeout = z->type->sp_freq; // Reset timer
-    z->moves = -150; // It takes a while
+    z->moves = -150;                  // It takes a while
 
     if (g->u_see(z->posx, z->posy, j))
         g->add_msg("The %s fires its smg!", z->name().c_str());
@@ -472,9 +472,9 @@ void mattack::flamethrower(Game* g, monster* z)
     int t;
     if (abs(g->u.posx - z->posx) > 5 || abs(g->u.posy - z->posy) > 5
         || !g->sees_u(z->posx, z->posy, t))
-        return; // Out of range
+        return;                       // Out of range
     z->sp_timeout = z->type->sp_freq; // Reset timer
-    z->moves = -500; // It takes a while
+    z->moves = -500;                  // It takes a while
     std::vector<point> traj = line_to(z->posx, z->posy, g->u.posx, g->u.posy, t);
     for (int i = 0; i < traj.size(); i++)
         g->m.add_field(g, traj[i].x, traj[i].y, fd_fire, 1);

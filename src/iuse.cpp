@@ -756,7 +756,7 @@ void iuse::light_on(Game* g, item* it, bool t)
     if (t) { // Normal use
         if (g->turn % 20 == 0)
             it->charges--; // Flashlights last a long long time.
-    } else { // Turning it off
+    } else {               // Turning it off
         g->add_msg("The flashlight flicks off.");
         it->make(g->itypes[itm_flashlight]);
         it->active = false;
@@ -1196,9 +1196,9 @@ void iuse::grenade_act(Game* g, item* it, bool t)
     point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
-    if (t) // Simple timer effects
+    if (t)                                  // Simple timer effects
         g->sound(pos.x, pos.y, 0, "Tick."); // Vol 0 = only heard if you hold it
-    else // When that timer runs down...
+    else                                    // When that timer runs down...
         g->explosion(pos.x, pos.y, 12, 16, false);
 }
 

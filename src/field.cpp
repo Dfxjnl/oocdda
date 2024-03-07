@@ -345,7 +345,7 @@ void map::step_in_field(int x, int y, Game* g)
     switch (cur->type) {
     case fd_null:
     case fd_blood: // It doesn't actually do anything
-    case fd_bile: // Ditto
+    case fd_bile:  // Ditto
         return;
 
     case fd_acid:
@@ -421,7 +421,7 @@ void map::mon_in_field(int x, int y, Game* g, monster* z)
     switch (cur->type) {
     case fd_null:
     case fd_blood: // It doesn't actually do anything
-    case fd_bile: // Ditto
+    case fd_bile:  // Ditto
         break;
 
     case fd_acid:

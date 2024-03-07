@@ -2,6 +2,8 @@
 Language: Cpp
 BasedOnStyle: WebKit
 AlignArrayOfStructures: Left
+AlignTrailingComments:
+  Kind: Always
 BraceWrapping:
     AfterFunction: true
 BreakBeforeBraces: Custom

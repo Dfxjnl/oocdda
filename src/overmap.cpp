@@ -28,8 +28,8 @@ class Game;
 #define MAX_RIFT_SIZE 16
 #define SETTLE_DICE 2
 #define SETTLE_SIDES 2
-#define HIVECHANCE 180 // Chance that any given forest will be a hive
-#define SWAMPINESS 8 // Affects the size of a swamp
+#define HIVECHANCE 180  // Chance that any given forest will be a hive
+#define SWAMPINESS 8    // Affects the size of a swamp
 #define SWAMPCHANCE 850 // Chance that a swamp will spawn instead of forest
 
 void settlement_building(settlement& set, int x, int y);
@@ -223,9 +223,9 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             seen(i, j) = false;
         }
     }
-    std::vector<city> road_points; // cities and roads_out together
+    std::vector<city> road_points;  // cities and roads_out together
     std::vector<point> river_start; // West/North endpoints of rivers
-    std::vector<point> river_end; // East/South endpoints of rivers
+    std::vector<point> river_end;   // East/South endpoints of rivers
 
     // Determine points where rivers & roads should connect w/ adjacent maps
     if (north != NULL) {
@@ -438,7 +438,7 @@ void overmap::generate_sub(overmap* above)
     std::vector<city> lab_points;
     for (int i = 0; i < OMAPX; i++) {
         for (int j = 0; j < OMAPY; j++) {
-            seen(i, j) = false; // Start by setting all squares to unseen
+            seen(i, j) = false;  // Start by setting all squares to unseen
             ter(i, j) = ot_rock; // Start by setting everything to solid rock
             if (above->ter(i, j) >= ot_sub_station_north
                 && above->ter(i, j) <= ot_sub_station_west) {
@@ -1288,9 +1288,9 @@ void overmap::make_hiway(int x1, int y1, int x2, int y2, oter_id base)
                 next.clear();
             }
         }
-        if (!next.empty()) { // Assuming we DIDN'T take an existing road...
+        if (!next.empty()) {       // Assuming we DIDN'T take an existing road...
             if (next[0].x == -1) { // X is correct, so we're taking the y-change
-                dir = 1; // We are moving vertically
+                dir = 1;           // We are moving vertically
                 x = next[1].x;
                 y = next[1].y;
                 if (is_river(ter(x, y)))

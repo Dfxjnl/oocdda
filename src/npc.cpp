@@ -80,7 +80,7 @@ void npc::randomize(Game* g, npc_class type)
     if (one_in(5))
         type = NC_NONE;
     switch (type) { // Type of character
-    case NC_NONE: // Untyped; no particular specialization
+    case NC_NONE:   // Untyped; no particular specialization
         for (int i = 1; i < num_skill_types; i++)
             sklevel[i] = dice(4, 2) - 4;
         break;
@@ -992,7 +992,7 @@ void npc::perform_mission(Game* g)
         break;
     case MISSION_SHOPKEEP:
         break; // Just stay where we are
-    default: // Random Walk
+    default:   // Random Walk
         if (g->turn % 24 == 0) {
             mapx += rng(-1, 1);
             mapy += rng(-1, 1);

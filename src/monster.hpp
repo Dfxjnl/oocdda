@@ -25,21 +25,21 @@ public:
     void spawn(int x, int y); // All this does is moves the monster to x,y
 
     // Access
-    std::string name(); // Returns the monster's formal name
+    std::string name();                  // Returns the monster's formal name
     void print_info(Game* g, WINDOW* w); // Prints information to w.
-    char symbol(); // Just our type's symbol; no context
+    char symbol();                       // Just our type's symbol; no context
     void draw(WINDOW* w, int plx, int ply, bool inv);
     // Inverts color if inv==true
     bool has_flag(m_flags f); // Returns true if f is set (see mtype.h)
     bool made_of(material m); // Returns true if it's made of m
     void load_info(std::string data, std::vector<mtype*>* mtypes);
     std::string save_info(); // String of all data, for save files
-    void debug(player& u); // Gives debug info
+    void debug(player& u);   // Gives debug info
 
     // Movement
-    void shift(int sx, int sy); // Shifts the monster to the appropriate submap
-                                // Updates current pos AND our plans
-    bool wander(); // Returns true if we have no plans
+    void shift(int sx, int sy);             // Shifts the monster to the appropriate submap
+                                            // Updates current pos AND our plans
+    bool wander();                          // Returns true if we have no plans
     bool can_move_to(map& m, int x, int y); // Can we move to (x, y)?
 
     void set_dest(int x, int y, int& t); // Go in a straight line to (x, y)
@@ -57,11 +57,11 @@ public:
     void stumble(Game* g, bool moved);
 
     // Combat
-    bool is_fleeing(player& u); // True if we're fleeing
+    bool is_fleeing(player& u);            // True if we're fleeing
     int hit(player& p, body_part& bp_hit); // Returns a damage
     void hit_monster(Game* g, int i);
     bool hurt(int dam); // Deals this dam damage; returns true if we dead
-    int armor(); // Natural armor, plus any worn armor
+    int armor();        // Natural armor, plus any worn armor
     void die(Game* g);
 
     // Other
@@ -70,7 +70,7 @@ public:
     void make_friendly();
     int posx, posy;
     int wandx, wandy; // Wander destination - Just try to move in that direction
-    int wandf; // Urge to wander - Increased by sound, decrements each move
+    int wandf;        // Urge to wander - Increased by sound, decrements each move
 
     // If we were spawned by the map, store our origin for later use
     int spawnmapx, spawnmapy, spawnposx, spawnposy;

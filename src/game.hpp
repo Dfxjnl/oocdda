@@ -52,7 +52,7 @@ public:
     int npc_at(int x, int y); // Index of the npc at (x, y); -1 for none
     int mon_at(int x, int y); // Index of the monster at (x, y); -1 for none
     void kill_mon(int index); // Kill that monster; fixes any pointers etc
-    void plfire(bool burst); // Player fires a gun (setup of target)...
+    void plfire(bool burst);  // Player fires a gun (setup of target)...
     // ... a gun is fired, maybe by an NPC (actual damage, etc.).
     void fire(player& p, int tarx, int tary, std::vector<point>& trajectory, bool burst);
     void throw_item(player& p, int tarx, int tary, item& thrown, std::vector<point>& trajectory);
@@ -120,7 +120,7 @@ private:
     void wish();
     void plmove(int x, int y);
     void plswim(int x, int y);
-    void update_map(int& x, int& y); // Called by plmove, sometimes
+    void update_map(int& x, int& y);       // Called by plmove, sometimes
     void spawn_mon(int shift, int shifty); // Called by update_map, sometimes
     mon_id valid_monster_from(std::vector<mon_id> group);
     int valid_group(mon_id type, int x, int y);
@@ -129,9 +129,9 @@ private:
     void open();
     void close();
     void smash();
-    void craft(); // See crafting.cpp
+    void craft();                    // See crafting.cpp
     void make_craft(recipe* making); // See crafting.cpp
-    void complete_craft(); // See crafting.cpp
+    void complete_craft();           // See crafting.cpp
     void pick_recipes(
         std::vector<recipe*>& current, std::vector<bool>& available, craft_cat tab); // crafting.cpp
     void examine();
@@ -186,18 +186,18 @@ private:
     void groupdebug();
     // Data
     signed char last_target; // The last monster targeted
-    char run_mode; // 0 - Normal run always; 1 - Running allowed, but if a new
-                   //  monsters spawns, go to 2 - No movement allowed
-    int mostseen; // # of mons seen last turn; if this increases, run_mode++
+    char run_mode;           // 0 - Normal run always; 1 - Running allowed, but if a new
+                             //  monsters spawns, go to 2 - No movement allowed
+    int mostseen;            // # of mons seen last turn; if this increases, run_mode++
 
     bool uquit;
 
     int nextspawn;
     signed char temp;
     std::vector<std::string> messages;
-    char curmes; // The last-seen message.  Older than 256 is deleted.
+    char curmes;                     // The last-seen message.  Older than 256 is deleted.
     int grscent[SEEX * 3][SEEY * 3]; // The scent map
-    int nulscent; // Returned for OOB scent checks
+    int nulscent;                    // Returned for OOB scent checks
     std::vector<recipe> recipes;
     std::vector<event> events;
     int kills[num_monsters];

@@ -83,74 +83,74 @@ enum mon_id {
 
 enum m_size {
     MS_TINY = 0, // Rodent
-    MS_SMALL, // Half human
-    MS_MEDIUM, // Human
-    MS_LARGE, // Cow
-    MS_HUGE // TAAAANK
+    MS_SMALL,    // Half human
+    MS_MEDIUM,   // Human
+    MS_LARGE,    // Cow
+    MS_HUGE      // TAAAANK
 };
 
 // Feel free to add to m_flags.  Order shouldn't matter, just keep it tidy!
 // There is a maximum number of 32 flags, including MF_MAX, so...
 // And comment them well. ;)
 enum m_flags {
-    MF_SEES, // It can see you (and will run/follow)
-    MF_HEARS, // It can hear you
+    MF_SEES,        // It can see you (and will run/follow)
+    MF_HEARS,       // It can hear you
     MF_GOODHEARING, // Pursues sounds more than most monsters
-    MF_SMELLS, // It can smell you
-    MF_STUMBLES, // Stumbles in its movement
-    MF_WARM, // Warm blooded
-    MF_NOHEAD, // Headshots not allowed!
+    MF_SMELLS,      // It can smell you
+    MF_STUMBLES,    // Stumbles in its movement
+    MF_WARM,        // Warm blooded
+    MF_NOHEAD,      // Headshots not allowed!
     MF_HARDTOSHOOT, // Some shots are actually misses
-    MF_BASHES, // Bashes down doors
-    MF_DESTROYS, // Bashes down walls and more
-    MF_POISON, // Poisonous to eat
-    MF_VENOM, // Attack may poison the player
-    MF_DIGS, // Digs through the ground
-    MF_FLIES, // Can fly (over water, etc)
-    MF_AQUATIC, // Confined to water
-    MF_SWIMS, // Treats water as 50 movement point terrain
-    MF_ATTACKMON, // Attacks other monsters
-    MF_ANIMAL, // Is an "animal" for purposes of the Animal Empath trait
-    MF_PLASTIC, // Absorbs physical damage to a great degree
-    MF_SUNDEATH, // Dies in full sunlight
-    MF_ACIDPROOF, // Immune to acid
-    MF_FIREY, // Burns stuff and is immune to fire
-    MF_SHOCK, // Shocks the player if they attack w/out gloves
-    MF_ELECTRONIC, // E.g. a robot; affected by emp blasts, and other stuff
-    MF_FUR, // May produce fur when butchered.
-    MF_LEATHER, // May produce leather when butchered
-    MF_IMMOBILE, // Doesn't move (e.g. turrets)
-    MF_MAX // Sets the length of the flags - obviously MUST be last
+    MF_BASHES,      // Bashes down doors
+    MF_DESTROYS,    // Bashes down walls and more
+    MF_POISON,      // Poisonous to eat
+    MF_VENOM,       // Attack may poison the player
+    MF_DIGS,        // Digs through the ground
+    MF_FLIES,       // Can fly (over water, etc)
+    MF_AQUATIC,     // Confined to water
+    MF_SWIMS,       // Treats water as 50 movement point terrain
+    MF_ATTACKMON,   // Attacks other monsters
+    MF_ANIMAL,      // Is an "animal" for purposes of the Animal Empath trait
+    MF_PLASTIC,     // Absorbs physical damage to a great degree
+    MF_SUNDEATH,    // Dies in full sunlight
+    MF_ACIDPROOF,   // Immune to acid
+    MF_FIREY,       // Burns stuff and is immune to fire
+    MF_SHOCK,       // Shocks the player if they attack w/out gloves
+    MF_ELECTRONIC,  // E.g. a robot; affected by emp blasts, and other stuff
+    MF_FUR,         // May produce fur when butchered.
+    MF_LEATHER,     // May produce leather when butchered
+    MF_IMMOBILE,    // Doesn't move (e.g. turrets)
+    MF_MAX          // Sets the length of the flags - obviously MUST be last
 };
 
 struct mtype {
     int id;
     std::string name;
     std::string description;
-    char sym; // Symbol on the map
+    char sym;       // Symbol on the map
     nc_color color; // Color of symbol (see color.h)
 
     m_size size;
-    material mat; // See enums.h for material list.  Generally, flesh; veggy?
+    material mat;            // See enums.h for material list.  Generally, flesh; veggy?
     unsigned flags : MF_MAX; // Bitfield of m_flags
 
     unsigned char frequency; // How often do these show up? 0 (never) to ??
-    int difficulty; // Used all over; 30 min + (diff-3)*30 min = earlist appearance
-    signed char agro; // How likely to attack; -5 to 5
+    int difficulty;          // Used all over; 30 min + (diff-3)*30 min = earlist appearance
+    signed char agro;        // How likely to attack; -5 to 5
 
-    unsigned int speed; // Speed; human = 100
+    unsigned int speed;        // Speed; human = 100
     unsigned char melee_skill; // Melee skill; should be 0 to 5
-    unsigned char melee_dice; // Number of dice on melee hit
+    unsigned char melee_dice;  // Number of dice on melee hit
     unsigned char melee_sides; // Number of sides those dice have
-    unsigned char melee_cut; // Bonus cutting damage
-    unsigned char sk_dodge; // Dodge skill; should be 0 to 5
-    unsigned char armor; // Natural armor
-    signed char item_chance; // Higher # means higher chance of loot
-                             // Negative # means one item gen'd, tops
+    unsigned char melee_cut;   // Bonus cutting damage
+    unsigned char sk_dodge;    // Dodge skill; should be 0 to 5
+    unsigned char armor;       // Natural armor
+    signed char item_chance;   // Higher # means higher chance of loot
+                               // Negative # means one item gen'd, tops
     int hp;
 
-    unsigned char sp_freq; // How long sp_attack takes to charge
-    void (mdeath::*dies)(Game*, monster*); // What happens when this monster dies
+    unsigned char sp_freq;                       // How long sp_attack takes to charge
+    void (mdeath::*dies)(Game*, monster*);       // What happens when this monster dies
     void (mattack::*sp_attack)(Game*, monster*); // This monster's special attack
 
     // Default constructor

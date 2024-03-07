@@ -1898,7 +1898,7 @@ int player::hit_mon(Game* g, monster* z)
                         z->name().c_str());
             }
         } // End of not-unarmed
-    } // End of critical hit
+    }     // End of critical hit
 
     if (shock_them) {
         power_level -= 2;
@@ -1940,7 +1940,7 @@ int player::hit_mon(Game* g, monster* z)
         for (int i = 0; i < weapon.contents.size(); i++)
             g->m.add_item(posx, posy, weapon.contents[i]);
         hit(g, bp_arms, 1, 0, rng(0, weapon.volume() * 2)); // Take damage
-        if (weapon.is_two_handed(this)) // Hurt left arm too, if it was big
+        if (weapon.is_two_handed(this))                     // Hurt left arm too, if it was big
             hit(g, bp_arms, 0, 0, rng(0, weapon.volume()));
         dam += rng(0, int(weapon.volume() * 1.5)); // Hurt the monster extra
         remove_weapon();
@@ -2222,7 +2222,7 @@ void player::hurt(Game* g, body_part bphurt, int side, int dam)
     pain += painadd;
 
     switch (bphurt) {
-    case bp_eyes: // Fall through to head damage
+    case bp_eyes:  // Fall through to head damage
     case bp_mouth: // Fall through to head damage
     case bp_head:
         pain++;
@@ -2273,7 +2273,7 @@ void player::heal(body_part bpheal, int side, int dam)
 {
     hp_part healpart;
     switch (bpheal) {
-    case bp_eyes: // Fall through to head damage
+    case bp_eyes:  // Fall through to head damage
     case bp_mouth: // Fall through to head damage
     case bp_head:
         healpart = hp_head;

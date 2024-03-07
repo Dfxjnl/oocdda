@@ -58,10 +58,10 @@ public:
     bool is_two_handed(player* u);
     bool made_of(material mat);
     bool conductive();
-    bool is_food(player* u); // Some non-food items are food to certain players
+    bool is_food(player* u);           // Some non-food items are food to certain players
     bool is_food_container(player* u); // Ditto
-    bool is_food(); // Ignoring the ability to eat batteries, etc.
-    bool is_food_container(); // Ignoring the ability to eat batteries, etc.
+    bool is_food();                    // Ignoring the ability to eat batteries, etc.
+    bool is_food_container();          // Ignoring the ability to eat batteries, etc.
     bool is_drink();
     bool is_weap();
     bool is_bashing_weapon();
@@ -84,10 +84,10 @@ public:
     std::string name;
     char invlet;
     int charges;
-    bool active; // If true, it has active effects to be processed
+    bool active;        // If true, it has active effects to be processed
     signed char damage; // How much damage it's sustained; generally, max is 5
-    unsigned int bday; // The turn on which it was created
-    bool owned; // If true, NPCs will shout at you for picking it up
+    unsigned int bday;  // The turn on which it was created
+    bool owned;         // If true, NPCs will shout at you for picking it up
 };
 } // namespace oocdda
 

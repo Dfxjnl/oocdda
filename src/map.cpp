@@ -771,7 +771,7 @@ bool map::sees(int Fx, int Fy, int Tx, int Ty, int range, int& tc)
 
     if (range >= 0 && (abs(dx) > range || abs(dy) > range))
         return false; // Out of range!
-    if (ax > ay) { // Mostly-horizontal line
+    if (ax > ay) {    // Mostly-horizontal line
         st = SGN(ay - (ax >> 1));
         // Doing it "backwards" prioritizes straight lines before diagonal.
         // This will help avoid creating a string of zombies behind you and will

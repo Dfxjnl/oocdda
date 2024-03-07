@@ -31,7 +31,7 @@ namespace oocdda {
 #define EXPLOSION_SPEED 70000000
 
 void intro();
-nc_color sev(int a); // Right now, ONLY used for scent debugging....
+nc_color sev(int a);             // Right now, ONLY used for scent debugging....
 moncat_id mt_to_mc(mon_id type); // Pick the moncat that contains type
 
 // This is the main game set-up process.
@@ -43,13 +43,13 @@ Game::Game()
     ensure_save_directory_exists();
 
     // Gee, it sure is init-y around here!
-    init_itypes(); // Set up item types                   (SEE itypedef.cpp)
-    init_mtypes(); // Set up monster types                (SEE mtypedef.cpp)
+    init_itypes();   // Set up item types                   (SEE itypedef.cpp)
+    init_mtypes();   // Set up monster types                (SEE mtypedef.cpp)
     init_monitems(); // Set up which items monsters carry   (SEE monitemsdef.cpp)
-    init_traps(); // Set up the trap types               (SEE trapdef.cpp)
+    init_traps();    // Set up the trap types               (SEE trapdef.cpp)
     init_mapitems(); // Set up which items appear where     (SEE mapitemsdef.cpp)
-    init_recipes(); // Set up crafting reciptes            (SEE crafting.cpp)
-    init_moncats(); // Set up monster categories           (SEE mongroupdef.cpp)
+    init_recipes();  // Set up crafting reciptes            (SEE crafting.cpp)
+    init_moncats();  // Set up monster categories           (SEE mongroupdef.cpp)
 
     m = map(&itypes, &mapitems, &traps); // Init the root map with our vectors
 
@@ -69,11 +69,11 @@ Game::Game()
     werase(w_status);
     // Even though we may already have 'd', nextinv will be incremented as needed
     nextinv = 'd';
-    last_target = -1; // We haven't targeted any monsters yet
-    curmes = 0; // We haven't read any messages yet
-    uquit = false; // We haven't quit the game
-    debugmon = false; // We're not debugging monster behavior
-    in_tutorial = false; // We're not in a tutorial game
+    last_target = -1;                      // We haven't targeted any monsters yet
+    curmes = 0;                            // We haven't read any messages yet
+    uquit = false;                         // We haven't quit the game
+    debugmon = false;                      // We're not debugging monster behavior
+    in_tutorial = false;                   // We're not in a tutorial game
     for (int i = 0; i < num_monsters; i++) // Reset kill counts to 0
         kills[i] = 0;
     // Set the scent map to 0
@@ -288,7 +288,7 @@ bool Game::opening_screen()
 // Set up all default values for a new game
 void Game::start_game()
 {
-    turn = 0; // It's turn 0...
+    turn = 0;     // It's turn 0...
     run_mode = 1; // run_mode is on by default...
     mostseen = 0; // ...and mostseen is 0, we haven't seen any monsters yet.
 
@@ -317,7 +317,7 @@ void Game::start_game()
     u.posx = SEEX + 4;
     u.posy = SEEY + 5;
     nextspawn = 300; // No monsters until 8:30 AM!
-    temp = 65; // Kind of cool for June, but okay.
+    temp = 65;       // Kind of cool for June, but okay.
 
     // Testing pet dog!
     monster doggy(mtypes[mon_dog], u.posx - 1, u.posy - 1);
@@ -457,7 +457,7 @@ bool Game::do_turn()
             u.charge_power(1);
     }
     if (turn % 300 == 0) { // Pain and morale up/down every 30 minutes
-        if (one_in(10)) { // Morale shifts are rare
+        if (one_in(10)) {  // Morale shifts are rare
             if (u.morale < 0 && one_in(3))
                 u.morale++;
             else if (u.morale > 0)
@@ -3420,7 +3420,7 @@ void Game::pickup(int posx, int posy, int min)
     }
     // At this point we've selected our items, now we add them to our inventory
     int curmit = 0;
-    bool did_tut = false; // Tutorial message displayed
+    bool did_tut = false;   // Tutorial message displayed
     bool got_water = false; // Did we try to pick up water?
     for (int i = 0; i < here.size(); i++) {
         iter = 0;
@@ -5025,7 +5025,7 @@ void Game::vertical_move(int movez, bool force)
         monbuff.clear();
     }
     u.moves -= 100;
-    if (force) { // Basically, we fell.
+    if (force) {                                                 // Basically, we fell.
         int dam = int((u.str_max / 4) + rng(5, 10)) * rng(1, 3); // The bigger they are
         dam -= rng(u.dodge(), u.dodge() * 3);
         if (dam <= 0)
@@ -5284,10 +5284,10 @@ void Game::spawn_mon(int shiftx, int shifty)
                     zom.spawn(monx, mony);
                     z.push_back(zom);
                 }
-            } // Placing monsters of this group is done!
-            if (cur_om.zg[i].population <= 0) { // Last monster in the group spawned...
+            }                                           // Placing monsters of this group is done!
+            if (cur_om.zg[i].population <= 0) {         // Last monster in the group spawned...
                 cur_om.zg.erase(cur_om.zg.begin() + i); // ...so remove that group
-                i--; // And don't increment i.
+                i--;                                    // And don't increment i.
             }
         } // Check whether we're inside a group's radius is done!
     }
@@ -5495,7 +5495,7 @@ std::vector<point> Game::target(int& x, int& y, int lowx, int lowy, int hix, int
                 if (u_see(active_npc[i].posx, active_npc[i].posy, tart))
                     active_npc[i].draw(w_terrain, u.posx, u.posy, false);
             }
-            if (m.sees(u.posx, u.posy, x, y, -1, tart)) { // Selects a valid line-of-sight
+            if (m.sees(u.posx, u.posy, x, y, -1, tart)) {  // Selects a valid line-of-sight
                 ret = line_to(u.posx, u.posy, x, y, tart); // Sets the vector to that LOS
                 for (int i = 0; i < ret.size(); i++) {
                     if (abs(ret[i].x - u.posx) <= sight_dist

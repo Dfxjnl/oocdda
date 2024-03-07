@@ -80,9 +80,9 @@ struct trap {
     nc_color color;
     std::string name;
 
-    int visibility; // 1 to ??, affects detection
-    int avoidance; // 0 to ??, affects avoidance
-    int difficulty; // 0 to ??, difficulty of assembly & disassembly
+    int visibility;                   // 1 to ??, affects detection
+    int avoidance;                    // 0 to ??, affects avoidance
+    int difficulty;                   // 0 to ??, difficulty of assembly & disassembly
     std::vector<itype_id> components; // For disassembly?
 
     // You stepped on it

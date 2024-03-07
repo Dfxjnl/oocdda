@@ -44,7 +44,7 @@ public:
 
     // Movement and LOS
     int move_cost(int x, int y); // Cost to move through; 0 = impassible
-    bool trans(int x, int y); // Transparent?
+    bool trans(int x, int y);    // Transparent?
     // (Fx, Fy) sees (Tx, Ty), within a range of (range)?
     // tc indicates the Bresenham line used to connect the two points, and may
     //  subsequently be used to form a path between them
@@ -52,8 +52,8 @@ public:
     // std::vector<point> route(int Fx, int Fy, int Tx, int Ty); // Best route
 
     // Terrain
-    ter_id& ter(int x, int y); // Terrain at coord (x, y); {x|y}=(0, SEE{X|Y}*3]
-    std::string tername(int x, int y); // Name of terrain at (x, y)
+    ter_id& ter(int x, int y);          // Terrain at coord (x, y); {x|y}=(0, SEE{X|Y}*3]
+    std::string tername(int x, int y);  // Name of terrain at (x, y)
     std::string features(int x, int y); // Words relevant to terrain (sharp, etc)
     bool has_flag(t_flag flag, int x, int y);
     bool is_destructable(int x, int y);
@@ -104,10 +104,10 @@ private:
 
     submap grid[9];
     std::vector<item> nulitems; // Returned when &i_at() is asked for an OOB value
-    ter_id nulter; // Returned when &ter() is asked for an OOB value
-    trap_id nultrap; // Returned when &tr_at() is asked for an OOB value
-    field nulfield; // Returned when &field_at() is asked for an OOB value
-    int nulrad; // OOB &radiation()
+    ter_id nulter;              // Returned when &ter() is asked for an OOB value
+    trap_id nultrap;            // Returned when &tr_at() is asked for an OOB value
+    field nulfield;             // Returned when &field_at() is asked for an OOB value
+    int nulrad;                 // OOB &radiation()
 
     std::vector<itype*>* itypes;
     std::vector<trap*>* traps;

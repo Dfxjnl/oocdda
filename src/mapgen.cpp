@@ -616,7 +616,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 }
             }
         }
-        if (rn == 2) { // Special embellishments for a plaza
+        if (rn == 2) {        // Special embellishments for a plaza
             if (one_in(10)) { // Fountain
                 for (int i = SEEX - 2; i <= SEEX + 2; i++) {
                     ter(i, i) = t_water_sh;
@@ -767,12 +767,12 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
     case ot_house_east:
     case ot_house_south:
     case ot_house_west:
-        lw = rng(0, 4); // West external wall
-        mw = lw + rng(7, 10); // Middle wall between bedroom & kitchen/bath
+        lw = rng(0, 4);            // West external wall
+        mw = lw + rng(7, 10);      // Middle wall between bedroom & kitchen/bath
         rw = SEEX * 2 - rng(1, 5); // East external wall
-        tw = rng(1, 6); // North external wall
+        tw = rng(1, 6);            // North external wall
         bw = SEEX * 2 - rng(2, 5); // South external wall
-        cw = tw + rng(4, 7); // Middle wall between living room & kitchen/bed
+        cw = tw + rng(4, 7);       // Middle wall between living room & kitchen/bed
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
                 if (i > lw && i < rw && j > tw && j < bw)
@@ -1738,7 +1738,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
             bw = (t_south >= ot_lab && t_south <= ot_lab_finale) ? 1 : 2;
             lw = (t_west >= ot_lab && t_west <= ot_lab_finale) ? 0 : 2;
             switch (rng(1, 3)) { // Pick a random lab layout
-            case 1: // Cross shaped
+            case 1:              // Cross shaped
                 for (int i = 0; i < SEEX * 2; i++) {
                     for (int j = 0; j < SEEY * 2; j++) {
                         if ((i < lw || i > SEEX * 2 - 1 - rw)
@@ -2037,7 +2037,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 place_items(mi_allguns, 96, SEEX - 2, SEEY, SEEX + 1, SEEY, false, 0);
             }
             break;
-        case 2: // Netherworld access
+        case 2:               // Netherworld access
             if (!one_in(4)) { // Trapped netherworld monsters
                 tw = rng(SEEY + 3, SEEY + 5);
                 bw = tw + 4;
@@ -2912,7 +2912,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
             }
         }
         switch (rng(1, 4)) { // TODO: More types!
-        case 1: // Weapons cache
+        case 1:              // Weapons cache
             for (int i = 2; i < SEEX * 2 - 2; i++) {
                 ter(i, 1) = t_rack;
                 ter(i, 5) = t_rack;

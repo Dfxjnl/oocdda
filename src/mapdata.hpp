@@ -27,20 +27,20 @@ class monster;
 
 enum t_flag {
     transparent, // Player & monsters can see through/past it
-    bashable, // Player & monsters can bash this & make it the next in the list
-    container, // Items on this square are hidden until looted by the player
-    flammable, // May be lit on fire
-    explodes, // Explodes when on fire
-    diggable, // Digging monsters, seeding monsters, digging w/ shovel, etc.
-    swimmable, // You (and monsters) swim here
-    sharp, // May do minor damage to players/monsters passing it
-    rough, // May hurt the player's feet
-    sealed, // Can't 'e' to retrieve items here
-    noitem, // Items "fall off" this space
-    goes_down, // Can '>' to go down a level
-    goes_up, // Can '<' to go up a level
-    computer, // Used as a computer
-    num_t_flags // MUST be last
+    bashable,    // Player & monsters can bash this & make it the next in the list
+    container,   // Items on this square are hidden until looted by the player
+    flammable,   // May be lit on fire
+    explodes,    // Explodes when on fire
+    diggable,    // Digging monsters, seeding monsters, digging w/ shovel, etc.
+    swimmable,   // You (and monsters) swim here
+    sharp,       // May do minor damage to players/monsters passing it
+    rough,       // May hurt the player's feet
+    sealed,      // Can't 'e' to retrieve items here
+    noitem,      // Items "fall off" this space
+    goes_down,   // Can '>' to go down a level
+    goes_up,     // Can '<' to go up a level
+    computer,    // Used as a computer
+    num_t_flags  // MUST be last
 };
 
 struct ter_t {
@@ -362,11 +362,11 @@ struct spawn_point {
 };
 
 struct submap {
-    ter_id ter[SEEX][SEEY]; // Terrain on each square
+    ter_id ter[SEEX][SEEY];            // Terrain on each square
     std::vector<item> itm[SEEX][SEEY]; // Items on each square
-    trap_id trp[SEEX][SEEY]; // Trap on each square
-    field fld[SEEX][SEEY]; // Field on each square
-    int rad[SEEX][SEEY]; // Irradiation of each square
+    trap_id trp[SEEX][SEEY];           // Trap on each square
+    field fld[SEEX][SEEY];             // Field on each square
+    int rad[SEEX][SEEY];               // Irradiation of each square
     std::vector<spawn_point> spawns;
 };
 } // namespace oocdda

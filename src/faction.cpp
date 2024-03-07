@@ -265,7 +265,7 @@ int faction::response_time(Game* g)
         maxdiv -= rng(0, 3);
     int mindiv = (maxdiv > 9 ? maxdiv - 9 : 1);
     base /= rng(mindiv, maxdiv); // We might be in the field
-    base -= likes_u; // We'll hurry, if we like you
+    base -= likes_u;             // We'll hurry, if we like you
     if (base < 100)
         base = 100;
     return base;
