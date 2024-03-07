@@ -104,6 +104,15 @@ set_target_properties(oocdda_exe PROPERTIES OUTPUT_NAME oocdda)
 target_compile_features(oocdda_exe PRIVATE cxx_std_20)
 target_link_libraries(oocdda_exe PRIVATE oocdda_lib)
 
+add_custom_command(
+  TARGET oocdda_exe
+  POST_BUILD
+  COMMAND
+    ${CMAKE_COMMAND} -E create_symlink ${CMAKE_SOURCE_DIR}/data
+    ${CMAKE_CURRENT_BINARY_DIR}/data DEPENDS ${CMAKE_CURRENT_BINARY_DIR/data}
+  COMMENT "symbolic link ${CMAKE_SOURCE_DIR}/data =>
+    ${CMAKE_CURRENT_BINARY_DIR}/data")
+
 include(CTest)
 
 if(BUILD_TESTING)

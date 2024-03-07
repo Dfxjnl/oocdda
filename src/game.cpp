@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 
@@ -2547,8 +2548,9 @@ void Game::use_computer(int x, int y)
                 int lines = 0, notes = 0;
                 std::string log, tmp;
                 int ch;
-                std::ifstream fin;
-                fin.open("LAB_NOTES");
+                const std::filesystem::path lab_notes_file { "data/LAB_NOTES" };
+                std::ifstream fin { lab_notes_file };
+
                 while (fin.good()) {
                     ch = fin.get();
                     if (ch == '%')

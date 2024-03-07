@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 
@@ -792,15 +793,22 @@ void npc::set_name()
 {
     std::ifstream fin;
     char buff[256];
-    if (male)
-        fin.open("NAMES_MALE");
-    else
-        fin.open("NAMES_FEMALE");
+
+    const std::filesystem::path male_names_file { "data/NAMES_MALE" };
+    const std::filesystem::path female_names_file { "data/NAMES_FEMALE" };
+
+    if (male) {
+        fin.open(male_names_file);
+    } else {
+        fin.open(female_names_file);
+    }
+
     if (!fin.is_open()) {
-        debugmsg(
-            "Could not open npc first names list (%s)", (male ? "NAMES_MALE" : "NAMES_FEMALE"));
+        debugmsg("Could not open npc first names list (%s)",
+            (male ? male_names_file.c_str() : female_names_file.c_str()));
         return;
     }
+
     int line = rng(1, 100); // TODO: Don't assume 100 first names.
     for (int i = 0; i < line; i++)
         fin.getline(buff, 256);
@@ -808,11 +816,14 @@ void npc::set_name()
     fin.close();
 
     std::string lastname;
-    fin.open("NAMES_LAST");
+    const std::filesystem::path last_names_file { "data/NAMES_LAST" };
+    fin.open(last_names_file);
+
     if (!fin.is_open()) {
-        debugmsg("Could not open npc last names list (NAMES_LAST)");
+        debugmsg("Could not open npc last names list (%s)", last_names_file.c_str());
         return;
     }
+
     line = rng(1, 100); // TODO: Shouldn't assume this one, either.
     for (int i = 0; i < line; i++)
         fin.getline(buff, 256);
