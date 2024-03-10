@@ -1,8 +1,7 @@
-#ifndef OOCDDA_MTYPE_HPP
-#define OOCDDA_MTYPE_HPP
+#ifndef OOCDDA_MONSTER_TYPE_HPP
+#define OOCDDA_MONSTER_TYPE_HPP
 
-// SEE ALSO: monitemsdef.cpp, which defines data on which items any given
-// monster may carry.
+// SEE ALSO: monitemsdef.cpp, which defines data on which items any given monster may carry.
 
 #include <string>
 
@@ -216,4 +215,4 @@ struct MonsterType {
 };
 } // namespace oocdda
 
-#endif // OOCDDA_MTYPE_HPP
+#endif // OOCDDA_MONSTER_TYPE_HPP

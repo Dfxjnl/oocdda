@@ -59,7 +59,7 @@ add_library(
   src/monster.hpp
   src/monster_attack.cpp
   src/monster_attack.hpp
-  src/mtype.hpp
+  src/monster_type.hpp
   src/mtypedef.cpp
   src/newcharacter.cpp
   src/npc.cpp

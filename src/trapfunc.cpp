@@ -6,7 +6,7 @@
 #include "map.hpp"
 #include "mapdata.hpp"
 #include "monster.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "output.hpp"
 #include "player.hpp"
 #include "pldata.hpp"

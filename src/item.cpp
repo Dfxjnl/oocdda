@@ -8,7 +8,7 @@
 #include "bionics.hpp"
 #include "bodypart.hpp"
 #include "game.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "output.hpp"
 #include "player.hpp"
 #include "skill.hpp"

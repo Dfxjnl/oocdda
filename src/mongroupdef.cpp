@@ -2,7 +2,7 @@
 
 #include "game.hpp"
 #include "mongroup.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "setvector.hpp"
 
 namespace oocdda {

@@ -18,7 +18,7 @@
 #include "mapdata.hpp"
 #include "mapitems.hpp"
 #include "monster.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "output.hpp"
 #include "overmap.hpp"
 #include "pldata.hpp"

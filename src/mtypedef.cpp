@@ -5,16 +5,16 @@
 #include "game.hpp"
 #include "mondeath.hpp"
 #include "monster_attack.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 
 namespace oocdda {
 // This function populates the master list of monster types.
 // If you edit this function, you'll also need to edit:
-//  * mtype.h - enum mon_id MUST match the order of this list!
-//  * monster.cpp - void make_fungus() should be edited, or fungal infection
-//                  will simply kill the monster
-//  * mongroupdef.cpp - void init_moncats() should be edited, so the monster
-//                      spawns with the proper group
+//  * monster_type.hpp - enum mon_id must match the order of this list!
+//  * monster.cpp - void make_fungus() should be edited, or fungal infection will simply kill the
+//                  monster
+//  * mongroupdef.cpp - void init_moncats() should be edited, so the monster spawns with the proper
+//                      group
 void Game::init_mtypes()
 {
     int id = 0;

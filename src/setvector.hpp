@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "itype.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 
 namespace oocdda {
 struct component;

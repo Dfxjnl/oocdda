@@ -15,7 +15,7 @@
 #include "mapitems.hpp"
 #include "mongroup.hpp"
 #include "monster.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "npc.hpp"
 #include "omdata.hpp"
 #include "overmap.hpp"

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "mtype.hpp"
+#include "monster_type.hpp"
 
 namespace oocdda {
 enum moncat_id {

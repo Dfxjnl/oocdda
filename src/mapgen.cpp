@@ -8,7 +8,7 @@
 #include "map.hpp"
 #include "mapdata.hpp"
 #include "mapitems.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "omdata.hpp"
 #include "output.hpp"
 #include "overmap.hpp"

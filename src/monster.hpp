@@ -8,7 +8,7 @@
 
 #include "bodypart.hpp"
 #include "enums.hpp"
-#include "mtype.hpp"
+#include "monster_type.hpp"
 #include "point.hpp"
 
 namespace oocdda {
@@ -31,7 +31,7 @@ public:
     char symbol();                       // Just our type's symbol; no context
     void draw(WINDOW* w, int plx, int ply, bool inv);
     // Inverts color if inv==true
-    bool has_flag(m_flags f); // Returns true if f is set (see mtype.h)
+    bool has_flag(m_flags f); // Returns true if f is set.
     bool made_of(material m); // Returns true if it's made of m
     void load_info(std::string data, std::vector<MonsterType*>* mtypes);
     std::string save_info(); // String of all data, for save files
