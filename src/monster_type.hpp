@@ -4,6 +4,7 @@
 // SEE ALSO: monitemsdef.cpp, which defines data on which items any given monster may carry.
 
 #include <string>
+#include <string_view>
 
 #include "color.hpp"
 #include "enums.hpp"
@@ -123,111 +124,88 @@ enum m_flags {
 };
 
 struct MonsterType {
-    int id;
-    std::string name;
-    std::string description;
-    char sym;       // Symbol on the map
-    nc_color color; // Color of symbol (see color.h)
+    MonsterType() = default;
 
-    m_size size;
-    material mat;            // See enums.h for material list.  Generally, flesh; veggy?
-    unsigned flags : MF_MAX; // Bitfield of m_flags
-
-    unsigned char frequency; // How often do these show up? 0 (never) to ??
-    int difficulty;          // Used all over; 30 min + (diff-3)*30 min = earlist appearance
-    signed char agro;        // How likely to attack; -5 to 5
-
-    unsigned int speed;        // Speed; human = 100
-    unsigned char melee_skill; // Melee skill; should be 0 to 5
-    unsigned char melee_dice;  // Number of dice on melee hit
-    unsigned char melee_sides; // Number of sides those dice have
-    unsigned char melee_cut;   // Bonus cutting damage
-    unsigned char sk_dodge;    // Dodge skill; should be 0 to 5
-    unsigned char armor;       // Natural armor
-    signed char item_chance;   // Higher # means higher chance of loot
-                               // Negative # means one item gen'd, tops
-    int hp;
-
-    unsigned char sp_freq;                       // How long sp_attack takes to charge
-    void (mdeath::*dies)(Game*, Monster*);       // What happens when this monster dies
-    void (mattack::*sp_attack)(Game*, Monster*); // This monster's special attack
-
-    // Default constructor
-    MonsterType()
-    {
-        id = 0;
-        name = "human";
-        description = "";
-        sym = ' ';
-        color = c_white;
-        size = MS_MEDIUM;
-        mat = FLESH;
-        flags = 0;
-        difficulty = 0;
-        frequency = 0;
-        agro = 0;
-        speed = 0;
-        melee_skill = 0;
-        melee_dice = 0;
-        melee_sides = 0;
-        melee_cut = 0;
-        sk_dodge = 0;
-        armor = 0;
-        hp = 0;
-        sp_freq = 0;
-        item_chance = 0;
-        dies = NULL;
-        sp_attack = NULL;
-    }
-    // Non-default (messy)
-    MonsterType(int pid,
-                std::string pname,
-                char psym,
-                nc_color pcolor,
-                m_size psize,
-                material pmat,
-                unsigned pflags,
-                unsigned char pfreq,
-                unsigned int pdiff,
-                signed char pagro,
-                unsigned int pspeed,
-                unsigned char pml_skill,
-                unsigned char pml_dice,
-                unsigned char pml_sides,
-                unsigned char pml_cut,
-                unsigned char pdodge,
-                unsigned char parmor,
-                unsigned char pitem_chance,
-                int php,
-                unsigned char psp_freq,
+    // Non-default (messy).
+    MonsterType(const mon_id pid,
+                const std::string_view pname,
+                const char psym,
+                const nc_color pcolor,
+                const m_size psize,
+                const material pmat,
+                const unsigned int pflags,
+                const int pfreq,
+                const int pdiff,
+                const int pagro,
+                const int pspeed,
+                const int pml_skill,
+                const int pml_dice,
+                const int pml_sides,
+                const int pml_cut,
+                const int pdodge,
+                const int parmor,
+                const int pitem_chance,
+                const int php,
+                const int psp_freq,
                 void (mdeath::*pdies)(Game*, Monster*),
                 void (mattack::*psp_attack)(Game*, Monster*),
-                std::string pdescription)
+                const std::string_view pdescription)
+        : id {pid}
+        , name {pname}
+        , description {pdescription}
+        , sym {psym}
+        , color {pcolor}
+        , size {psize}
+        , mat {pmat}
+        , flags {pflags}
+        , frequency {pfreq}
+        , difficulty {pdiff}
+        , agro {pagro}
+        , speed {pspeed}
+        , melee_skill {pml_skill}
+        , melee_dice {pml_dice}
+        , melee_sides {pml_sides}
+        , melee_cut {pml_cut}
+        , sk_dodge {pdodge}
+        , armor {parmor}
+        , item_chance {pitem_chance}
+        , hp {php}
+        , sp_freq {psp_freq}
+        , dies {pdies}
+        , sp_attack {psp_attack}
     {
-        id = pid;
-        name = pname;
-        sym = psym;
-        color = pcolor;
-        size = psize;
-        mat = pmat;
-        flags = pflags;
-        frequency = pfreq;
-        difficulty = pdiff;
-        agro = pagro;
-        speed = pspeed;
-        melee_skill = pml_skill;
-        melee_dice = pml_dice;
-        melee_sides = pml_sides;
-        melee_cut = pml_cut;
-        sk_dodge = pdodge;
-        armor = parmor;
-        item_chance = pitem_chance;
-        hp = php;
-        sp_freq = psp_freq;
-        dies = pdies;
-        sp_attack = psp_attack;
-        description = pdescription;
     }
+
+    mon_id id {mon_id::mon_null};
+    std::string name {"human"};
+    std::string description;
+    char sym {' '};                     // Symbol on the map.
+    nc_color color {nc_color::c_white}; // Color of symbol.h).
+
+    m_size size {m_size::MS_MEDIUM};
+    material mat {material::FLESH}; // Generally, flesh; veggy?
+    unsigned int flags {0};         // Bitfield of m_flags.
+
+    int frequency {0};  // How often do these show up? 0 (never) to ??.
+    int difficulty {0}; // Used all over; 30 min + (diff-3)*30 min = earlist appearance.
+    int agro {0};       // How likely to attack; -5 to 5.
+
+    int speed {0};       // Speed; human = 100.
+    int melee_skill {0}; // Melee skill; should be 0 to 5.
+    int melee_dice {0};  // Number of dice on melee hit.
+    int melee_sides {0}; // Number of sides those dice have.
+    int melee_cut {0};   // Bonus cutting damage.
+    int sk_dodge {0};    // Dodge skill; should be 0 to 5.
+    int armor {0};       // Natural armor.
+    // Higher number means higher chance of loot. Negative number means maximum of one item
+    // generated.
+    int item_chance {0};
+    int hp {0};
+
+    int sp_freq {0}; // How long sp_attack takes to charge.
+
+    void (mdeath::*dies)(Game*, Monster*) {nullptr};       // What happens when this monster dies.
+    void (mattack::*sp_attack)(Game*, Monster*) {nullptr}; // This monster's special attack.
 };
 } // namespace oocdda
 
