@@ -445,8 +445,8 @@ ITEM TYPES:\n\
 F           Forest - May be dense or sparse.  Slow moving; foragable food.");
             mvprintz(3, 0, c_dkgray, "\
 %c%c%c%c%c%c%c%c%c%c%c Road - Safe from burrowing animals.",
-                LINE_XOXO, LINE_OXOX, LINE_XXOO, LINE_OXXO, LINE_OOXX, LINE_XOOX, LINE_XXXO,
-                LINE_XXOX, LINE_XOXX, LINE_OXXX, LINE_XXXX);
+                     LINE_XOXO, LINE_OXOX, LINE_XXOO, LINE_OXXO, LINE_OOXX, LINE_XOOX, LINE_XXXO,
+                     LINE_XXOX, LINE_XOXX, LINE_OXXX, LINE_XXXX);
             mvprintz(4, 0, c_dkgray, "\
 H=          Highway - Like roads, but lined with guard rails.");
             mvprintz(5, 0, c_dkgray, "\

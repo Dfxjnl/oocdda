@@ -59,8 +59,8 @@ void iuse::bandage(Game* g, item* it, bool t)
 {
     int bonus = g->u.sklevel[sk_firstaid];
     WINDOW* w = newwin(10, 20, 8, 1);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     mvwprintz(w, 1, 1, c_ltred, "Bandage where?");
     mvwprintz(w, 2, 1, c_ltgray, "1: Head");
     mvwprintz(w, 3, 1, c_ltgray, "2: Torso");
@@ -161,8 +161,8 @@ void iuse::firstaid(Game* g, item* it, bool t)
 {
     int bonus = g->u.sklevel[sk_firstaid] * 2;
     WINDOW* w = newwin(10, 20, 8, 1);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     mvwprintz(w, 1, 1, c_ltred, "Heal where?");
     mvwprintz(w, 2, 1, c_ltgray, "1: Head");
     mvwprintz(w, 3, 1, c_ltgray, "2: Torso");
@@ -524,8 +524,8 @@ void iuse::sew(Game* g, item* it, bool t)
                 g->u.i_rem(ch);
             }
         } else if (rn <= 6) {
-            g->add_msg(
-                "You don't repair your %s, but you waste lots of thread.", fix->tname().c_str());
+            g->add_msg("You don't repair your %s, but you waste lots of thread.",
+                       fix->tname().c_str());
             int waste = rng(1, 8);
             if (waste > it->charges)
                 it->charges = 0;
@@ -592,8 +592,8 @@ void iuse::scissors(Game* g, item* it, bool t)
         g->add_msg("You clumsily cut the %s into useless ribbons.", cut->tname().c_str());
         return;
     }
-    g->add_msg(
-        "You slice the %s into %d rag%s.", cut->tname().c_str(), count, (count == 1 ? "" : "s"));
+    g->add_msg("You slice the %s into %d rag%s.", cut->tname().c_str(), count,
+               (count == 1 ? "" : "s"));
     item rag(g->itypes[itm_rag], g->turn, g->nextinv);
     g->u.i_rem(ch);
     bool drop = false;
@@ -672,8 +672,8 @@ void iuse::hammer(Game* g, item* it, bool t)
     dirx += g->u.posx;
     diry += g->u.posy;
     WINDOW* w = newwin(7, 40, 9, 30);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     int nails = 0, boards = 0;
     std::string title;
     ter_id newter;
@@ -787,8 +787,8 @@ void iuse::water_purifier(Game* g, item* it, bool t)
 void iuse::two_way_radio(Game* g, item* it, bool t)
 {
     WINDOW* w = newwin(6, 36, 9, 5);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     // TODO: More options here.  Thoughts...
     //       > Respond to the SOS of an NPC
     //       > Report something to a faction
@@ -845,7 +845,7 @@ void iuse::two_way_radio(Game* g, item* it, bool t)
         if (in_range.size() > 0) {
             npc* coming = in_range[rng(0, in_range.size() - 1)];
             popup("A reply!  %s says, \"I'm on my way; give me %d minutes!\"", coming->name.c_str(),
-                coming->minutes_to_u(g));
+                  coming->minutes_to_u(g));
             coming->mission = MISSION_RESCUE_U;
         } else
             popup("No-one seems to reply...");
@@ -963,8 +963,8 @@ void iuse::dig(Game* g, item* it, bool t)
         g->add_msg("You dig a pit.");
         g->m.ter(g->u.posx + dirx, g->u.posy + diry) = t_pit;
     } else
-        g->add_msg(
-            "You can't dig through %d!", g->m.tername(g->u.posx + dirx, g->u.posy + diry).c_str());
+        g->add_msg("You can't dig through %d!",
+                   g->m.tername(g->u.posx + dirx, g->u.posy + diry).c_str());
 }
 
 void iuse::chainsaw_off(Game* g, item* it, bool t)
@@ -1123,8 +1123,8 @@ That trap needs a 3x3 space to be clear, centered two tiles from you.");
 void iuse::geiger(Game* g, item* it, bool t)
 {
     WINDOW* w = newwin(6, 16, 8, 1);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     mvwprintz(w, 1, 1, c_ltred, "Scan what?");
     mvwprintz(w, 2, 1, c_ltgray, "1: Yourself");
     mvwprintz(w, 3, 1, c_ltgray, "2: The ground");
@@ -1156,14 +1156,14 @@ void iuse::can_goo(Game* g, item* it, bool t)
     if (mondex != -1) {
         if (g->u_see(goox, gooy, junk))
             g->add_msg("Black goo emerges from the canister and envelopes a %s!",
-                g->z[mondex].name().c_str());
+                       g->z[mondex].name().c_str());
         g->z[mondex].poly(g->mtypes[mon_blob]);
         g->z[mondex].speed -= rng(5, 25);
         g->z[mondex].hp = g->z[mondex].speed;
     } else {
         if (g->u_see(goox, gooy, junk))
             g->add_msg("Living black goo emerges from the canister!");
-        monster goo(g->mtypes[mon_blob]);
+        Monster goo(g->mtypes[mon_blob]);
         goo.spawn(goox, gooy);
         g->z.push_back(goo);
     }
@@ -1174,8 +1174,8 @@ void iuse::can_goo(Game* g, item* it, bool t)
             goox = g->u.posx + rng(-2, 2);
             gooy = g->u.posy + rng(-2, 2);
             tries++;
-        } while (
-            g->m.move_cost(goox, gooy) == 0 && g->m.tr_at(goox, gooy) != tr_null && tries < 10);
+        } while (g->m.move_cost(goox, gooy) == 0 && g->m.tr_at(goox, gooy) != tr_null
+                 && tries < 10);
         if (g->m.tr_at(goox, gooy) == tr_null) {
             if (g->u_see(goox, gooy, junk))
                 g->add_msg("A nearby splatter of goo forms into a goo pit.");

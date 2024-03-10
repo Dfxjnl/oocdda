@@ -14,8 +14,8 @@ void Game::init_monitems()
     monitems[mon_ant_queen] = monitems[mon_ant];
 
     setvector(monitems[mon_zombie], mi_livingroom, 10, mi_kitchen, 8, mi_bedroom, 20, mi_dresser,
-        30, mi_softdrugs, 5, mi_harddrugs, 2, mi_tools, 6, mi_trash, 7, mi_ammo, 18, mi_pistols, 3,
-        mi_shotguns, 2, mi_smg, 1, NULL);
+              30, mi_softdrugs, 5, mi_harddrugs, 2, mi_tools, 6, mi_trash, 7, mi_ammo, 18,
+              mi_pistols, 3, mi_shotguns, 2, mi_smg, 1, NULL);
     monitems[mon_zombie_shrieker] = monitems[mon_zombie];
     monitems[mon_zombie_spitter] = monitems[mon_zombie];
     monitems[mon_zombie_electric] = monitems[mon_zombie];
@@ -28,7 +28,7 @@ void Game::init_monitems()
     monitems[mon_zombie_necro] = monitems[mon_zombie];
 
     setvector(monitems[mon_chud], mi_subway, 40, mi_sewer, 20, mi_trash, 5, mi_bedroom, 1,
-        mi_dresser, 5, mi_ammo, 18, NULL);
+              mi_dresser, 5, mi_ammo, 18, NULL);
     monitems[mon_one_eye] = monitems[mon_chud];
 
     setvector(monitems[mon_bee], mi_bees, 1, NULL);

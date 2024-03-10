@@ -24,7 +24,7 @@ void ensure_save_directory_exists()
         throw std::runtime_error("Failed to create the '" + save_path.string() + "' directory");
     } catch (const std::filesystem::filesystem_error& e) {
         throw std::runtime_error("Filesystem error while ensuring the '" + save_path.string()
-            + "' directory exists: " + e.what());
+                                 + "' directory exists: " + e.what());
     }
 }
 } // namespace oocdda

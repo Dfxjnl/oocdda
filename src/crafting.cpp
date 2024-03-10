@@ -44,7 +44,7 @@ void Game::init_recipes()
      */
     RECIPE(itm_spear_wood, CC_WEAPON, sk_null, sk_null, 0, 800);
     TOOL(itm_hatchet, -1, itm_knife_steak, -1, itm_knife_butcher, -1, itm_knife_combat, -1,
-        itm_machete, -1, NULL);
+         itm_machete, -1, NULL);
     COMP(itm_stick, 1, itm_broom, 1, itm_mop, 1, itm_2x4, 1, NULL);
 
     RECIPE(itm_nailboard, CC_WEAPON, sk_null, sk_null, 0, 1000);
@@ -62,7 +62,7 @@ void Game::init_recipes()
 
     RECIPE(itm_bolt_wood, CC_WEAPON, sk_mechanics, sk_gun, 1, 5000);
     TOOL(itm_hatchet, -1, itm_knife_steak, -1, itm_knife_butcher, -1, itm_knife_combat, -1,
-        itm_machete, -1, NULL);
+         itm_machete, -1, NULL);
     COMP(itm_stick, 1, itm_broom, 1, itm_mop, 1, itm_2x4, 1, itm_bee_sting, 1, NULL);
 
     RECIPE(itm_crossbow, CC_WEAPON, sk_mechanics, sk_gun, 3, 15000);
@@ -134,7 +134,7 @@ void Game::init_recipes()
     COMP(itm_can_food, 1, itm_steel_chunk, 1, itm_canister_empty, 1, NULL);
     COMP(itm_nail, 100, itm_bb, 100, NULL);
     COMP(itm_shot_bird, 30, itm_shot_00, 18, itm_shot_slug, 15, itm_gasoline, 3, itm_grenade, 1,
-        NULL);
+         NULL);
 
     RECIPE(itm_mininuke, CC_WEAPON, sk_mechanics, sk_electronics, 10, 40000);
     TOOL(itm_screwdriver, -1, NULL);
@@ -213,13 +213,13 @@ void Game::init_recipes()
     RECIPE(itm_amplifier, CC_ELECTRONIC, sk_electronics, sk_null, 2, 4000);
     TOOL(itm_screwdriver, -1, NULL);
     COMP(itm_flashlight, 1, itm_radio, 1, itm_two_way_radio, 1, itm_geiger, 1, itm_goggles_nv, 1,
-        itm_transponder, 2, NULL);
+         itm_transponder, 2, NULL);
 
     RECIPE(itm_power_supply, CC_ELECTRONIC, sk_electronics, sk_null, 2, 6500);
     TOOL(itm_screwdriver, -1, NULL);
     TOOL(itm_soldering_iron, 3, NULL);
     COMP(itm_amplifier, 2, itm_soldering_iron, 1, itm_electrohack, 1, itm_battery, 800, itm_geiger,
-        1, NULL);
+         1, NULL);
 
     RECIPE(itm_receiver, CC_ELECTRONIC, sk_electronics, sk_null, 3, 12000);
     TOOL(itm_screwdriver, -1, NULL);
@@ -261,7 +261,7 @@ void Game::init_recipes()
     TOOL(itm_screwdriver, -1, NULL);
     COMP(itm_soldering_iron, 1, itm_amplifier, 1, NULL);
     COMP(itm_pan, 1, itm_pot, 1, itm_knife_butcher, 2, itm_knife_steak, 6, itm_knife_butter, 6,
-        itm_muffler, 1, NULL);
+         itm_muffler, 1, NULL);
 
     RECIPE(itm_two_way_radio, CC_ELECTRONIC, sk_electronics, sk_null, 4, 30000);
     TOOL(itm_screwdriver, -1, NULL);
@@ -434,33 +434,33 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
         for (int i = 0; i < current.size() && i < 23; i++) {
             if (i == line)
                 mvwprintz(w_data, i, 0, (available[i] ? h_white : h_dkgray),
-                    itypes[current[i]->result]->name.c_str());
+                          itypes[current[i]->result]->name.c_str());
             else
                 mvwprintz(w_data, i, 0, (available[i] ? c_white : c_dkgray),
-                    itypes[current[i]->result]->name.c_str());
+                          itypes[current[i]->result]->name.c_str());
         }
         if (current.size() > 0) {
             nc_color col = (available[line] ? c_white : c_dkgray);
             mvwprintz(w_data, 0, 30, col, "Primary skill: %s",
-                (current[line]->sk_primary == sk_null
-                        ? "N/A"
-                        : skill_name(current[line]->sk_primary).c_str()));
+                      (current[line]->sk_primary == sk_null
+                           ? "N/A"
+                           : skill_name(current[line]->sk_primary).c_str()));
             mvwprintz(w_data, 1, 30, col, "Secondary skill: %s",
-                (current[line]->sk_secondary == sk_null
-                        ? "N/A"
-                        : skill_name(current[line]->sk_secondary).c_str()));
+                      (current[line]->sk_secondary == sk_null
+                           ? "N/A"
+                           : skill_name(current[line]->sk_secondary).c_str()));
             mvwprintz(w_data, 2, 30, col, "Difficulty: %d", current[line]->difficulty);
             if (current[line]->sk_primary == sk_null)
                 mvwprintz(w_data, 3, 30, col, "Your skill level: N/A");
             else
                 mvwprintz(w_data, 3, 30, col, "Your skill level: %d",
-                    u.sklevel[current[line]->sk_primary]);
+                          u.sklevel[current[line]->sk_primary]);
             if (current[line]->time >= 1000)
                 mvwprintz(w_data, 4, 30, col, "Time to complete: %d minutes",
-                    int(current[line]->time / 1000));
+                          int(current[line]->time / 1000));
             else
                 mvwprintz(w_data, 4, 30, col, "Time to complete: %d turns",
-                    int(current[line]->time / 100));
+                          int(current[line]->time / 100));
             mvwprintz(w_data, 5, 30, col, "Tools required:");
             if (current[line]->tools[0].size() == 0) {
                 mvwputch(w_data, 6, 30, col, '>');
@@ -759,11 +759,11 @@ void Game::complete_craft()
             else { // Let the player pick which component they want to use
                 WINDOW* w = newwin(you_have.size() + 2, 30, 10, 25);
                 wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX,
-                    LINE_XXOO, LINE_XOOX);
+                        LINE_XXOO, LINE_XOOX);
                 mvwprintz(w, 0, 5, c_red, "Use which component?");
                 for (int j = 0; j < you_have.size(); j++)
                     mvwprintz(w, j + 1, 1, c_white, "%d: %s", j + 1,
-                        itypes[you_have[j].type]->name.c_str());
+                              itypes[you_have[j].type]->name.c_str());
                 wrefresh(w);
                 char ch;
                 do
@@ -781,9 +781,9 @@ void Game::complete_craft()
         }
     }
     int skill_roll = (making.difficulty == 0
-            ? 1
-            : dice(
-                u.sklevel[making.sk_primary] * 3 + u.sklevel[making.sk_secondary], 20 + u.int_cur));
+                          ? 1
+                          : dice(u.sklevel[making.sk_primary] * 3 + u.sklevel[making.sk_secondary],
+                                 20 + u.int_cur));
     int diff_roll = (making.difficulty == 0 ? 0 : dice(making.difficulty * 4, 28));
     if (making.sk_primary != sk_null)
         u.practice(making.sk_primary, making.difficulty * 4 + 12);
@@ -791,7 +791,7 @@ void Game::complete_craft()
         u.practice(making.sk_secondary, 5);
     if (diff_roll >= skill_roll * (1 + 0.1 * rng(1, 5))) {
         add_msg("You fail to make the %s, and waste some materials.",
-            itypes[making.result]->name.c_str());
+                itypes[making.result]->name.c_str());
         int num_lost = rng(1, will_use.size());
         for (int i = 0; i < num_lost; i++) {
             int n = rng(0, will_use.size() - 1);
@@ -802,7 +802,7 @@ void Game::complete_craft()
         return;
     } else if (diff_roll > skill_roll) {
         add_msg("You fail to make the %s, but don't waste any materials.",
-            itypes[making.result]->name.c_str());
+                itypes[making.result]->name.c_str());
         u.activity.type = ACT_NULL;
         return;
     }
@@ -817,8 +817,8 @@ void Game::complete_craft()
     } while (u.has_item(newit.invlet) && iter < 52);
     newit = newit.in_its_container(&itypes);
     if (iter == 52 || u.volume_carried() + newit.volume() > u.volume_capacity()) {
-        add_msg(
-            "There's no room in your inventory for the %s, so you drop it.", newit.tname().c_str());
+        add_msg("There's no room in your inventory for the %s, so you drop it.",
+                newit.tname().c_str());
         m.add_item(u.posx, u.posy, newit);
     } else if (u.weight_carried() + newit.volume() > u.weight_capacity()) {
         add_msg("The %s is too heavy to carry, so you drop it.", newit.tname().c_str());

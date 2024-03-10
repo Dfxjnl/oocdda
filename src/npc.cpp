@@ -735,7 +735,7 @@ std::vector<item> starting_inv(npc* me, npc_class type, Game* g)
             total_space -= ret[ret.size() - 1].volume();
         }
         while ((type == NC_COWBOY || type == NC_BOUNTY_HUNTER || !one_in(3)) && !one_in(4)
-            && total_space >= g->itypes[tmp]->volume) {
+               && total_space >= g->itypes[tmp]->volume) {
             ret.push_back(item(g->itypes[tmp], 0));
             total_space -= ret[ret.size() - 1].volume();
         }
@@ -805,7 +805,7 @@ void npc::set_name()
 
     if (!fin.is_open()) {
         debugmsg("Could not open npc first names list (%s)",
-            (male ? male_names_file.c_str() : female_names_file.c_str()));
+                 (male ? male_names_file.c_str() : female_names_file.c_str()));
         return;
     }
 
@@ -1413,7 +1413,7 @@ void npc::print_info(WINDOW* w)
     // w is also 48 characters wide - 2 characters for border = 46 characters for us
     mvwprintz(w, 6, 1, c_white, "NPC: %s", name.c_str());
     mvwprintz(w, 7, 1, c_red, "Wielding %s%s", (weapon.type->id == 0 ? "" : "a "),
-        weapon.tname().c_str());
+              weapon.tname().c_str());
     std::string wearing;
     std::stringstream wstr;
     wstr << "Wearing: ";

@@ -411,13 +411,13 @@ Strength - 4;    Dexterity - 4;    Intelligence - 4;    Dexterity - 4");
     // First!  Default STATS screen.
     mvwprintz(w_stats, 0, 10, c_ltgray, "STATS");
     mvwprintz(w_stats, 2, 2, c_ltgray, "Strength:%s(%d)", (str_max < 10 ? "         " : "        "),
-        str_max);
+              str_max);
     mvwprintz(w_stats, 3, 2, c_ltgray, "Dexterity:%s(%d)", (dex_max < 10 ? "        " : "       "),
-        dex_max);
-    mvwprintz(
-        w_stats, 4, 2, c_ltgray, "Intelligence:%s(%d)", (int_max < 10 ? "     " : "    "), int_max);
+              dex_max);
+    mvwprintz(w_stats, 4, 2, c_ltgray, "Intelligence:%s(%d)", (int_max < 10 ? "     " : "    "),
+              int_max);
     mvwprintz(w_stats, 5, 2, c_ltgray, "Perception:%s(%d)", (per_max < 10 ? "       " : "      "),
-        per_max);
+              per_max);
 
     nc_color status = c_white;
 
@@ -483,25 +483,25 @@ Strength - 4;    Dexterity - 4;    Intelligence - 4;    Dexterity - 4");
     mvwprintz(w_encumb, 0, 6, c_ltgray, "ENCUMBERANCE");
     mvwprintz(w_encumb, 2, 2, c_ltgray, "Head................");
     mvwprintz(w_encumb, 2, (encumb(bp_head) >= 0 && encumb(bp_head) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_head)), "%d", encumb(bp_head));
+              encumb_color(encumb(bp_head)), "%d", encumb(bp_head));
     mvwprintz(w_encumb, 3, 2, c_ltgray, "Eyes................");
     mvwprintz(w_encumb, 3, (encumb(bp_eyes) >= 0 && encumb(bp_eyes) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_eyes)), "%d", encumb(bp_eyes));
+              encumb_color(encumb(bp_eyes)), "%d", encumb(bp_eyes));
     mvwprintz(w_encumb, 4, 2, c_ltgray, "Mouth...............");
     mvwprintz(w_encumb, 4, (encumb(bp_mouth) >= 0 && encumb(bp_mouth) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_mouth)), "%d", encumb(bp_mouth));
+              encumb_color(encumb(bp_mouth)), "%d", encumb(bp_mouth));
     mvwprintz(w_encumb, 5, 2, c_ltgray, "Torso...............");
     mvwprintz(w_encumb, 5, (encumb(bp_torso) >= 0 && encumb(bp_torso) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_torso)), "%d", encumb(bp_torso));
+              encumb_color(encumb(bp_torso)), "%d", encumb(bp_torso));
     mvwprintz(w_encumb, 6, 2, c_ltgray, "Hands...............");
     mvwprintz(w_encumb, 6, (encumb(bp_hands) >= 0 && encumb(bp_hands) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_hands)), "%d", encumb(bp_hands));
+              encumb_color(encumb(bp_hands)), "%d", encumb(bp_hands));
     mvwprintz(w_encumb, 7, 2, c_ltgray, "Legs................");
     mvwprintz(w_encumb, 7, (encumb(bp_legs) >= 0 && encumb(bp_legs) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_legs)), "%d", encumb(bp_legs));
+              encumb_color(encumb(bp_legs)), "%d", encumb(bp_legs));
     mvwprintz(w_encumb, 8, 2, c_ltgray, "Feet................");
     mvwprintz(w_encumb, 8, (encumb(bp_feet) >= 0 && encumb(bp_feet) < 10 ? 21 : 20),
-        encumb_color(encumb(bp_feet)), "%d", encumb(bp_feet));
+              encumb_color(encumb(bp_feet)), "%d", encumb(bp_feet));
     wrefresh(w_encumb);
 
     // Next, draw traits.
@@ -566,58 +566,58 @@ Strength - 4;    Dexterity - 4;    Intelligence - 4;    Dexterity - 4");
         line++;
     } else if (weight_carried() > weight_capacity() * .25) {
         pen = 100 - int((120 * (weight_capacity() - weight_carried())) / weight_capacity());
-        mvwprintz(
-            w_speed, line, 1, c_red, "Overburdened        -%s%d%%%%", (pen < 10 ? " " : ""), pen);
+        mvwprintz(w_speed, line, 1, c_red, "Overburdened        -%s%d%%%%", (pen < 10 ? " " : ""),
+                  pen);
         line++;
     }
     pen = int(morale_level() / 2);
     if (abs(pen) >= 5) {
         if (pen > 0)
             mvwprintz(w_speed, line, 1, c_green, "Good mood           +%s%d%%%%",
-                (pen < 10 ? " " : ""), pen);
+                      (pen < 10 ? " " : ""), pen);
         else
             mvwprintz(w_speed, line, 1, c_red, "Depressed           -%s%d%%%%",
-                (abs(pen) < 10 ? " " : ""), abs(pen));
+                      (abs(pen) < 10 ? " " : ""), abs(pen));
         line++;
     }
     pen = int((pain - pkill) * .7);
     if (pen >= 1) {
-        mvwprintz(
-            w_speed, line, 1, c_red, "Pain                -%s%d%%%%", (pen < 10 ? " " : ""), pen);
+        mvwprintz(w_speed, line, 1, c_red, "Pain                -%s%d%%%%", (pen < 10 ? " " : ""),
+                  pen);
         line++;
     }
     if (pkill >= 3) {
         pen = int(pkill * .4);
-        mvwprintz(
-            w_speed, line, 1, c_red, "Painkillers         -%s%d%%%%", (pen < 10 ? " " : ""), pen);
+        mvwprintz(w_speed, line, 1, c_red, "Painkillers         -%s%d%%%%", (pen < 10 ? " " : ""),
+                  pen);
         line++;
     }
     if (stim != 0) {
         pen = stim;
         if (pen > 0)
             mvwprintz(w_speed, line, 1, c_green, "Stimulants          +%s%d%%%%",
-                (pen < 10 ? " " : ""), pen);
+                      (pen < 10 ? " " : ""), pen);
         else
             mvwprintz(w_speed, line, 1, c_red, "Depressants         -%s%d%%%%",
-                (abs(pen) < 10 ? " " : ""), abs(pen));
+                      (abs(pen) < 10 ? " " : ""), abs(pen));
         line++;
     }
     if (thirst > 40) {
         pen = int((thirst - 40) / 4);
-        mvwprintz(
-            w_speed, line, 1, c_red, "Thirst              -%s%d%%%%", (pen < 10 ? " " : ""), pen);
+        mvwprintz(w_speed, line, 1, c_red, "Thirst              -%s%d%%%%", (pen < 10 ? " " : ""),
+                  pen);
         line++;
     }
     if (hunger > 100) {
         pen = int((hunger - 100) / 4);
-        mvwprintz(
-            w_speed, line, 1, c_red, "Hunger              -%s%d%%%%", (pen < 10 ? " " : ""), pen);
+        mvwprintz(w_speed, line, 1, c_red, "Hunger              -%s%d%%%%", (pen < 10 ? " " : ""),
+                  pen);
         line++;
     }
     if (has_trait(PF_QUICK)) {
         pen = int(newmoves * .1);
-        mvwprintz(
-            w_speed, line, 1, c_green, "Quick               +%s%d%%%%", (pen < 10 ? " " : ""), pen);
+        mvwprintz(w_speed, line, 1, c_green, "Quick               +%s%d%%%%", (pen < 10 ? " " : ""),
+                  pen);
     }
     mvwprintw(w_speed, 2, (newmoves >= 100 ? 21 : (newmoves < 10 ? 23 : 22)), "%d%%", newmoves);
     wrefresh(w_speed);
@@ -783,13 +783,13 @@ slower.");
                     status = c_ltred;
                 if (i == line)
                     mvwprintz(w_traits, 2 + i - min, 1, hilite(status),
-                        traits[traitslist[i]].name.c_str());
+                              traits[traitslist[i]].name.c_str());
                 else
                     mvwprintz(w_traits, 2 + i - min, 1, status, traits[traitslist[i]].name.c_str());
             }
             if (line >= 0 && line < traitslist.size())
-                mvwprintz(
-                    w_info, 0, 0, c_magenta, "%s", traits[traitslist[line]].description.c_str());
+                mvwprintz(w_info, 0, 0, c_magenta, "%s",
+                          traits[traitslist[line]].description.c_str());
             wrefresh(w_traits);
             wrefresh(w_info);
             switch (input()) {
@@ -905,12 +905,12 @@ slower.");
                 }
                 mvwprintz(w_skills, 2 + i - min, 1, c_ltgray, "                         ");
                 if (skexercise[i] >= 100) {
-                    mvwprintz(
-                        w_skills, 2 + i - min, 1, status, "%s:", skill_name(skillslist[i]).c_str());
+                    mvwprintz(w_skills, 2 + i - min, 1, status,
+                              "%s:", skill_name(skillslist[i]).c_str());
                     mvwprintz(w_skills, 2 + i - min, 19, status, "%d", sklevel[skillslist[i]]);
                 } else {
-                    mvwprintz(
-                        w_skills, 2 + i - min, 1, status, "%s:", skill_name(skillslist[i]).c_str());
+                    mvwprintz(w_skills, 2 + i - min, 1, status,
+                              "%s:", skill_name(skillslist[i]).c_str());
                     mvwprintz(w_skills, 2 + i - min, 19, status, "%d", sklevel[skillslist[i]]);
                 }
             }
@@ -1146,9 +1146,9 @@ void player::power_bionics(Game* g)
                 type = c_ltred;
             mvwputch(wBio, 3 + i, 32, type, active[i].invlet);
             mvwprintz(wBio, 3 + i, 34, type,
-                (active[i].powered ? "%s - ON" : "%s - %d PU / %d trns"),
-                bionics[active[i].id].name.c_str(), bionics[active[i].id].power_cost,
-                bionics[active[i].id].charge_time);
+                      (active[i].powered ? "%s - ON" : "%s - %d PU / %d trns"),
+                      bionics[active[i].id].name.c_str(), bionics[active[i].id].power_cost,
+                      bionics[active[i].id].charge_time);
         }
     }
 
@@ -1187,8 +1187,8 @@ void player::power_bionics(Game* g)
                         mvwprintz(wBio, 22, 0, c_ltred, "\
 You can not activate %s!  To read a description of\
 %s, press '!', then '%c'.",
-                            bionics[tmp->id].name.c_str(), bionics[tmp->id].name.c_str(),
-                            tmp->invlet);
+                                  bionics[tmp->id].name.c_str(), bionics[tmp->id].name.c_str(),
+                                  tmp->invlet);
                 } else { // Describing bionics, not activating them!
                     // Clear the lines first
                     ch = 0;
@@ -1305,7 +1305,7 @@ void player::mutate(Game* g)
             case 13:
                 if (has_trait(PF_DEFORMED2) || has_trait(PF_DEFORMED)) {
                     g->add_msg("Your deformations melt away%s.",
-                        (has_trait(PF_DEFORMED2) ? " somewhat" : ""));
+                               (has_trait(PF_DEFORMED2) ? " somewhat" : ""));
                     if (has_trait(PF_DEFORMED2))
                         toggle_trait(PF_DEFORMED2);
                     toggle_trait(PF_DEFORMED);
@@ -1555,8 +1555,8 @@ void player::mutate(Game* g)
                             if (worn[i].damage >= 5)
                                 g->add_msg("Your %s is destroyed!", worn[i].tname().c_str());
                             else {
-                                g->add_msg(
-                                    "Your %s is damaged and pushed off!", worn[i].tname().c_str());
+                                g->add_msg("Your %s is damaged and pushed off!",
+                                           worn[i].tname().c_str());
                                 g->m.add_item(posx, posy, worn[i]);
                             }
                             worn.erase(worn.begin() + i);
@@ -1679,7 +1679,7 @@ void player::pause()
     }
 }
 
-int player::hit_mon(Game* g, monster* z)
+int player::hit_mon(Game* g, Monster* z)
 {
     bool is_u = (this == &(g->u)); // Affects how we'll display messages
     int j;
@@ -1839,7 +1839,8 @@ int player::hit_mon(Game* g, monster* z)
         shock_them
             = (shock_them || (has_bionic(bio_shock) && power_level >= 2 && unarmed && !one_in(3)));
         drain_them = (drain_them
-            || (has_bionic(bio_heat_absorb) && !is_armed() && z->has_flag(MF_WARM) && !one_in(3)));
+                      || (has_bionic(bio_heat_absorb) && !is_armed() && z->has_flag(MF_WARM)
+                          && !one_in(3)));
         bite_them = (bite_them || (has_trait(PF_FANGS) && z->armor() < 18 && one_in(5)));
         peck_them = (peck_them || (has_trait(PF_BEAK) && z->armor() < 16 && one_in(4)));
         if (unarmed) {
@@ -1854,22 +1855,22 @@ int player::hit_mon(Game* g, monster* z)
                 if (headshot && can_see)
                     g->add_msg("%s claws pierce the %s's skull!", Your.c_str(), z->name().c_str());
                 else if (can_see)
-                    g->add_msg(
-                        "%s claws stab straight through the %s!", Your.c_str(), z->name().c_str());
+                    g->add_msg("%s claws stab straight through the %s!", Your.c_str(),
+                               z->name().c_str());
             } else if (has_trait(PF_TALONS)) {
                 dam += 2;
                 headshot &= z->hp < dam;
                 if (headshot && can_see)
-                    g->add_msg(
-                        "%s talons tear the %s's head open!", Your.c_str(), z->name().c_str());
+                    g->add_msg("%s talons tear the %s's head open!", Your.c_str(),
+                               z->name().c_str());
                 else if (can_see)
                     g->add_msg("%s bur%s %s talons into the %s!", You.c_str(), (is_u ? "y" : "ies"),
-                        your.c_str(), z->name().c_str());
+                               your.c_str(), z->name().c_str());
             } else {
                 headshot &= z->hp < dam;
                 if (headshot && can_see)
                     g->add_msg("%s crush%s the %s's skull in a single blow!", You.c_str(),
-                        (is_u ? "" : "es"), z->name().c_str());
+                               (is_u ? "" : "es"), z->name().c_str());
                 else if (can_see)
                     g->add_msg("%s deliver%s a crushing punch!", You.c_str(), (is_u ? "" : "s"));
             }
@@ -1884,18 +1885,18 @@ int player::hit_mon(Game* g, monster* z)
                 headshot &= z->hp < dam;
                 if (headshot && can_see)
                     g->add_msg("%s %s slices the %s's head off!", Your.c_str(),
-                        weapon.tname().c_str(), z->name().c_str());
+                               weapon.tname().c_str(), z->name().c_str());
                 else if (can_see)
                     g->add_msg("%s stab %s %s through the %s!", You.c_str(), your.c_str(),
-                        weapon.tname().c_str(), z->name().c_str());
+                               weapon.tname().c_str(), z->name().c_str());
             } else { // Not cutting, probably bashing
                 headshot &= z->hp < dam;
                 if (headshot && can_see)
                     g->add_msg("%s crush%s the %s's skull!", You.c_str(), (is_u ? "" : "es"),
-                        z->name().c_str());
+                               z->name().c_str());
                 else if (can_see)
                     g->add_msg("%s crush%s the %s's body!", You.c_str(), (is_u ? "" : "es"),
-                        z->name().c_str());
+                               z->name().c_str());
             }
         } // End of not-unarmed
     }     // End of critical hit
@@ -1912,20 +1913,20 @@ int player::hit_mon(Game* g, monster* z)
         charge_power(rng(0, 4));
         if (can_see)
             g->add_msg("%s drain%s the %s's body heat!", You.c_str(), (is_u ? "" : "s"),
-                z->name().c_str());
+                       z->name().c_str());
         dam += rng(4, 10);
         z->moves -= rng(80, 120);
     }
     if (bite_them) {
         if (can_see)
-            g->add_msg(
-                "%s sink %s fangs into the %s!", You.c_str(), your.c_str(), z->name().c_str());
+            g->add_msg("%s sink %s fangs into the %s!", You.c_str(), your.c_str(),
+                       z->name().c_str());
         dam += 18 - z->armor();
     }
     if (peck_them) {
         if (can_see)
-            g->add_msg(
-                "%s peck%s the %s viciously!", You.c_str(), (is_u ? "" : "s"), z->name().c_str());
+            g->add_msg("%s peck%s the %s viciously!", You.c_str(), (is_u ? "" : "s"),
+                       z->name().c_str());
         dam += 16 - z->armor();
     }
 
@@ -1951,7 +1952,7 @@ int player::hit_mon(Game* g, monster* z)
             g->add_msg("You hit the %s, but do no damage.", z->name().c_str());
         else if (can_see)
             g->add_msg("%s's %s hits the %s, but does no damage.", You.c_str(),
-                weapon.tname().c_str(), z->name().c_str());
+                       weapon.tname().c_str(), z->name().c_str());
         practice(sk_melee, rng(2, 5));
         if (unarmed)
             practice(sk_unarmed, 2);
@@ -1965,7 +1966,8 @@ int player::hit_mon(Game* g, monster* z)
         g->add_msg("You hit the %s for %d damage.", z->name().c_str(), dam);
     else if (can_see)
         g->add_msg("%s hits the %s with %s %s.", You.c_str(), z->name().c_str(),
-            (male ? "his" : "her"), (weapon.type->id == 0 ? "fists" : weapon.tname().c_str()));
+                   (male ? "his" : "her"),
+                   (weapon.type->id == 0 ? "fists" : weapon.tname().c_str()));
     practice(sk_melee, rng(5, 10));
     if (unarmed)
         practice(sk_unarmed, rng(5, 10));
@@ -2551,7 +2553,7 @@ void player::suffer(Game* g)
                 morale += rng(2, 5) * rng(-1, 1);
         }
         if (has_trait(PF_SCHIZOPHRENIC) && one_in(2400)) { // Every 4 hours or so
-            monster phantasm;
+            Monster phantasm;
             int i;
             switch (rng(0, 10)) {
             case 0:
@@ -2582,7 +2584,7 @@ void player::suffer(Game* g)
                 break;
             case 7:
                 for (i = 0; i < 10; i++) {
-                    phantasm = monster(g->mtypes[mon_hallu_zom + rng(0, 3)]);
+                    phantasm = Monster(g->mtypes[mon_hallu_zom + rng(0, 3)]);
                     phantasm.spawn(posx + rng(-10, 10), posy + rng(-10, 10));
                     if (g->mon_at(phantasm.posx, phantasm.posy) == -1)
                         g->z.push_back(phantasm);
@@ -2598,7 +2600,8 @@ void player::suffer(Game* g)
                 break;
             case 10:
                 g->add_msg(std::string(name + name + name + name + name + name + name + name + name
-                    + name + name + name + name + name + name + name + name + name + name + name)
+                                       + name + name + name + name + name + name + name + name
+                                       + name + name + name)
                                .c_str());
                 break;
             }
@@ -2654,7 +2657,7 @@ void player::suffer(Game* g)
         if (g->m.field_at(posx, posy).type == fd_null)
             g->m.add_field(g, posx, posy, fd_slime, 1);
         else if (g->m.field_at(posx, posy).type == fd_slime
-            && g->m.field_at(posx, posy).density < 3)
+                 && g->m.field_at(posx, posy).density < 3)
             g->m.field_at(posx, posy).density++;
     }
     if (has_trait(PF_RADIOGENIC) && g->turn % 50 == 0 && radiation >= 10) {
@@ -3315,7 +3318,7 @@ bool player::eat(Game* g, char let)
         if ((hunger < 0 && tmp->nutr > 0) && !query_yn("You're full.  Force yourself to eat?"))
             return false;
         else if ((thirst < 0 && tmp->quench > 0)
-            && !query_yn("You're full.  Force yourself to drink?"))
+                 && !query_yn("You're full.  Force yourself to drink?"))
             return false;
         bool hunger_danger = (hunger < 0), thirst_danger = (thirst < 0);
         if (has_trait(PF_CARNIVORE) && eaten->made_of(VEGGY)) {
@@ -3435,8 +3438,8 @@ bool player::wield(Game* g, char let)
             inv.push_back(remove_weapon());
             inv_sorted = false;
             return true;
-        } else if (query_yn(
-                       "No space in inventory for your %s.  Drop it?", weapon.tname().c_str())) {
+        } else if (query_yn("No space in inventory for your %s.  Drop it?",
+                            weapon.tname().c_str())) {
             g->m.add_item(posx, posy, remove_weapon());
             return true;
         } else {
@@ -3460,7 +3463,7 @@ bool player::wield(Game* g, char let)
                 inv_sorted = false;
                 return true;
             } else if (query_yn("No space in inventory for your %s.  Drop it?",
-                           weapon.tname().c_str())) {
+                                weapon.tname().c_str())) {
                 g->m.add_item(posx, posy, remove_weapon());
                 weapon = inv[i];
                 i_remn(i);
@@ -3536,7 +3539,7 @@ bool player::wear(Game* g, char let)
             verb = "is";
         if (encumb(i) >= 4)
             g->add_msg("Your %s %s very encumbered!", body_part_name(body_part(i), 2).c_str(),
-                (i == bp_head || i == bp_torso ? "is" : "are"));
+                       (i == bp_head || i == bp_torso ? "is" : "are"));
     }
     return true;
 }
@@ -3552,7 +3555,7 @@ bool player::takeoff(Game* g, char let)
                 inv_sorted = false;
                 return true;
             } else if (query_yn("No room in inventory for your %s.  Drop it?",
-                           worn[i].tname().c_str())) {
+                                worn[i].tname().c_str())) {
                 g->m.add_item(posx, posy, worn[i]);
                 worn.erase(worn.begin() + i);
                 return true;
@@ -3609,28 +3612,28 @@ void player::use(Game* g, char let)
             g->add_msg("That %s cannot be attached to a rifle.", used->tname().c_str());
             return;
         } else if (mod->acceptible_ammo_types != 0
-            && !(flag_to_bit_position(guntype->ammo) & mod->acceptible_ammo_types)) {
+                   && !(flag_to_bit_position(guntype->ammo) & mod->acceptible_ammo_types)) {
             g->add_msg("That %s cannot be used on a %s gun.", used->tname().c_str(),
-                ammo_name(guntype->ammo).c_str());
+                       ammo_name(guntype->ammo).c_str());
             return;
         } else if (gun->contents.size() >= 4) {
             g->add_msg("Your %s already has 4 mods installed!  To remove the mods,\
 press 'U' while wielding the unloaded gun.",
-                gun->tname().c_str());
+                       gun->tname().c_str());
             return;
         }
         for (int i = 0; i < gun->contents.size(); i++) {
             if (gun->contents[i].type->id == used->type->id) {
-                g->add_msg(
-                    "Your %s already has a %s.", gun->tname().c_str(), used->tname().c_str());
+                g->add_msg("Your %s already has a %s.", gun->tname().c_str(),
+                           used->tname().c_str());
                 return;
             } else if (mod->newtype != AT_NULL
-                && (dynamic_cast<it_gunmod*>(gun->contents[i].type))->newtype != AT_NULL) {
+                       && (dynamic_cast<it_gunmod*>(gun->contents[i].type))->newtype != AT_NULL) {
                 g->add_msg("Your %s's caliber has already been modified.", gun->tname().c_str());
                 return;
             } else if ((mod->id == itm_barrel_big || mod->id == itm_barrel_small)
-                && (gun->contents[i].type->id == itm_barrel_big
-                    || gun->contents[i].type->id == itm_barrel_small)) {
+                       && (gun->contents[i].type->id == itm_barrel_big
+                           || gun->contents[i].type->id == itm_barrel_small)) {
                 g->add_msg("Your %s already has a barrel replacement", gun->tname().c_str());
                 return;
             } else if ((mod->id == itm_clip || mod->id == itm_clip2) && gun->clip_size() <= 2) {
@@ -3672,7 +3675,7 @@ void player::read(Game* g, char ch)
         return;
     } else if ((index >= 0 && !inv[index].is_book()) || (index == -2 && !weapon.is_book())) {
         g->add_msg("Your %s is not good reading material.",
-            (index == -2 ? weapon.tname().c_str() : inv[index].tname().c_str()));
+                   (index == -2 ? weapon.tname().c_str() : inv[index].tname().c_str()));
         return;
     }
     it_book* tmp;
@@ -3742,7 +3745,7 @@ int player::encumb(body_part bp)
     for (int i = 0; i < worn.size(); i++) {
         if (!worn[i].is_armor())
             debugmsg("%s::encumb hit a non-armor item at worn[%d] (%s)", name.c_str(), i,
-                worn[i].tname().c_str());
+                     worn[i].tname().c_str());
         armor = dynamic_cast<it_armor*>(worn[i].type);
         if (armor->covers & flag_to_bit_position(bp)
             || (bp == bp_torso && (armor->covers & flag_to_bit_position(bp_arms)))) {
@@ -3861,12 +3864,12 @@ void player::absorb(Game* g, body_part bp, int& dam, int& cut)
             }
             // Wool, leather, and cotton clothing may be damaged by CUTTING damage
             if ((worn[i].made_of(WOOL) || worn[i].made_of(LEATHER) || worn[i].made_of(COTTON)
-                    || worn[i].made_of(GLASS) || worn[i].made_of(WOOD))
+                 || worn[i].made_of(GLASS) || worn[i].made_of(WOOD))
                 && rng(0, tmp->cut_resist * 2) < cut && !one_in(cut))
                 worn[i].damage++;
             // Kevlar, plastic, iron, steel, and silver may be damaged by BASHING damage
             if ((worn[i].made_of(KEVLAR) || worn[i].made_of(PLASTIC) || worn[i].made_of(IRON)
-                    || worn[i].made_of(STEEL) || worn[i].made_of(SILVER) || worn[i].made_of(STONE))
+                 || worn[i].made_of(STEEL) || worn[i].made_of(SILVER) || worn[i].made_of(STONE))
                 && rng(0, tmp->dmg_resist * 2) < dam && !one_in(dam))
                 worn[i].damage++;
             if (worn[i].damage >= 5) {

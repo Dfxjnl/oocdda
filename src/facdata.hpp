@@ -6,31 +6,44 @@
 #include "faction.hpp"
 
 namespace oocdda {
-std::string faction_adj_pos[15] = {"Shining", "Sacred", "Golden", "Holy", "Righteous", "Devoted",
-    "Virtuous", "Splendid", "Divine", "Radiant", "Noble", "Venerable",
-    "Immaculate"
-    "Heroic",
-    "Bright"};
+std::string faction_adj_pos[15] = {"Shining",
+                                   "Sacred",
+                                   "Golden",
+                                   "Holy",
+                                   "Righteous",
+                                   "Devoted",
+                                   "Virtuous",
+                                   "Splendid",
+                                   "Divine",
+                                   "Radiant",
+                                   "Noble",
+                                   "Venerable",
+                                   "Immaculate"
+                                   "Heroic",
+                                   "Bright"};
 std::string faction_adj_neu[15]
-    = {"Original", "Crystal", "Metal", "Mighty", "Powerful", "Solid", "Stone", "Firey", "Colossal",
-        "Famous", "Supreme", "Invincible", "Unlimited", "Great", "Electric"};
-std::string faction_adj_bad[15]
-    = {"Poisonous", "Deadly", "Foul", "Nefarious", "Wicked", "Vile", "Ruinous", "Horror",
-        "Devastating", "Vicious", "Sinister", "Baleful", "Pestilent", "Pernicious", "Dread"};
+    = {"Original", "Crystal", "Metal",   "Mighty",     "Powerful",  "Solid", "Stone",   "Firey",
+       "Colossal", "Famous",  "Supreme", "Invincible", "Unlimited", "Great", "Electric"};
+std::string faction_adj_bad[15] = {"Poisonous", "Deadly",  "Foul",      "Nefarious",   "Wicked",
+                                   "Vile",      "Ruinous", "Horror",    "Devastating", "Vicious",
+                                   "Sinister",  "Baleful", "Pestilent", "Pernicious",  "Dread"};
 
 std::string faction_noun_strong[15]
-    = {"Fists", "Slayers", "Furies", "Dervishes", "Tigers", "Destroyers", "Berserkers", "Samurai",
-        "Valkyries", "Army", "Killers", "Paladins", "Knights", "Warriors", "Huntsmen"};
-std::string faction_noun_sneak[15]
-    = {"Snakes", "Rats", "Assassins", "Ninja", "Agents", "Shadows", "Guerillas", "Eliminators",
-        "Snipers", "Smoke", "Arachnids", "Creepers", "Shade", "Stalkers", "Eels"};
-std::string faction_noun_crime[15] = {"Bandits", "Punks", "Family", "Mafia", "Mob", "Gang",
-    "Vandals", "Sharks", "Muggers", "Cutthroats", "Guild", "Faction", "Thugs", "Racket", "Crooks"};
-std::string faction_noun_cult[15]
-    = {"Brotherhood", "Church", "Ones", "Crucible", "Sect", "Creed", "Doctrine", "Priests", "Tenet",
-        "Monks", "Clerics", "Pastors", "Gnostics", "Elders", "Inquisitors"};
-std::string faction_noun_none[15] = {"Settlers", "People", "Men", "Faction", "Tribe", "Clan",
-    "Society", "Folk", "Nation", "Republic", "Colony", "State", "Kingdom", "Party", "Company"};
+    = {"Fists",      "Slayers",    "Furies",  "Dervishes", "Tigers",
+       "Destroyers", "Berserkers", "Samurai", "Valkyries", "Army",
+       "Killers",    "Paladins",   "Knights", "Warriors",  "Huntsmen"};
+std::string faction_noun_sneak[15] = {"Snakes",    "Rats",      "Assassins",   "Ninja",    "Agents",
+                                      "Shadows",   "Guerillas", "Eliminators", "Snipers",  "Smoke",
+                                      "Arachnids", "Creepers",  "Shade",       "Stalkers", "Eels"};
+std::string faction_noun_crime[15]
+    = {"Bandits", "Punks",      "Family", "Mafia",   "Mob",   "Gang",   "Vandals", "Sharks",
+       "Muggers", "Cutthroats", "Guild",  "Faction", "Thugs", "Racket", "Crooks"};
+std::string faction_noun_cult[15] = {
+    "Brotherhood", "Church", "Ones",    "Crucible", "Sect",     "Creed",  "Doctrine",   "Priests",
+    "Tenet",       "Monks",  "Clerics", "Pastors",  "Gnostics", "Elders", "Inquisitors"};
+std::string faction_noun_none[15]
+    = {"Settlers", "People",   "Men",    "Faction", "Tribe",   "Clan",  "Society", "Folk",
+       "Nation",   "Republic", "Colony", "State",   "Kingdom", "Party", "Company"};
 
 struct faction_value_datum {
     std::string name;

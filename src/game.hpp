@@ -63,8 +63,8 @@ public:
     unsigned char light_level();
     bool sees_u(int x, int y, int& t);
     bool u_see(int x, int y, int& t);
-    bool u_see(monster* mon, int& t);
-    bool pl_sees(player* p, monster* mon, int& t);
+    bool u_see(Monster* mon, int& t);
+    bool pl_sees(player* p, Monster* mon, int& t);
     void refresh_all();
 
     char inv(std::string title = "INVENTORY:");
@@ -83,8 +83,8 @@ public:
     map m;
     int levx, levy, levz; // Placement inside the overmap
     player u;
-    std::vector<monster> z;
-    std::vector<monster> monbuff;
+    std::vector<Monster> z;
+    std::vector<Monster> monbuff;
     int monbuffx, monbuffy, monbuffz, monbuff_turn;
     std::vector<npc> active_npc;
     std::vector<mon_id> moncats[num_moncats];
@@ -132,8 +132,9 @@ private:
     void craft();                    // See crafting.cpp
     void make_craft(recipe* making); // See crafting.cpp
     void complete_craft();           // See crafting.cpp
-    void pick_recipes(
-        std::vector<recipe*>& current, std::vector<bool>& available, craft_cat tab); // crafting.cpp
+    void pick_recipes(std::vector<recipe*>& current,
+                      std::vector<bool>& available,
+                      craft_cat tab); // crafting.cpp
     void examine();
     void look_around();
     void pickup(int posx, int posy, int min);
@@ -149,8 +150,15 @@ private:
     void read();
     void chat(); // Chat to an NPC
     void plthrow();
-    std::vector<Point> target(int& x, int& y, int lowx, int lowy, int hix, int hiy,
-        std::vector<monster> t, int& target, item* relevent);
+    std::vector<Point> target(int& x,
+                              int& y,
+                              int lowx,
+                              int lowy,
+                              int hix,
+                              int hiy,
+                              std::vector<Monster> t,
+                              int& target,
+                              item* relevent);
     void help();
 
     // Routine loop functions, approximately in order of execution

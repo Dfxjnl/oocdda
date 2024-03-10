@@ -19,7 +19,7 @@
 #include "rng.hpp"
 
 namespace oocdda {
-void mdeath::normal(Game* g, monster* z)
+void mdeath::normal(Game* g, Monster* z)
 {
     int junk;
     if (g->u_see(z, junk))
@@ -40,7 +40,7 @@ void mdeath::normal(Game* g, monster* z)
     }
 }
 
-void mdeath::acid(Game* g, monster* z)
+void mdeath::acid(Game* g, Monster* z)
 {
     int tmp;
     if (g->u_see(z, tmp))
@@ -48,7 +48,7 @@ void mdeath::acid(Game* g, monster* z)
     g->m.add_field(g, z->posx, z->posy, fd_acid, 3);
 }
 
-void mdeath::boomer(Game* g, monster* z)
+void mdeath::boomer(Game* g, Monster* z)
 {
     std::string tmp;
     g->sound(z->posx, z->posy, 24, "a boomer explode!");
@@ -66,9 +66,9 @@ void mdeath::boomer(Game* g, monster* z)
         g->u.infect(DI_BOOMERED, bp_eyes, 2, 24, g);
 }
 
-void mdeath::fungus(Game* g, monster* z)
+void mdeath::fungus(Game* g, Monster* z)
 {
-    monster spore(g->mtypes[mon_spore]);
+    Monster spore(g->mtypes[mon_spore]);
     int sporex, sporey;
     g->sound(z->posx, z->posy, 10, "Pouf!");
     for (int i = -1; i <= 1; i++) {
@@ -79,7 +79,7 @@ void mdeath::fungus(Game* g, monster* z)
                 if (g->mon_at(sporex, sporey) >= 0) { // Spores hit a monster
                     if (g->u_see(sporex, sporey, j))
                         g->add_msg("The %s is covered in tiny spores!",
-                            g->z[g->mon_at(sporex, sporey)].name().c_str());
+                                   g->z[g->mon_at(sporex, sporey)].name().c_str());
                     if (!g->z[g->mon_at(sporex, sporey)].make_fungus(g))
                         g->kill_mon(g->mon_at(sporex, sporey));
                 } else if (g->u.posx == sporex && g->u.posy == sporey)
@@ -93,14 +93,14 @@ void mdeath::fungus(Game* g, monster* z)
     }
 }
 
-void mdeath::fungusawake(Game* g, monster* z)
+void mdeath::fungusawake(Game* g, Monster* z)
 {
-    monster newfung(g->mtypes[mon_fungaloid]);
+    Monster newfung(g->mtypes[mon_fungaloid]);
     newfung.spawn(z->posx, z->posy);
     g->z.push_back(newfung);
 }
 
-void mdeath::worm(Game* g, monster* z)
+void mdeath::worm(Game* g, Monster* z)
 {
     int j;
     if (g->u_see(z, j))
@@ -119,7 +119,7 @@ void mdeath::worm(Game* g, monster* z)
         }
     }
     int rn;
-    monster worm(g->mtypes[mon_halfworm]);
+    Monster worm(g->mtypes[mon_halfworm]);
     for (int worms = 0; worms < 2 && wormspots.size() > 0; worms++) {
         rn = rng(0, wormspots.size() - 1);
         worm.spawn(wormspots[rn].x, wormspots[rn].y);
@@ -128,12 +128,12 @@ void mdeath::worm(Game* g, monster* z)
     }
 }
 
-void mdeath::disappear(Game* g, monster* z)
+void mdeath::disappear(Game* g, Monster* z)
 {
     g->add_msg("The %s disappears!  Was it in your head?", z->name().c_str());
 }
 
-void mdeath::guilt(Game* g, monster* z)
+void mdeath::guilt(Game* g, Monster* z)
 {
     if (g->u.has_trait(PF_HEARTLESS))
         return; // We don't give a shit!
@@ -141,7 +141,7 @@ void mdeath::guilt(Game* g, monster* z)
     g->u.morale -= 5;
 }
 
-void mdeath::blobsplit(Game* g, monster* z)
+void mdeath::blobsplit(Game* g, Monster* z)
 {
     int j;
     int speed = z->speed - rng(30, 50);
@@ -150,7 +150,7 @@ void mdeath::blobsplit(Game* g, monster* z)
             g->add_msg("The %s splatters into tiny, dead pieces.", z->name().c_str());
         return;
     }
-    monster blob(g->mtypes[(speed < 50 ? mon_blob_small : mon_blob)]);
+    Monster blob(g->mtypes[(speed < 50 ? mon_blob_small : mon_blob)]);
     blob.speed = speed;
     if (g->u_see(z, j))
         g->add_msg("The %s splits!", z->name().c_str());
@@ -175,14 +175,14 @@ void mdeath::blobsplit(Game* g, monster* z)
     }
 }
 
-void mdeath::melt(Game* g, monster* z)
+void mdeath::melt(Game* g, Monster* z)
 {
     int j;
     if (g->u_see(z, j))
         g->add_msg("The %s melts away!", z->name().c_str());
 }
 
-void mdeath::explode(Game* g, monster* z)
+void mdeath::explode(Game* g, Monster* z)
 {
     int size;
     switch (z->type->size) {

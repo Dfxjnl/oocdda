@@ -35,8 +35,9 @@ map::map()
     nultrap = tr_null;
 }
 
-map::map(std::vector<itype*>* itptr, std::vector<itype_id> (*miptr)[num_itloc],
-    std::vector<trap*>* trptr)
+map::map(std::vector<itype*>* itptr,
+         std::vector<itype_id> (*miptr)[num_itloc],
+         std::vector<trap*>* trptr)
 {
     nulter = t_null;
     nultrap = tr_null;
@@ -885,7 +886,7 @@ void map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
     // Open appropriate file.
     char buff[32];
     sprintf(buff, "save/m.%d.%d.%d", om->posx * OMAPX * 2 + worldx + gridx,
-        om->posy * OMAPY * 2 + worldy + gridy, om->posz);
+            om->posy * OMAPY * 2 + worldy + gridy, om->posz);
     std::ofstream fout;
     fout.open(buff);
 
@@ -967,7 +968,7 @@ bool map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
     std::string databuff;
 
     sprintf(fname, "save/m.%d.%d.%d", g->cur_om.posx * OMAPX * 2 + worldx + gridx,
-        g->cur_om.posy * OMAPY * 2 + worldy + gridy, g->cur_om.posz);
+            g->cur_om.posy * OMAPY * 2 + worldy + gridy, g->cur_om.posz);
     mapin.open(fname);
     if (mapin.is_open()) {
         // Load turn number
@@ -1062,10 +1063,10 @@ void map::spawn_monsters(Game* g)
                 for (int j = 0; j < grid[n].spawns[i].count; j++) {
                     int tries = 0;
                     int mx = grid[n].spawns[i].posx, my = grid[n].spawns[i].posy;
-                    monster tmp(g->mtypes[grid[n].spawns[i].type]);
+                    Monster tmp(g->mtypes[grid[n].spawns[i].type]);
                     while (tries < 10
-                        && (g->mon_at(mx + gx * SEEX, my + gy * SEEY) != -1
-                            || !tmp.can_move_to(g->m, mx + gx * SEEX, my + gy * SEEY))) {
+                           && (g->mon_at(mx + gx * SEEX, my + gy * SEEY) != -1
+                               || !tmp.can_move_to(g->m, mx + gx * SEEX, my + gy * SEEY))) {
                         mx = grid[n].spawns[i].posx + rng(-3, 3);
                         my = grid[n].spawns[i].posy + rng(-3, 3);
                         tries++;

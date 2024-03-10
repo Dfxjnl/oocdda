@@ -16,12 +16,12 @@ class Game;
 class map;
 class player;
 
-class monster {
+class Monster {
 public:
-    monster();
-    monster(MonsterType* t);
-    monster(MonsterType* t, int x, int y);
-    ~monster();
+    Monster();
+    Monster(MonsterType* t);
+    Monster(MonsterType* t, int x, int y);
+
     void poly(MonsterType* t);
     void spawn(int x, int y); // All this does is moves the monster to x,y
 

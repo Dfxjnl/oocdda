@@ -143,8 +143,13 @@ void map::generate(Game* g, overmap* om, int x, int y, int turn)
     }
 }
 
-void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_id t_south,
-    oter_id t_west, oter_id t_above, int turn)
+void map::draw_map(oter_id terrain_type,
+                   oter_id t_north,
+                   oter_id t_east,
+                   oter_id t_south,
+                   oter_id t_west,
+                   oter_id t_above,
+                   int turn)
 {
     // Big old switch statement with a case for each overmap terrain type.
     // Many of these can be copied from another type, then rotated; for instance,
@@ -478,7 +483,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     if (terrain_type == ot_hive)
                         place_items(mi_hive, 80, i - 2, j - 2, i + 2, j + 2, false, turn);
                     else if (terrain_type == ot_hive_center && t_north == ot_hive
-                        && t_east == ot_hive && t_south == ot_hive && t_west == ot_hive)
+                             && t_east == ot_hive && t_south == ot_hive && t_west == ot_hive)
                         place_items(mi_hive_center, 90, i - 2, j - 2, i + 2, j + 2, false, turn);
                 }
             }
@@ -1014,7 +1019,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     && ((i > 1 && i < 8) || (i > 14 && i < SEEX * 2 - 2)))
                     ter(i, j) = t_pavement_y;
                 else if ((j < 2 && i > 7 && i < 17)
-                    || (j >= 2 && j < SEEY * 2 - 2 && i > 1 && i < SEEX * 2 - 2))
+                         || (j >= 2 && j < SEEY * 2 - 2 && i > 1 && i < SEEX * 2 - 2))
                     ter(i, j) = t_pavement;
                 else
                     ter(i, j) = grass_or_dirt();
@@ -1042,10 +1047,11 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if (j == 12 && (i == 7 || i == 8 || i == 15 || i == 16))
                     ter(i, j) = t_window;
                 else if (((j == 12 || j == SEEY * 2 - 3) && i > 3 && i < SEEX * 2 - 4)
-                    || (j == 18 && (i > 8 && i < SEEX * 2 - 5)))
+                         || (j == 18 && (i > 8 && i < SEEX * 2 - 5)))
                     ter(i, j) = t_wall_h;
                 else if (((i == 4 || i == SEEX * 2 - 5) && j > 12 && j < SEEY * 2 - 3)
-                    || (i == 15 && (j == 19 || j == SEEY * 2 - 4)) || (i == 9 && j == SEEY * 2 - 4))
+                         || (i == 15 && (j == 19 || j == SEEY * 2 - 4))
+                         || (i == 9 && j == SEEY * 2 - 4))
                     ter(i, j) = t_wall_v;
                 else if ((i == 17 && j == 18) || (i == 9 && j == 19))
                     ter(i, j) = t_door_c;
@@ -1098,18 +1104,18 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if ((j == 3 && (i == 11 || i == 12)) || (i == 13 && j == 18))
                     ter(i, j) = t_door_c;
                 else if (((j == 3 || j == SEEY * 2 - 4) && i > 2 && i < SEEX * 2 - 3)
-                    || (j == 17 && i > 12 && i < SEEX * 2 - 4))
+                         || (j == 17 && i > 12 && i < SEEX * 2 - 4))
                     ter(i, j) = t_wall_h;
                 else if (((i == 3 || i == SEEX * 2 - 4) && j > 3 && j < SEEY * 2 - 4)
-                    || (i == 13 && j == 19))
+                         || (i == 13 && j == 19))
                     ter(i, j) = t_wall_v;
                 else if (((i == 11 || i == 12 || i == 16 || i == 17) && j > 6 && j < 14)
-                    || (j == 19 && i > 4 && i < 12))
+                         || (j == 19 && i > 4 && i < 12))
                     ter(i, j) = t_rack;
                 else if ((i == 4 && j > 11 && j < 15) || (j == 16 && i > 14 && i < SEEX * 2 - 4))
                     ter(i, j) = t_fridge;
                 else if ((j == 17 && i > 4 && i < 13) || (j == 9 && i > 4 && i < 9)
-                    || (i == 8 && j > 3 && j < 10))
+                         || (i == 8 && j > 3 && j < 10))
                     ter(i, j) = t_counter;
                 else if (i > 3 && i < SEEX * 2 - 4 && j > 3 && j < SEEY * 2 - 4)
                     ter(i, j) = t_floor;
@@ -1159,10 +1165,10 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if ((j == 2 && (i == 11 || i == 12)) || (i == 6 && j == 20))
                     ter(i, j) = t_door_c;
                 else if (((j == 2 || j == SEEY * 2 - 3) && i > 1 && i < SEEX * 2 - 2)
-                    || (j == 18 && i > 2 && i < 7))
+                         || (j == 18 && i > 2 && i < 7))
                     ter(i, j) = t_wall_h;
                 else if (((i == 2 || i == SEEX * 2 - 3) && j > 2 && j < SEEY * 2 - 3)
-                    || (i == 6 && j == 19))
+                         || (i == 6 && j == 19))
                     ter(i, j) = t_wall_v;
                 else if (j > 4 && j < 8) {
                     if (i == 5 || i == 9 || i == 13 || i == 17)
@@ -1174,15 +1180,15 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     else
                         ter(i, j) = grass_or_dirt();
                 } else if ((j == 7 && (i == 3 || i == 4))
-                    || ((j == 11 || j == 14) && (i == 18 || i == 19))
-                    || ((j > 9 && j < 16)
-                        && (i == 6 || i == 7 || i == 10 || i == 11 || i == 14 || i == 15
-                            || i == 20)))
+                           || ((j == 11 || j == 14) && (i == 18 || i == 19))
+                           || ((j > 9 && j < 16)
+                               && (i == 6 || i == 7 || i == 10 || i == 11 || i == 14 || i == 15
+                                   || i == 20)))
                     ter(i, j) = t_rack;
                 else if ((j == 18 && i > 15 && i < 21) || (j == 19 && i == 16))
                     ter(i, j) = t_counter;
                 else if ((i == 3 && j > 9 && j < 16)
-                    || (j == 20 && ((i > 7 && i < 15) || (i > 18 && i < 21))))
+                         || (j == 20 && ((i > 7 && i < 15) || (i > 18 && i < 21))))
                     ter(i, j) = t_fridge;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 2 && j < SEEY * 2 - 3)
                     ter(i, j) = t_floor;
@@ -1228,22 +1234,22 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 if (j == 3 && ((i > 5 && i < 9) || (i > 14 && i < 18)))
                     ter(i, j) = t_window;
                 else if ((j == 3 && i > 1 && i < SEEX * 2 - 2) || (j == 15 && i > 1 && i < 14)
-                    || (j == SEEY * 2 - 3 && i > 12 && i < SEEX * 2 - 2))
+                         || (j == SEEY * 2 - 3 && i > 12 && i < SEEX * 2 - 2))
                     ter(i, j) = t_wall_h;
                 else if ((i == 2 && j > 3 && j < 15)
-                    || (i == SEEX * 2 - 3 && j > 3 && j < SEEY * 2 - 3)
-                    || (i == 13 && j > 15 && j < SEEY * 2 - 3))
+                         || (i == SEEX * 2 - 3 && j > 3 && j < SEEY * 2 - 3)
+                         || (i == 13 && j > 15 && j < SEEY * 2 - 3))
                     ter(i, j) = t_wall_v;
                 else if ((i > 3 && i < 10 && j == 6) || (i == 9 && j > 3 && j < 7))
                     ter(i, j) = t_counter;
                 else if (((i == 3 || i == 6 || i == 7 || i == 10 || i == 11) && j > 8 && j < 15)
-                    || (i == SEEX * 2 - 4 && j > 3 && j < SEEX * 2 - 4)
-                    || (i > 14 && i < 18 && (j == 8 || j == 9 || j == 12 || j == 13))
-                    || (j == SEEY * 2 - 4 && i > 13 && i < SEEX * 2 - 4)
-                    || (i > 15 && i < 18 && j > 15 && j < 18) || (i == 9 && j == 7))
+                         || (i == SEEX * 2 - 4 && j > 3 && j < SEEX * 2 - 4)
+                         || (i > 14 && i < 18 && (j == 8 || j == 9 || j == 12 || j == 13))
+                         || (j == SEEY * 2 - 4 && i > 13 && i < SEEX * 2 - 4)
+                         || (i > 15 && i < 18 && j > 15 && j < 18) || (i == 9 && j == 7))
                     ter(i, j) = t_rack;
                 else if ((i > 2 && i < SEEX * 2 - 3 && j > 3 && j < 15)
-                    || (i > 13 && i < SEEX * 2 - 3 && j > 14 && j < SEEY * 2 - 3))
+                         || (i > 13 && i < SEEX * 2 - 3 && j > 14 && j < SEEY * 2 - 3))
                     ter(i, j) = t_floor;
                 else if (rn == 2 && i > 1 && i < 13 && j > 15 && j < SEEY * 2 - 3)
                     ter(i, j) = t_pavement;
@@ -1348,7 +1354,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if ((i == lw || i == rw) && j > tw && j < bw)
                     ter(i, j) = t_wall_v;
                 else if ((j == cw - 1 && i > lw && i < rw - 4)
-                    || (j < cw - 3 && j > tw && (i == lw + 1 || i == rw - 1)))
+                         || (j < cw - 3 && j > tw && (i == lw + 1 || i == rw - 1)))
                     ter(i, j) = t_rack;
                 else if (j == cw - 3 && i > lw && i < rw - 4)
                     ter(i, j) = t_counter;
@@ -1409,21 +1415,21 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 if (j == 2 && (i == 5 || i == 18))
                     ter(i, j) = t_window;
                 else if (((j == 2 || j == 12) && i > 2 && i < SEEX * 2 - 3)
-                    || (j == 9 && i > 3 && i < 8))
+                         || (j == 9 && i > 3 && i < 8))
                     ter(i, j) = t_wall_h;
                 else if (((i == 3 || i == SEEX * 2 - 4) && j > 2 && j < 12)
-                    || (i == 7 && j > 9 && j < 12))
+                         || (i == 7 && j > 9 && j < 12))
                     ter(i, j) = t_wall_v;
                 else if ((i == 19 && j > 6 && j < 12) || (j == 11 && i > 16 && i < 19))
                     ter(i, j) = t_fridge;
                 else if (((i == 4 || i == 7 || i == 8) && j > 2 && j < 8)
-                    || (j == 3 && i > 8 && i < 12) || (i > 10 && i < 13 && j > 4 && j < 7)
-                    || (i > 10 && i < 16 && j > 7 && j < 10))
+                         || (j == 3 && i > 8 && i < 12) || (i > 10 && i < 13 && j > 4 && j < 7)
+                         || (i > 10 && i < 16 && j > 7 && j < 10))
                     ter(i, j) = t_rack;
                 else if ((i == 16 && j > 2 && j < 6) || (j == 5 && i > 16 && i < 19))
                     ter(i, j) = t_counter;
                 else if ((i > 4 && i < 8 && j > 12 && j < 15)
-                    || (i > 17 && i < 20 && j > 14 && j < 18))
+                         || (i > 17 && i < 20 && j > 14 && j < 18))
                     ter(i, j) = t_dumpster;
                 else if (i > 2 && i < SEEX * 2 - 3) {
                     if (j > 2 && j < 12)
@@ -1468,7 +1474,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 if ((i == 2 || i == SEEX * 2 - 3) && j > 6 && j < SEEY * 2 - 1)
                     ter(i, j) = t_wall_v;
                 else if ((i == 8 && j > 6 && j < 13)
-                    || (j == 16 && (i == 5 || i == 8 || i == 11 || i == 14 || i == 17)))
+                         || (j == 16 && (i == 5 || i == 8 || i == 11 || i == 14 || i == 17)))
                     ter(i, j) = t_counter;
                 else if ((j == 6 && ((i > 4 && i < 8) || (i > 15 && i < 19))))
                     ter(i, j) = t_window;
@@ -1477,16 +1483,16 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if (j == 16 && i == SEEX * 2 - 4)
                     ter(i, j) = t_door_c;
                 else if (((j == 6 || j == SEEY * 2 - 1) && i > 1 && i < SEEX * 2 - 2)
-                    || ((j == 16 || j == 14) && i > 2 && i < SEEX * 2 - 3))
+                         || ((j == 16 || j == 14) && i > 2 && i < SEEX * 2 - 3))
                     ter(i, j) = t_wall_h;
                 else if (((i == 3 || i == SEEX * 2 - 4) && j > 6 && j < 14)
-                    || ((j > 8 && j < 12) && (i == 12 || i == 13 || i == 16))
-                    || (j == 13 && i > 15 && i < SEEX * 2 - 4))
+                         || ((j > 8 && j < 12) && (i == 12 || i == 13 || i == 16))
+                         || (j == 13 && i > 15 && i < SEEX * 2 - 4))
                     ter(i, j) = t_rack;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 6 && j < SEEY * 2 - 1)
                     ter(i, j) = t_floor;
                 else if ((j > 0 && j < 6
-                             && (i == 2 || i == 6 || i == 10 || i == 17 || i == SEEX * 2 - 3)))
+                          && (i == 2 || i == 6 || i == 10 || i == 17 || i == SEEX * 2 - 3)))
                     ter(i, j) = t_pavement_y;
                 else if (j < 6 && i > 1 && i < SEEX * 2 - 2)
                     ter(i, j) = t_pavement;
@@ -1523,21 +1529,21 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if (j == 2 && i > 3 && i < SEEX * 2 - 4)
                     ter(i, j) = t_wall_glass_h;
                 else if (((j == 2 || j == SEEY * 2 - 2) && i > 1 && i < SEEX * 2 - 2)
-                    || (j == 4 && i > 12 && i < SEEX * 2 - 3) || (j == 17 && i > 2 && i < 12)
-                    || (j == 20 && i > 2 && i < 11))
+                         || (j == 4 && i > 12 && i < SEEX * 2 - 3) || (j == 17 && i > 2 && i < 12)
+                         || (j == 20 && i > 2 && i < 11))
                     ter(i, j) = t_wall_h;
                 else if (((i == 2 || i == SEEX * 2 - 3) && j > 1 && j < SEEY * 2 - 1)
-                    || (i == 11 && (j == 18 || j == 20 || j == 21))
-                    || (j == 21 && (i == 5 || i == 8)))
+                         || (i == 11 && (j == 18 || j == 20 || j == 21))
+                         || (j == 21 && (i == 5 || i == 8)))
                     ter(i, j) = t_wall_v;
                 else if ((i == 16 && j > 4 && j < 9) || (j == 8 && (i == 17 || i == 18))
-                    || (j == 18 && i > 2 && i < 11))
+                         || (j == 18 && i > 2 && i < 11))
                     ter(i, j) = t_counter;
                 else if ((i == 3 && j > 4 && j < 13) || (i == SEEX * 2 - 4 && j > 9 && j < 20)
-                    || ((j == 10 || j == 11) && i > 6 && i < 13)
-                    || ((j == 14 || j == 15) && i > 4 && i < 13)
-                    || ((i == 15 || i == 16) && j > 10 && j < 18)
-                    || (j == SEEY * 2 - 3 && i > 11 && i < 18))
+                         || ((j == 10 || j == 11) && i > 6 && i < 13)
+                         || ((j == 14 || j == 15) && i > 4 && i < 13)
+                         || ((i == 15 || i == 16) && j > 10 && j < 18)
+                         || (j == SEEY * 2 - 3 && i > 11 && i < 18))
                     ter(i, j) = t_rack;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 2 && j < SEEY * 2 - 2)
                     ter(i, j) = t_floor;
@@ -1625,8 +1631,9 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     else
                         ter(i, j) = grass_or_dirt();
                 } else if (((j == 4 || j == 5) && i > 2 && i < 10)
-                    || ((j == 8 || j == 9 || j == 12 || j == 13 || j == 16) && i > 2 && i < 16)
-                    || (i == 20 && j > 7 && j < 17))
+                           || ((j == 8 || j == 9 || j == 12 || j == 13 || j == 16) && i > 2
+                               && i < 16)
+                           || (i == 20 && j > 7 && j < 17))
                     ter(i, j) = t_bookcase;
                 else if ((i == 14 && j < 6 && j > 2) || (j == 5 && i > 14 && i < 19))
                     ter(i, j) = t_counter;
@@ -1718,7 +1725,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                         else
                             ter(i, j) = t_wall_v;
                     } else if ((j == 0 && t_north >= ot_lab && t_north <= ot_lab_core)
-                        || j == SEEY * 2 - 1) {
+                               || j == SEEY * 2 - 1) {
                         if (ter(i, j) == t_sewage)
                             ter(i, j) = t_bars;
                         else if (i == SEEX - 1 || i == SEEX)
@@ -1742,7 +1749,8 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                             || ((j < SEEY - 1 || j > SEEY) && (i == SEEX - 2 || i == SEEX + 1)))
                             ter(i, j) = t_wall_v;
                         else if ((j < tw || j > SEEY * 2 - 1 - bw)
-                            || ((i < SEEX - 1 || i > SEEX) && (j == SEEY - 2 || j == SEEY + 1)))
+                                 || ((i < SEEX - 1 || i > SEEX)
+                                     && (j == SEEY - 2 || j == SEEY + 1)))
                             ter(i, j) = t_wall_h;
                         else
                             ter(i, j) = t_floor;
@@ -1866,8 +1874,8 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 science_room(this, SEEX + 4, SEEY - 3, SEEX * 2 - 1 - rw, SEEY + 2, 3);
                 science_room(this, lw, SEEY + 4, SEEX - 5, SEEY * 2 - 1 - bw, rng(0, 1));
                 science_room(this, SEEX - 3, SEEY + 4, SEEX + 2, SEEY * 2 - 1 - bw, 0);
-                science_room(
-                    this, SEEX + 4, SEEX + 4, SEEX * 2 - 1 - rw, SEEY * 2 - 1 - bw, 3 * rng(0, 1));
+                science_room(this, SEEX + 4, SEEX + 4, SEEX * 2 - 1 - rw, SEEY * 2 - 1 - bw,
+                             3 * rng(0, 1));
                 if (rw == 1) {
                     ter(SEEX * 2 - 1, SEEY - 1) = t_door_metal_c;
                     ter(SEEX * 2 - 1, SEEY) = t_door_metal_c;
@@ -2220,7 +2228,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
                 if (((j == 3 || j == SEEY * 2 - 4)
-                        && ((i > 2 && i < 10) || (i > 13 && i < SEEX * 2 - 3)))
+                     && ((i > 2 && i < 10) || (i > 13 && i < SEEX * 2 - 3)))
                     || ((i == 3 || i == SEEX * 2 - 4)
                         && ((j > 2 && j < 10) || (j > 13 && j < SEEY * 2 - 3))))
                     ter(i, j) = t_counter;
@@ -2300,14 +2308,14 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     else
                         ter(i, j) = t_wall_h;
                 } else if ((i == 4 && j > 8 && j < 16) || (i == SEEX * 2 - 5 && j > 1 && j < 16)
-                    || (i == 16 && j > 1 && j < 14))
+                           || (i == 16 && j > 1 && j < 14))
                     ter(i, j) = t_wall_v;
                 else if ((j == 9 && i > 4 && i < 16) || (i == 15 && j > 9 && j < 13))
                     ter(i, j) = t_rack;
                 else if (j == 13 && (i == 17 || i == 18))
                     ter(i, j) = t_counter;
                 else if ((j > 8 && j < 16 && i > 4 && i < 16)
-                    || (j > 1 && j < 16 && i > 16 && i < 19))
+                         || (j > 1 && j < 16 && i > 16 && i < 19))
                     ter(i, j) = t_floor;
                 else
                     ter(i, j) = grass_or_dirt();
@@ -2331,7 +2339,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if (((i == 5 || i == SEEX * 2 - 6) && j > 6 && j < 17) || (i == 10 && j == 8))
                     ter(i, j) = t_wall_v;
                 else if ((j == 10 || j == 12 || j == 14)
-                    && (i == 6 || i == 7 || i == 16 || i == 17))
+                         && (i == 6 || i == 7 || i == 16 || i == 17))
                     ter(i, j) = t_bed;
                 else if (j == 7 && i > 13 && i < SEEX * 2 - 6)
                     ter(i, j) = t_counter;
@@ -2410,7 +2418,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if (j == 5 && i > 11 && i < SEEX * 2 - 3)
                     ter(i, j) = t_fridge;
                 else if (((i == 4 || i == 5 || i == 8 || i == 9) && j > 5 && j < 11)
-                    || ((i == 13 || i == 14 || i == 17 || i == 18) && j > 7 && j < 15))
+                         || ((i == 13 || i == 14 || i == 17 || i == 18) && j > 7 && j < 15))
                     ter(i, j) = t_rack;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 4 && j < 17)
                     ter(i, j) = t_floor;
@@ -2441,17 +2449,17 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if (j == SEEY - 3 && i > 9 && i < 14)
                     ter(i, j) = t_door_c;
                 else if (((j == 2 || j == SEEY * 2 - 3) && i > 1 && i < SEEX * 2 - 2)
-                    || (j == tw && i > 2 && i < SEEX * 2 - 3))
+                         || (j == tw && i > 2 && i < SEEX * 2 - 3))
                     ter(i, j) = t_wall_h;
                 else if (((i == 2 || i == SEEY * 2 - 3) && j > 2 && j < SEEY * 2 - 3)
-                    || (i == 13 && j > 2 && j < 6) || ((i == 7 || i == 12) && j > 8 && j < 17))
+                         || (i == 13 && j > 2 && j < 6) || ((i == 7 || i == 12) && j > 8 && j < 17))
                     ter(i, j) = t_wall_v;
                 else if (((i == 3 | i == 6 || i == 8 || i == 11 || i == 13) && j > 8 && j < 17)
-                    || (j == 7 && i > 4 && i < 14))
+                         || (j == 7 && i > 4 && i < 14))
                     ter(i, j) = t_slot_machine;
                 else if (((j == 9 || j == 11 || j == 13 || j == 15) && i < SEEX * 2 - 3
-                             && i > SEEX * 2 - 6)
-                    || (i == SEEX * 2 - 5 && (j == 8 || j == 14)))
+                          && i > SEEX * 2 - 6)
+                         || (i == SEEX * 2 - 5 && (j == 8 || j == 14)))
                     ter(i, j) = t_counter;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 2 && j < SEEY * 2 - 3)
                     ter(i, j) = t_floor;
@@ -2474,7 +2482,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                 else if ((i == 2 || i == SEEX * 2 - 3) && j > 2 && j < SEEY * 2 - 3)
                     ter(i, j) = t_wall_v;
                 else if (j > 2 && j < 17 && (j % 3 == 1 || j % 3 == 2) && i > 2 && i < SEEX * 2 - 3
-                    && (i < 10 || i > 12))
+                         && (i < 10 || i > 12))
                     ter(i, j) = t_bookcase;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 2 && j < SEEY * 2 - 3)
                     ter(i, j) = t_floor;
@@ -2526,8 +2534,8 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     || ((i == 10 || i == 13) && j > 0 && j < 18))
                     ter(i, j) = t_wall_v;
                 else if (((j == 0 || j == SEEY * 2 - 2) && i > 0 && i < SEEX * 2 - 1)
-                    || ((j == 6 || j == 12 || j == 18) && i > 1 && i < SEEX * 2 - 2 && i != 11
-                        && i != 12))
+                         || ((j == 6 || j == 12 || j == 18) && i > 1 && i < SEEX * 2 - 2 && i != 11
+                             && i != 12))
                     ter(i, j) = t_wall_h;
             }
         }
@@ -2867,7 +2875,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
                 if ((j < n_fac * SEEX || i < w_fac * SEEX && !one_in(10)
-                        || j > SEEY * 2 - s_fac * SEEY || i > SEEX * 2 - e_fac * SEEX))
+                     || j > SEEY * 2 - s_fac * SEEY || i > SEEX * 2 - e_fac * SEEX))
                     ter(i, j) = (!one_in(10) ? t_slime : t_rock_floor);
                 else if (rng(0, SEEX) > abs(i - SEEX) && rng(0, SEEY) > abs(j - SEEY))
                     ter(i, j) = t_slime;
@@ -3406,11 +3414,11 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
         n_fac
             = (t_north == ot_cavern || t_north == ot_subway_ns || t_north == ot_subway_ew ? 0 : 3);
         e_fac = (t_east == ot_cavern || t_east == ot_subway_ns || t_east == ot_subway_ew
-                ? SEEX * 2 - 1
-                : SEEX * 2 - 4);
+                     ? SEEX * 2 - 1
+                     : SEEX * 2 - 4);
         s_fac = (t_south == ot_cavern || t_south == ot_subway_ns || t_south == ot_subway_ew
-                ? SEEY * 2 - 1
-                : SEEY * 2 - 4);
+                     ? SEEY * 2 - 1
+                     : SEEY * 2 - 4);
         w_fac = (t_west == ot_cavern || t_west == ot_subway_ns || t_west == ot_subway_ew ? 0 : 3);
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
@@ -3476,7 +3484,7 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
 
     default:
         debugmsg("Error: tried to generate map for omtype %d, \"%s\"", terrain_type,
-            oterlist[terrain_type].name.c_str());
+                 oterlist[terrain_type].name.c_str());
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++)
                 ter(i, j) = t_floor;
@@ -3620,7 +3628,7 @@ void map::place_items(
             selection++;
             if (selection >= eligible.size())
                 debugmsg("OOB selection (%d of %d); randnum is %d, item_chance %d", selection,
-                    eligible.size(), randnum, item_chance);
+                         eligible.size(), randnum, item_chance);
             randnum -= (*itypes)[eligible[selection]]->rarity;
         }
         do {
@@ -3628,8 +3636,8 @@ void map::place_items(
             py = rng(y1, y2);
             // Only place on valid terrain
         } while ((terlist[ter(px, py)].movecost == 0
-                     && !(terlist[ter(px, py)].flags & flag_to_bit_position(container)))
-            || (!ongrass && (ter(px, py) == t_dirt || ter(px, py) == t_grass)));
+                  && !(terlist[ter(px, py)].flags & flag_to_bit_position(container)))
+                 || (!ongrass && (ter(px, py) == t_dirt || ter(px, py) == t_grass)));
         add_item(px, py, (*itypes)[eligible[selection]], turn);
         // Guns in the home and behind counters are generated with their ammo
         // TODO: Make this less of a hack
@@ -4054,7 +4062,7 @@ void science_room(map* m, int x1, int y1, int x2, int y2, int rotate)
         m->ter(int((x1 + x2) / 2) + 1, int((y1 + y2) / 2) + 1) = t_counter;
         m->add_trap(trapx, trapy, tr_telepad);
         m->place_items(mi_teleport, 70, int((x1 + x2) / 2), int((y1 + y2) / 2),
-            int((x1 + x2) / 2) + 1, int((y1 + y2) / 2) + 1, false, 0);
+                       int((x1 + x2) / 2) + 1, int((y1 + y2) / 2) + 1, false, 0);
         break;
     case room_goo:
         do {

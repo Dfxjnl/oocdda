@@ -380,8 +380,8 @@ bool query_yn(const char* mes, ...)
     va_end(ap);
     int win_width = strlen(buff) + 10;
     WINDOW* w = newwin(3, win_width, 11, 0);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     mvwprintz(w, 1, 1, c_ltred, "%s (Y/N)", buff);
     wrefresh(w);
     char ch;
@@ -407,8 +407,8 @@ std::string string_input_popup(const char* mes, ...)
     va_end(ap);
     int startx = strlen(buff) + 2;
     WINDOW* w = newwin(3, 80, 11, 0);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     mvwprintz(w, 1, 1, c_ltred, "%s", buff);
     for (int i = startx + 1; i < 79; i++)
         mvwputch(w, 1, i, c_ltgray, '_');
@@ -457,8 +457,8 @@ int menu_vec(const char* mes, std::vector<std::string> options)
     }
     WINDOW* w = newwin(height, width, 6, 10);
     wattron(w, c_white);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     mvwprintw(w, 1, 1, title.c_str());
     for (int i = 0; i < options.size(); i++)
         mvwprintw(w, i + 2, 1, "%d: %s", i + 1, options[i].c_str());
@@ -513,8 +513,8 @@ void popup_top(const char* mes, ...)
         width = tmp.length();
     width += 2;
     WINDOW* w = newwin(height + 1, width, 0, int((80 - width) / 2));
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     tmp = buff;
     pos = tmp.find_first_of('\n');
     int line_num = 0;
@@ -563,8 +563,8 @@ void popup(const char* mes, ...)
     if (height > 25)
         height = 25;
     WINDOW* w = newwin(height + 1, width, int((25 - height) / 2), int((80 - width) / 2));
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     tmp = buff;
     pos = tmp.find_first_of('\n');
     int line_num = 0;
@@ -598,8 +598,8 @@ void full_screen_popup(const char* mes, ...)
     va_end(ap);
     std::string tmp = buff;
     WINDOW* w = newwin(25, 80, 0, 0);
-    wborder(
-        w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO, LINE_XOOX);
+    wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+            LINE_XOOX);
     size_t pos = tmp.find_first_of('\n');
     int line_num = 0;
     while (pos != std::string::npos) {

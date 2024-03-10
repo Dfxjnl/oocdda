@@ -197,7 +197,7 @@ bool faction::matches_us(faction_value v)
     facval_data[v].name.c_str());
     */
     if ((abs(facval_data[v].good - avggood) <= 3 || (avggood >= 5 && facval_data[v].good >= 1)
-            || (avggood <= -5 && facval_data[v].good <= 0))
+         || (avggood <= -5 && facval_data[v].good <= 0))
         && (abs(facval_data[v].strength - avgstrength) <= 5
             || (avgstrength >= 5 && facval_data[v].strength >= 3)
             || (avgstrength <= -5 && facval_data[v].strength <= -1))

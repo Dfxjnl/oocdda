@@ -628,7 +628,7 @@ int item::reload_time(player& u)
             break;
         default:
             debugmsg("Why is reloading %s using %s skill?", (reloading->name).c_str(),
-                skill_name(reloading->skill_used).c_str());
+                     skill_name(reloading->skill_used).c_str());
         }
         if (ret <= 0)
             debugmsg("Reloading %s takes %d moves!", (reloading->name).c_str(), ret);
@@ -794,7 +794,7 @@ Choose ammo type:         Damage     Armor Pierce     Range     Accuracy");
                 ammo_type = dynamic_cast<it_ammo*>(u.inv[am[i]].type);
                 mvwaddch(w_ammo, i + 1, 1, i + 'a');
                 mvwprintw(w_ammo, i + 1, 3, "%s (%d)", u.inv[am[i]].tname().c_str(),
-                    u.inv[am[i]].charges);
+                          u.inv[am[i]].charges);
                 mvwprintw(w_ammo, i + 1, 27, "%d", ammo_type->damage);
                 mvwprintw(w_ammo, i + 1, 38, "%d", ammo_type->pierce);
                 mvwprintw(w_ammo, i + 1, 55, "%d", ammo_type->range);

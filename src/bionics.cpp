@@ -104,7 +104,7 @@ void player::activate_bionic(int b, Game* g)
     case bio_blood_anal:
         w = newwin(20, 40, 3, 10);
         wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
-            LINE_XOOX);
+                LINE_XOOX);
         if (has_disease(DI_FUNGUS))
             bad.push_back("Fungal Parasite");
         if (has_disease(DI_POISON))
@@ -306,7 +306,7 @@ void player::activate_bionic(int b, Game* g)
                                 l = traj.size() + 1;
                             } else if (l > 0 && g->m.move_cost(traj[l].x, traj[l].y) == 0) {
                                 g->m.bash(traj[l].x, traj[l].y,
-                                    tmp_item.weight() * tmp_item.volume(), junk);
+                                          tmp_item.weight() * tmp_item.volume(), junk);
                                 g->sound(traj[l].x, traj[l].y, 12, junk);
                                 if (g->m.move_cost(traj[l].x, traj[l].y) == 0) {
                                     g->m.add_item(traj[l - 1].x, traj[l - 1].y, tmp_item);

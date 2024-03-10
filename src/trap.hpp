@@ -55,23 +55,23 @@ struct trapfunc {
 };
 
 struct trapfuncm {
-    void none(Game* g, monster* z, int x, int y) {};
-    void bubble(Game* g, monster* z, int x, int y);
-    void beartrap(Game* g, monster* z, int x, int y);
-    void board(Game* g, monster* z, int x, int y);
-    void tripwire(Game* g, monster* z, int x, int y);
-    void crossbow(Game* g, monster* z, int x, int y);
-    void shotgun(Game* g, monster* z, int x, int y);
-    void blade(Game* g, monster* z, int x, int y);
-    void snare(Game* g, monster* z, int x, int y) {};
-    void landmine(Game* g, monster* z, int x, int y);
-    void telepad(Game* g, monster* z, int x, int y);
-    void goo(Game* g, monster* z, int x, int y);
-    void dissector(Game* g, monster* z, int x, int y);
-    void sinkhole(Game* g, monster* z, int x, int y) {};
-    void pit(Game* g, monster* z, int x, int y);
-    void pit_spikes(Game* g, monster* z, int x, int y);
-    void portal(Game* g, monster* z, int x, int y) {};
+    void none(Game* g, Monster* z, int x, int y) {};
+    void bubble(Game* g, Monster* z, int x, int y);
+    void beartrap(Game* g, Monster* z, int x, int y);
+    void board(Game* g, Monster* z, int x, int y);
+    void tripwire(Game* g, Monster* z, int x, int y);
+    void crossbow(Game* g, Monster* z, int x, int y);
+    void shotgun(Game* g, Monster* z, int x, int y);
+    void blade(Game* g, Monster* z, int x, int y);
+    void snare(Game* g, Monster* z, int x, int y) {};
+    void landmine(Game* g, Monster* z, int x, int y);
+    void telepad(Game* g, Monster* z, int x, int y);
+    void goo(Game* g, Monster* z, int x, int y);
+    void dissector(Game* g, Monster* z, int x, int y);
+    void sinkhole(Game* g, Monster* z, int x, int y) {};
+    void pit(Game* g, Monster* z, int x, int y);
+    void pit_spikes(Game* g, Monster* z, int x, int y);
+    void portal(Game* g, Monster* z, int x, int y) {};
 };
 
 struct trap {
@@ -88,11 +88,18 @@ struct trap {
     // You stepped on it
     void (trapfunc::*act)(Game*, int x, int y);
     // Monster stepped on it
-    void (trapfuncm::*actm)(Game*, monster*, int x, int y);
+    void (trapfuncm::*actm)(Game*, Monster*, int x, int y);
 
-    trap(int pid, char psym, nc_color pcolor, std::string pname, int pvisibility, int pavoidance,
-        int pdifficulty, void (trapfunc::*pact)(Game*, int x, int y),
-        void (trapfuncm::*pactm)(Game*, monster*, int x, int y), ...)
+    trap(int pid,
+         char psym,
+         nc_color pcolor,
+         std::string pname,
+         int pvisibility,
+         int pavoidance,
+         int pdifficulty,
+         void (trapfunc::*pact)(Game*, int x, int y),
+         void (trapfuncm::*pactm)(Game*, Monster*, int x, int y),
+         ...)
     {
         id = pid;
         sym = psym;

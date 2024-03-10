@@ -492,9 +492,9 @@ int set_traits(WINDOW* w, player* u, int& points)
             traitmax = PF_SPLIT;
             mvwprintz(w, 3, 40, c_ltgray, "                                       ");
             mvwprintz(w, 3, 40, c_ltgreen, "%s costs %d points", traits[cur_adv].name.c_str(),
-                traits[cur_adv].points);
+                      traits[cur_adv].points);
             mvwprintz(w, 22, 0, (u->has_trait(cur_adv) ? c_green : c_ltgreen), "%s",
-                traits[cur_adv].description.c_str());
+                      traits[cur_adv].description.c_str());
         } else {
             col_on = c_red;
             col_off = c_ltred;
@@ -506,9 +506,9 @@ int set_traits(WINDOW* w, player* u, int& points)
             traitmax = PF_MAX;
             mvwprintz(w, 3, 40, c_ltgray, "                                       ");
             mvwprintz(w, 3, 40, c_ltred, "%s costs %d points", traits[cur_dis].name.c_str(),
-                traits[cur_dis].points);
+                      traits[cur_dis].points);
             mvwprintz(w, 22, 0, (u->has_trait(cur_dis) ? c_red : c_ltred), "%s",
-                traits[cur_dis].description.c_str());
+                      traits[cur_dis].description.c_str());
         }
         if (cur_trait <= traitmin + 7) {
             for (int i = traitmin; i < traitmin + 16; i++) {
@@ -656,10 +656,10 @@ int set_skills(WINDOW* w, player* u, int& points)
                                                                              ");
         if (points >= u->sklevel[cur_sk] + 1)
             mvwprintz(w, 3, 30, c_ltgreen, "Upgrading %s costs %d points         ",
-                skill_name(cur_sk).c_str(), u->sklevel[cur_sk] + 1);
+                      skill_name(cur_sk).c_str(), u->sklevel[cur_sk] + 1);
         else
             mvwprintz(w, 3, 30, c_ltred, "Upgrading %s costs %d points         ",
-                skill_name(cur_sk).c_str(), u->sklevel[cur_sk] + 1);
+                      skill_name(cur_sk).c_str(), u->sklevel[cur_sk] + 1);
         mvwprintz(w, 22, 0, c_ltgreen, skill_description(cur_sk).c_str());
 
         if (cur_sk <= 7) {
@@ -667,11 +667,11 @@ int set_skills(WINDOW* w, player* u, int& points)
                 mvwprintz(w, 4 + i, 0, c_ltgray, "\
                                              "); // Clear the line
                 if (u->sklevel[i] == 0) {
-                    mvwprintz(
-                        w, 4 + i, 0, (i == cur_sk ? h_ltgray : c_ltgray), skill_name(i).c_str());
+                    mvwprintz(w, 4 + i, 0, (i == cur_sk ? h_ltgray : c_ltgray),
+                              skill_name(i).c_str());
                 } else {
                     mvwprintz(w, 4 + i, 0, (i == cur_sk ? h_ltgreen : c_ltgreen), "%s ",
-                        skill_name(i).c_str());
+                              skill_name(i).c_str());
                     for (int j = 0; j < u->sklevel[i]; j++)
                         wprintz(w, (i == cur_sk ? h_ltgreen : c_ltgreen), "*");
                 }
@@ -682,10 +682,10 @@ int set_skills(WINDOW* w, player* u, int& points)
                                              "); // Clear the line
                 if (u->sklevel[i] == 0) {
                     mvwprintz(w, 21 + i - num_skill_types, 0, (i == cur_sk ? h_ltgray : c_ltgray),
-                        skill_name(i).c_str());
+                              skill_name(i).c_str());
                 } else {
                     mvwprintz(w, 21 + i - num_skill_types, 0, (i == cur_sk ? h_ltgreen : c_ltgreen),
-                        "%s ", skill_name(i).c_str());
+                              "%s ", skill_name(i).c_str());
                     for (int j = 0; j < u->sklevel[i]; j++)
                         wprintz(w, (i == cur_sk ? h_ltgreen : c_ltgreen), "*");
                 }
@@ -696,10 +696,10 @@ int set_skills(WINDOW* w, player* u, int& points)
                                              "); // Clear the line
                 if (u->sklevel[i] == 0) {
                     mvwprintz(w, 12 + i - cur_sk, 0, (i == cur_sk ? h_ltgray : c_ltgray),
-                        skill_name(i).c_str());
+                              skill_name(i).c_str());
                 } else {
                     mvwprintz(w, 12 + i - cur_sk, 0, (i == cur_sk ? h_ltgreen : c_ltgreen), "%s ",
-                        skill_name(i).c_str());
+                              skill_name(i).c_str());
                     for (int j = 0; j < u->sklevel[i]; j++)
                         wprintz(w, (i == cur_sk ? h_ltgreen : c_ltgreen), "*");
                 }
@@ -800,7 +800,7 @@ When your character is finished and you're ready to start playing, press '>'.");
             if (points > 0)
                 mvwprintz(w, 3, 2, c_red, "\
 Points left: %d    You must use the rest of your points!",
-                    points);
+                          points);
             else if (u->name.size() == 0) {
                 mvwprintz(w, 6, 8, h_ltgray, "______NO NAME ENTERED!!!!_____");
                 noname = true;
@@ -821,7 +821,7 @@ Points left: %d    You must use the rest of your points!",
                     line = 2;
                     mvwprintz(w, 6, 8 + u->name.size(), c_ltgray, "_");
                 } else if (((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == ' ')
-                    && u->name.size() < 30) {
+                           && u->name.size() < 30) {
                     u->name.push_back(ch);
                 }
                 break;

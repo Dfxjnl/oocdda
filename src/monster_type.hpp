@@ -149,8 +149,8 @@ struct MonsterType {
     int hp;
 
     unsigned char sp_freq;                       // How long sp_attack takes to charge
-    void (mdeath::*dies)(Game*, monster*);       // What happens when this monster dies
-    void (mattack::*sp_attack)(Game*, monster*); // This monster's special attack
+    void (mdeath::*dies)(Game*, Monster*);       // What happens when this monster dies
+    void (mattack::*sp_attack)(Game*, Monster*); // This monster's special attack
 
     // Default constructor
     MonsterType()
@@ -180,13 +180,29 @@ struct MonsterType {
         sp_attack = NULL;
     }
     // Non-default (messy)
-    MonsterType(int pid, std::string pname, char psym, nc_color pcolor, m_size psize, material pmat,
-        unsigned pflags, unsigned char pfreq, unsigned int pdiff, signed char pagro,
-        unsigned int pspeed, unsigned char pml_skill, unsigned char pml_dice,
-        unsigned char pml_sides, unsigned char pml_cut, unsigned char pdodge, unsigned char parmor,
-        unsigned char pitem_chance, int php, unsigned char psp_freq,
-        void (mdeath::*pdies)(Game*, monster*), void (mattack::*psp_attack)(Game*, monster*),
-        std::string pdescription)
+    MonsterType(int pid,
+                std::string pname,
+                char psym,
+                nc_color pcolor,
+                m_size psize,
+                material pmat,
+                unsigned pflags,
+                unsigned char pfreq,
+                unsigned int pdiff,
+                signed char pagro,
+                unsigned int pspeed,
+                unsigned char pml_skill,
+                unsigned char pml_dice,
+                unsigned char pml_sides,
+                unsigned char pml_cut,
+                unsigned char pdodge,
+                unsigned char parmor,
+                unsigned char pitem_chance,
+                int php,
+                unsigned char psp_freq,
+                void (mdeath::*pdies)(Game*, Monster*),
+                void (mattack::*psp_attack)(Game*, Monster*),
+                std::string pdescription)
     {
         id = pid;
         name = pname;

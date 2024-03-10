@@ -348,15 +348,15 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             } else {
                 mvprintw(0, 0, "%d   ", river_start_copy.size());
                 getch();
-                place_river(
-                    river_start_copy[rng(0, river_start_copy.size() - 1)], river_end[index]);
+                place_river(river_start_copy[rng(0, river_start_copy.size() - 1)],
+                            river_end[index]);
             }
             river_end.erase(river_end.begin() + index);
         }
     } else if (river_end.size() > 0) {
         if (river_start.size() != river_end.size())
             debugmsg("river_start.size() = %d; river_end.size() = %d; not equal??",
-                river_start.size(), river_end.size());
+                     river_start.size(), river_end.size());
         for (int i = 0; i < river_start.size(); i++)
             place_river(river_start[i], river_end[i]);
     }
@@ -386,14 +386,14 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             do
                 tmp = rng(10, OMAPY - 11);
             while (is_river(ter(OMAPX - 1, tmp)) || is_river(ter(OMAPX - 1, tmp - 1))
-                || is_river(ter(OMAPX - 1, tmp + 1)));
+                   || is_river(ter(OMAPX - 1, tmp + 1)));
             viable_roads.push_back(city(OMAPX - 1, tmp, 0));
         }
         if (south == NULL) {
             do
                 tmp = rng(10, OMAPX - 11);
             while (is_river(ter(tmp, OMAPY - 1)) || is_river(ter(tmp - 1, OMAPY - 1))
-                || is_river(ter(tmp + 1, OMAPY - 1)));
+                   || is_river(ter(tmp + 1, OMAPY - 1)));
             viable_roads.push_back(city(tmp, OMAPY - 1, 0));
         }
         if (west == NULL) {
@@ -457,7 +457,7 @@ void overmap::generate_sub(overmap* above)
             } else if (above->ter(i, j) == ot_forest_water)
                 ter(i, j) = ot_cavern;
             else if (above->ter(i, j) == ot_lab_core
-                || (posz == -1 && above->ter(i, j) == ot_lab_stairs))
+                     || (posz == -1 && above->ter(i, j) == ot_lab_stairs))
                 lab_points.push_back(city(i, j, rng(1, 5 + posz)));
             else if (above->ter(i, j) == ot_lab_stairs)
                 ter(i, j) = ot_lab;
@@ -477,10 +477,10 @@ void overmap::generate_sub(overmap* above)
     for (int i = 0; i < above->cities.size(); i++) {
         if (one_in(3))
             zg.push_back(mongroup(mcat_chud, above->cities[i].x * 2, above->cities[i].y * 2,
-                above->cities[i].s, above->cities[i].s * 20));
+                                  above->cities[i].s, above->cities[i].s * 20));
         if (!one_in(8))
             zg.push_back(mongroup(mcat_sewer, above->cities[i].x * 2, above->cities[i].y * 2,
-                above->cities[i].s * 3.5, above->cities[i].s * 70));
+                                  above->cities[i].s * 3.5, above->cities[i].s * 70));
     }
     place_rifts();
     polish(ot_subway_ns, ot_subway_nesw);
@@ -1115,7 +1115,7 @@ void overmap::build_lab(int x, int y, int s)
             for (int lx = x - i; lx <= x + i; lx++) {
                 for (int ly = y - i; ly <= y + i; ly++) {
                     if ((ter(lx - 1, ly) == ot_lab || ter(lx + 1, ly) == ot_lab
-                            || ter(lx, ly - 1) == ot_lab || ter(lx, ly + 1) == ot_lab)
+                         || ter(lx, ly - 1) == ot_lab || ter(lx, ly + 1) == ot_lab)
                         && one_in(i))
                         ter(lx, ly) = ot_lab;
                 }
@@ -1442,10 +1442,10 @@ void overmap::polish(oter_id min, oter_id max)
             // Sometimes a bridge will start at the edge of a river, and this looks ugly
             // So, fix it by making that square normal road; bit of a kludge but it works
             else if (ter(x, y) == ot_bridge_ns
-                && (!is_river(ter(x - 1, y)) || !is_river(ter(x + 1, y))))
+                     && (!is_river(ter(x - 1, y)) || !is_river(ter(x + 1, y))))
                 ter(x, y) = ot_road_ns;
             else if (ter(x, y) == ot_bridge_ew
-                && (!is_river(ter(x, y - 1)) || !is_river(ter(x, y + 1))))
+                     && (!is_river(ter(x, y - 1)) || !is_river(ter(x, y + 1))))
                 ter(x, y) = ot_road_ew;
         }
     }
@@ -1463,7 +1463,7 @@ void overmap::polish(oter_id min, oter_id max)
                     ter(x, y + 1) = ot_hiway_ns;
                     ter(x + 1, y + 1) = ot_hiway_ns;
                 } else if (ter(x, y) == ot_road_esw && ter(x + 1, y) == ot_road_esw
-                    && ter(x, y + 1) == ot_road_new && ter(x + 1, y + 1) == ot_road_new) {
+                           && ter(x, y + 1) == ot_road_new && ter(x + 1, y + 1) == ot_road_new) {
                     ter(x, y) = ot_hiway_ew;
                     ter(x + 1, y) = ot_hiway_ew;
                     ter(x, y + 1) = ot_hiway_ew;
@@ -1642,7 +1642,7 @@ void overmap::place_mongroups()
     for (int i = 0; i < cities.size(); i++) {
         if (!one_in(16) || cities[i].s > 5)
             zg.push_back(mongroup(mcat_zombie, (cities[i].x * 2), (cities[i].y * 2),
-                int(cities[i].s * 2.5), cities[i].s * 80));
+                                  int(cities[i].s * 2.5), cities[i].s * 80));
     }
 
     // Lots of random anthills
@@ -1671,19 +1671,19 @@ void overmap::place_mongroups()
 
     int numgroups = rng(0, 3);
     for (int i = 0; i < numgroups; i++) {
-        zg.push_back(mongroup(
-            mcat_worm, rng(0, OMAPX * 2 - 1), rng(0, OMAPY * 2 - 1), rng(20, 40), rng(500, 1000)));
+        zg.push_back(mongroup(mcat_worm, rng(0, OMAPX * 2 - 1), rng(0, OMAPY * 2 - 1), rng(20, 40),
+                              rng(500, 1000)));
     }
 
     numgroups = rng(0, 6);
     for (int i = 0; i < numgroups; i++) {
         zg.push_back(mongroup(mcat_plants, rng(0, OMAPX * 2 - 1), rng(0, OMAPY * 2 - 1),
-            rng(30, 50), rng(800, 1300)));
+                              rng(30, 50), rng(800, 1300)));
     }
     numgroups = rng(0, 7);
     for (int i = 0; i < numgroups; i++) {
-        zg.push_back(mongroup(
-            mcat_fungi, rng(0, OMAPX * 2 - 1), rng(0, OMAPY * 2 - 1), rng(20, 30), rng(400, 800)));
+        zg.push_back(mongroup(mcat_fungi, rng(0, OMAPX * 2 - 1), rng(0, OMAPY * 2 - 1), rng(20, 30),
+                              rng(400, 800)));
     }
     zg.push_back(mongroup(mcat_forest, 0, OMAPY, OMAPY, rng(2000, 12000)));
     zg.push_back(mongroup(mcat_forest, 0, OMAPY * 2 - 1, OMAPY, rng(2000, 12000)));

@@ -182,7 +182,7 @@ void dis_effect(Game* g, player& p, disease& dis)
                     g->add_msg("%s coughs up a stream of live spores!", p.name.c_str());
                 p.moves = -500;
                 int sporex, sporey;
-                monster spore(g->mtypes[mon_spore]);
+                Monster spore(g->mtypes[mon_spore]);
                 for (int i = -1; i <= 1; i++) {
                     for (int j = -1; j <= 1; j++) {
                         sporex = p.posx + i;
@@ -191,7 +191,7 @@ void dis_effect(Game* g, player& p, disease& dis)
                             if (g->mon_at(sporex, sporey) >= 0) { // Spores hit a monster
                                 if (g->u_see(sporex, sporey, junk))
                                     g->add_msg("The %s is covered in tiny spores!",
-                                        g->z[g->mon_at(sporex, sporey)].name().c_str());
+                                               g->z[g->mon_at(sporex, sporey)].name().c_str());
                                 if (!g->z[g->mon_at(sporex, sporey)].make_fungus(g))
                                     g->kill_mon(g->mon_at(sporex, sporey));
                             } else {
@@ -381,7 +381,7 @@ void dis_effect(Game* g, player& p, disease& dis)
             p.dex_cur -= 2;
             p.str_cur -= 1;
             if (one_in(50)) { // Generate phantasm
-                monster phantasm(g->mtypes[mon_hallu_zom + rng(0, 3)]);
+                Monster phantasm(g->mtypes[mon_hallu_zom + rng(0, 3)]);
                 phantasm.spawn(p.posx + rng(-10, 10), p.posy + rng(-10, 10));
                 g->z.push_back(phantasm);
             }
@@ -453,7 +453,7 @@ void dis_effect(Game* g, player& p, disease& dis)
             if (one_in(4000 - int(.25 * (dis.duration - 3600)))) {
                 int range = g->moncats[mcat_nether].size();
                 mon_id type = (g->moncats[mcat_nether])[rng(0, range - 1)];
-                monster beast(g->mtypes[type]);
+                Monster beast(g->mtypes[type]);
                 int x, y, tries = 0;
                 do {
                     x = p.posx + rng(-4, 4);

@@ -22,7 +22,7 @@
 #include "skill.hpp"
 
 namespace oocdda {
-void mattack::antqueen(Game* g, monster* z)
+void mattack::antqueen(Game* g, Monster* z)
 {
     std::vector<Point> egg_points;
     z->moves = -200;                  // It takes a while
@@ -50,7 +50,7 @@ void mattack::antqueen(Game* g, monster* z)
                 if (g->m.i_at(x, y)[j].type->id == itm_ant_egg) {
                     g->m.i_rem(x, y, j);
                     j = g->m.i_at(x, y).size();
-                    monster tmp(g->mtypes[mon_ant_larva], x, y);
+                    Monster tmp(g->mtypes[mon_ant_larva], x, y);
                     g->z.push_back(tmp);
                 }
             }
@@ -58,7 +58,7 @@ void mattack::antqueen(Game* g, monster* z)
     }
 }
 
-void mattack::shriek(Game* g, monster* z)
+void mattack::shriek(Game* g, Monster* z)
 {
     int j;
     if (rl_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 4 || !g->sees_u(z->posx, z->posy, j))
@@ -68,7 +68,7 @@ void mattack::shriek(Game* g, monster* z)
     g->sound(z->posx, z->posy, 100, "a terrible shriek!");
 }
 
-void mattack::acid(Game* g, monster* z)
+void mattack::acid(Game* g, Monster* z)
 {
     int junk;
     if (rl_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 12 || !g->sees_u(z->posx, z->posy, junk))
@@ -92,7 +92,7 @@ void mattack::acid(Game* g, monster* z)
     }
 }
 
-void mattack::shockstorm(Game* g, monster* z)
+void mattack::shockstorm(Game* g, Monster* z)
 {
     int t;
     if (!g->sees_u(z->posx, z->posy, t))
@@ -116,7 +116,7 @@ void mattack::shockstorm(Game* g, monster* z)
     }
 }
 
-void mattack::boomer(Game* g, monster* z)
+void mattack::boomer(Game* g, Monster* z)
 {
     int j;
     if (abs(g->u.posx - z->posx) > 3 || abs(g->u.posy - z->posy) > 3
@@ -131,7 +131,7 @@ void mattack::boomer(Game* g, monster* z)
             g->m.field_at(line[i].x, line[i].y).type = fd_bile;
             g->m.field_at(line[i].x, line[i].y).density = 1;
         } else if (g->m.field_at(line[i].x, line[i].y).type == fd_bile
-            && g->m.field_at(line[i].x, line[i].y).density < 3)
+                   && g->m.field_at(line[i].x, line[i].y).density < 3)
             g->m.field_at(line[i].x, line[i].y).density++;
         else
             g->m.add_field(g, line[i].x, line[i].y, fd_bile, 1);
@@ -144,7 +144,7 @@ void mattack::boomer(Game* g, monster* z)
         g->add_msg("You dodge it!");
 }
 
-void mattack::resurrect(Game* g, monster* z)
+void mattack::resurrect(Game* g, Monster* z)
 {
     std::vector<Point> corpses;
     for (int x = z->posx - 6; x <= z->posx + 6; x++) {
@@ -172,7 +172,7 @@ void mattack::resurrect(Game* g, monster* z)
             if (g->m.i_at(x, y)[n].type->id == itm_corpse && one_in(2)) {
                 if (g->u_see(x, y, junk))
                     raised++;
-                monster mon(g->m.i_at(x, y)[n].corpse, x, y);
+                Monster mon(g->m.i_at(x, y)[n].corpse, x, y);
                 mon.speed = int(mon.speed * .8); // Raised corpses are slower
                 g->m.i_rem(x, y, n);
                 n = g->m.i_at(x, y).size();
@@ -191,7 +191,7 @@ void mattack::resurrect(Game* g, monster* z)
         g->add_msg("...but nothing seems to happen.");
 }
 
-void mattack::growplants(Game* g, monster* z)
+void mattack::growplants(Game* g, Monster* z)
 {
     int junk;
     for (int i = -3; i <= 3; i++) {
@@ -202,7 +202,7 @@ void mattack::growplants(Game* g, monster* z)
                     if (mondex != -1) {
                         if (g->u_see(z->posx + i, z->posy + j, junk))
                             g->add_msg("A tree bursts forth from the earth and pierces the %s!",
-                                g->z[mondex].name().c_str());
+                                       g->z[mondex].name().c_str());
                         int rn = rng(10, 30);
                         rn -= g->z[mondex].armor();
                         if (rn < 0)
@@ -217,7 +217,7 @@ void mattack::growplants(Game* g, monster* z)
                         else if (one_in(2))
                             hit = bp_feet;
                         g->add_msg("A tree bursts forth from the earth and pierces your %s!",
-                            body_part_name(hit, side).c_str());
+                                   body_part_name(hit, side).c_str());
                         g->u.hit(g, hit, side, 0, rng(10, 30));
                     } else {
                         int npcdex = g->npc_at(z->posx + i, z->posy + j);
@@ -255,7 +255,7 @@ void mattack::growplants(Game* g, monster* z)
                         if (mondex != -1) {
                             if (g->u_see(z->posx + i, z->posy + j, junk))
                                 g->add_msg("Underbrush forms into a tree, and it pierces the %s!",
-                                    g->z[mondex].name().c_str());
+                                           g->z[mondex].name().c_str());
                             int rn = rng(10, 30);
                             rn -= g->z[mondex].armor();
                             if (rn < 0)
@@ -297,11 +297,11 @@ void mattack::growplants(Game* g, monster* z)
     }
 }
 
-void mattack::fungus(Game* g, monster* z)
+void mattack::fungus(Game* g, Monster* z)
 {
     z->moves = -200;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
-    monster spore(g->mtypes[mon_spore]);
+    Monster spore(g->mtypes[mon_spore]);
     int sporex, sporey;
     int moncount = 0, mondex;
     int j;
@@ -318,8 +318,8 @@ void mattack::fungus(Game* g, monster* z)
             if (g->m.move_cost(sporex, sporey) > 0 && one_in(5)) {
                 if (mondex != -1) { // Spores hit a monster
                     if (g->u_see(sporex, sporey, j))
-                        g->add_msg(
-                            "The %s is covered in tiny spores!", g->z[mondex].name().c_str());
+                        g->add_msg("The %s is covered in tiny spores!",
+                                   g->z[mondex].name().c_str());
                     if (!g->z[mondex].make_fungus(g))
                         g->kill_mon(mondex);
                 } else if (g->u.posx == sporex && g->u.posy == sporey)
@@ -335,7 +335,7 @@ void mattack::fungus(Game* g, monster* z)
         z->poly(g->mtypes[mon_fungaloid_dormant]);
 }
 
-void mattack::plant(Game* g, monster* z)
+void mattack::plant(Game* g, Monster* z)
 {
     int j;
     if (g->m.has_flag(diggable, z->posx, z->posy)) {
@@ -347,9 +347,9 @@ void mattack::plant(Game* g, monster* z)
     }
 }
 
-void mattack::disappear(Game* g, monster* z) { z->hp = 0; }
+void mattack::disappear(Game* g, Monster* z) { z->hp = 0; }
 
-void mattack::formblob(Game* g, monster* z)
+void mattack::formblob(Game* g, Monster* z)
 {
     bool didit = false;
     ;
@@ -370,7 +370,7 @@ void mattack::formblob(Game* g, monster* z)
                     if (g->z[thatmon].speed >= 60)
                         g->z[thatmon].poly(g->mtypes[mon_blob]);
                 } else if ((g->z[thatmon].made_of(FLESH) || g->z[thatmon].made_of(VEGGY))
-                    && rng(0, z->hp) > rng(0, g->z[thatmon].hp)) {
+                           && rng(0, z->hp) > rng(0, g->z[thatmon].hp)) {
                     g->z[thatmon].poly(g->mtypes[mon_blob]);
                     g->z[thatmon].speed = z->speed - rng(5, 25);
                     g->z[thatmon].hp = g->z[thatmon].speed;
@@ -378,7 +378,7 @@ void mattack::formblob(Game* g, monster* z)
             } else if (z->speed >= 85 && rng(0, 250) < z->speed) {
                 didit = true;
                 z->speed -= 15;
-                monster blob(g->mtypes[mon_blob_small]);
+                Monster blob(g->mtypes[mon_blob_small]);
                 blob.spawn(z->posx + i, z->posy + j);
                 blob.speed = z->speed - rng(30, 60);
                 blob.hp = blob.speed;
@@ -393,7 +393,7 @@ void mattack::formblob(Game* g, monster* z)
     }
 }
 
-void mattack::gene_sting(Game* g, monster* z)
+void mattack::gene_sting(Game* g, Monster* z)
 {
     int j;
     if (abs(g->u.posx - z->posx) > 7 || abs(g->u.posy - z->posy) > 7
@@ -406,7 +406,7 @@ void mattack::gene_sting(Game* g, monster* z)
     g->u.mutate(g);
 }
 
-void mattack::stare(Game* g, monster* z)
+void mattack::stare(Game* g, Monster* z)
 {
     z->moves -= 200;
     z->sp_timeout = z->type->sp_freq;
@@ -427,7 +427,7 @@ void mattack::stare(Game* g, monster* z)
     }
 }
 
-void mattack::tazer(Game* g, monster* z)
+void mattack::tazer(Game* g, Monster* z)
 {
     int j;
     if (abs(g->u.posx - z->posx) > 2 || abs(g->u.posy - z->posy) > 2
@@ -441,7 +441,7 @@ void mattack::tazer(Game* g, monster* z)
     g->u.moves -= shock * 50;
 }
 
-void mattack::smg(Game* g, monster* z)
+void mattack::smg(Game* g, Monster* z)
 {
     int t, j;
     if (trig_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 12 || !g->sees_u(z->posx, z->posy, t))
@@ -468,7 +468,7 @@ void mattack::smg(Game* g, monster* z)
     g->fire(tmp, g->u.posx, g->u.posy, traj, true);
 }
 
-void mattack::flamethrower(Game* g, monster* z)
+void mattack::flamethrower(Game* g, Monster* z)
 {
     int t;
     if (abs(g->u.posx - z->posx) > 5 || abs(g->u.posy - z->posy) > 5
@@ -482,7 +482,7 @@ void mattack::flamethrower(Game* g, monster* z)
     g->u.add_disease(DI_ONFIRE, 8, g);
 }
 
-void mattack::multi_robot(Game* g, monster* z)
+void mattack::multi_robot(Game* g, Monster* z)
 {
     int t, mode = 0;
     if (!g->sees_u(z->posx, z->posy, t))

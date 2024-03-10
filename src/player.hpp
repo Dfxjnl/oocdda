@@ -16,7 +16,7 @@
 
 namespace oocdda {
 class Game;
-class monster;
+class Monster;
 struct trap;
 
 class player {
@@ -60,7 +60,7 @@ public:
     bool avoid_trap(trap* tr);
 
     void pause();                     // '.' command; pauses & reduces recoil
-    int hit_mon(Game* g, monster* z); // Handles hitting a monster up to its death
+    int hit_mon(Game* g, Monster* z); // Handles hitting a monster up to its death
     // hit_player returns false on a miss, and modifies bp, hitdam, and hitcut
     bool hit_player(player& p, body_part& bp, int& hitdam, int& hitcut);
     int dodge();              // Returns the players's dodge, modded by clothing etc

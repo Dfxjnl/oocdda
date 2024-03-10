@@ -17,7 +17,7 @@
 
 namespace oocdda {
 class Game;
-class monster;
+class Monster;
 class overmap;
 class player;
 
@@ -25,7 +25,8 @@ class map {
 public:
     // Constructors & Initialization
     map();
-    map(std::vector<itype*>* itptr, std::vector<itype_id> (*miptr)[num_itloc],
+    map(std::vector<itype*>* itptr,
+        std::vector<itype_id> (*miptr)[num_itloc],
         std::vector<trap*>* trptr);
     ~map();
     void init(Game* g, int x, int y);
@@ -87,7 +88,7 @@ public:
     bool add_field(Game* g, int x, int y, field_id t, unsigned char density);
     bool process_fields(Game* g);
     void step_in_field(int x, int y, Game* g);
-    void mon_in_field(int x, int y, Game* g, monster* z);
+    void mon_in_field(int x, int y, Game* g, Monster* z);
     // mapgen.h functions
     void place_items(
         items_location loc, int chance, int x1, int y1, int x2, int y2, bool ongrass, int turn);
@@ -97,8 +98,13 @@ public:
 private:
     void saven(overmap* om, unsigned int turn, int x, int y, int gridx, int gridy);
     bool loadn(Game* g, int x, int y, int gridx, int gridy);
-    void draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_id t_south,
-        oter_id t_west, oter_id t_above, int turn);
+    void draw_map(oter_id terrain_type,
+                  oter_id t_north,
+                  oter_id t_east,
+                  oter_id t_south,
+                  oter_id t_west,
+                  oter_id t_above,
+                  int turn);
     void rotate(int turns); // Rotates the current map 90*turns degress clockwise
                             // Useful for houses, shops, etc
 

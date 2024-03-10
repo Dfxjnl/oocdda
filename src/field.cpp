@@ -78,19 +78,20 @@ bool map::process_fields(Game* g)
                         cur->age -= vol * 10;
                         destroyed = true;
                     } else if ((i_at(x, y)[i].made_of(WOOD) || i_at(x, y)[i].made_of(VEGGY))
-                        && (vol <= cur->density * 10 - (cur->age > 0 ? rng(0, cur->age / 10) : 0)
-                            || cur->density == 3)) {
+                               && (vol <= cur->density * 10
+                                           - (cur->age > 0 ? rng(0, cur->age / 10) : 0)
+                                   || cur->density == 3)) {
                         cur->age -= vol * 10;
                         destroyed = true;
                     } else if ((i_at(x, y)[i].made_of(COTTON) || i_at(x, y)[i].made_of(FLESH)
-                                   || i_at(x, y)[i].made_of(WOOL))
-                        && (vol <= cur->density * 2 || (cur->density == 3 && one_in(vol)))) {
+                                || i_at(x, y)[i].made_of(WOOL))
+                               && (vol <= cur->density * 2 || (cur->density == 3 && one_in(vol)))) {
                         cur->age -= vol * 5;
                         destroyed = true;
                     } else if (i_at(x, y)[i].made_of(LIQUID) || i_at(x, y)[i].made_of(POWDER)
-                        || i_at(x, y)[i].made_of(PLASTIC)
-                        || (cur->density >= 2 && i_at(x, y)[i].made_of(GLASS))
-                        || (cur->density == 3 && i_at(x, y)[i].made_of(IRON))) {
+                               || i_at(x, y)[i].made_of(PLASTIC)
+                               || (cur->density >= 2 && i_at(x, y)[i].made_of(GLASS))
+                               || (cur->density == 3 && i_at(x, y)[i].made_of(IRON))) {
                         switch (i_at(x, y)[i].type->id) { // TODO: Make this be not a hack.
                         case itm_whiskey:
                         case itm_vodka:
@@ -152,15 +153,15 @@ bool map::process_fields(Game* g)
                                 ter(x + i, y + j) = t_gas_pump_smashed;
                                 g->explosion(x + i, y + j, 40, 0, true);
                             } else if ((i != 0 || j != 0)
-                                && (i_at(x + i, y + j).size() > 0
-                                    || rng(15, 120) < cur->density * 10)) {
+                                       && (i_at(x + i, y + j).size() > 0
+                                           || rng(15, 120) < cur->density * 10)) {
                                 if (field_at(x + i, y + j).type == fd_smoke)
                                     field_at(x + i, y + j) = field(fd_fire, 1, 0);
                                 else
                                     add_field(g, x + i, y + j, fd_fire, 1);
                                 // If we're not spreading, maybe we'll stick out some smoke, huh?
                             } else if (move_cost(x + i, y + j) > 0 && rng(7, 40) < cur->density * 10
-                                && cur->age < 1000) {
+                                       && cur->age < 1000) {
                                 add_field(g, x + i, y + j, fd_smoke, rng(1, cur->density));
                             }
                         }
@@ -178,7 +179,7 @@ bool map::process_fields(Game* g)
                     for (int a = -1; a <= 1; a++) {
                         for (int b = -1; b <= 1; b++) {
                             if ((field_at(x + a, y + b).type == fd_smoke
-                                    && field_at(x + a, y + b).density < 3)
+                                 && field_at(x + a, y + b).density < 3)
                                 || (field_at(x + a, y + b).is_null()
                                     && move_cost(x + a, y + b) > 0))
                                 spread.push_back(Point(x + a, y + b));
@@ -190,7 +191,7 @@ bool map::process_fields(Game* g)
                             field_at(p.x, p.y).density++;
                             cur->density--;
                         } else if (cur->density > 0 && move_cost(p.x, p.y) > 0
-                            && add_field(g, p.x, p.y, fd_smoke, 1)) {
+                                   && add_field(g, p.x, p.y, fd_smoke, 1)) {
                             cur->density--;
                             field_at(p.x, p.y).age = cur->age;
                         }
@@ -211,8 +212,8 @@ bool map::process_fields(Game* g)
                     for (int a = -1; a <= 1; a++) {
                         for (int b = -1; b <= 1; b++) {
                             if (((field_at(x + a, y + b).type == fd_smoke
-                                     || field_at(x + a, y + b).type == fd_tear_gas)
-                                    && field_at(x + a, y + b).density < 3)
+                                  || field_at(x + a, y + b).type == fd_tear_gas)
+                                 && field_at(x + a, y + b).density < 3)
                                 || (field_at(x + a, y + b).is_null()
                                     && move_cost(x + a, y + b) > 0))
                                 spread.push_back(Point(x + a, y + b));
@@ -231,7 +232,7 @@ bool map::process_fields(Game* g)
                             field_at(p.x, p.y).type = fd_tear_gas;
                             // Or, just create a new field.
                         } else if (cur->density > 0 && move_cost(p.x, p.y) > 0
-                            && add_field(g, p.x, p.y, fd_tear_gas, 1)) {
+                                   && add_field(g, p.x, p.y, fd_tear_gas, 1)) {
                             cur->density--;
                             field_at(p.x, p.y).age = cur->age;
                         }
@@ -253,9 +254,9 @@ bool map::process_fields(Game* g)
                     for (int a = -1; a <= 1; a++) {
                         for (int b = -1; b <= 1; b++) {
                             if (((field_at(x + a, y + b).type == fd_smoke
-                                     || field_at(x + a, y + b).type == fd_tear_gas
-                                     || field_at(x + a, y + b).type == fd_nuke_gas)
-                                    && field_at(x + a, y + b).density < 3)
+                                  || field_at(x + a, y + b).type == fd_tear_gas
+                                  || field_at(x + a, y + b).type == fd_nuke_gas)
+                                 && field_at(x + a, y + b).density < 3)
                                 || (field_at(x + a, y + b).is_null()
                                     && move_cost(x + a, y + b) > 0))
                                 spread.push_back(Point(x + a, y + b));
@@ -271,11 +272,11 @@ bool map::process_fields(Game* g)
                             cur->density--;
                             // Nearby smoke & teargas is converted into nukegas
                         } else if (field_at(p.x, p.y).type == fd_smoke
-                            || field_at(p.x, p.y).type == fd_tear_gas) {
+                                   || field_at(p.x, p.y).type == fd_tear_gas) {
                             field_at(p.x, p.y).type = fd_nuke_gas;
                             // Or, just create a new field.
                         } else if (cur->density > 0 && move_cost(p.x, p.y) > 0
-                            && add_field(g, p.x, p.y, fd_nuke_gas, 1)) {
+                                   && add_field(g, p.x, p.y, fd_nuke_gas, 1)) {
                             cur->density--;
                             field_at(p.x, p.y).age = cur->age;
                         }
@@ -411,7 +412,7 @@ void map::step_in_field(int x, int y, Game* g)
     }
 }
 
-void map::mon_in_field(int x, int y, Game* g, monster* z)
+void map::mon_in_field(int x, int y, Game* g, Monster* z)
 {
     if (z->has_flag(MF_DIGS))
         return; // Digging monsters are immune to fields

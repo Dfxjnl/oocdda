@@ -23,7 +23,7 @@ void trapfunc::bubble(Game* g, int x, int y)
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfuncm::bubble(Game* g, monster* z, int x, int y)
+void trapfuncm::bubble(Game* g, Monster* z, int x, int y)
 {
     g->sound(x, y, 18, "Pop!");
     g->m.tr_at(x, y) = tr_null;
@@ -39,7 +39,7 @@ void trapfunc::beartrap(Game* g, int x, int y)
     g->m.add_item(x, y, g->itypes[itm_beartrap], g->turn);
 }
 
-void trapfuncm::beartrap(Game* g, monster* z, int x, int y)
+void trapfuncm::beartrap(Game* g, Monster* z, int x, int y)
 {
     g->sound(x, y, 8, "SNAP!");
     if (z->hurt(35))
@@ -57,7 +57,7 @@ void trapfunc::board(Game* g, int x, int y)
     g->u.hit(g, bp_feet, 1, 0, rng(6, 10));
 }
 
-void trapfuncm::board(Game* g, monster* z, int x, int y)
+void trapfuncm::board(Game* g, Monster* z, int x, int y)
 {
     int t;
     if (g->u_see(z, t))
@@ -88,7 +88,7 @@ void trapfunc::tripwire(Game* g, int x, int y)
         g->u.hurtall(rng(1, 4));
 }
 
-void trapfuncm::tripwire(Game* g, monster* z, int x, int y)
+void trapfuncm::tripwire(Game* g, Monster* z, int x, int y)
 {
     int t;
     if (g->u_see(z, t))
@@ -133,7 +133,7 @@ void trapfunc::crossbow(Game* g, int x, int y)
         g->m.add_item(x, y, g->itypes[itm_bolt_steel], 0);
 }
 
-void trapfuncm::crossbow(Game* g, monster* z, int x, int y)
+void trapfuncm::crossbow(Game* g, Monster* z, int x, int y)
 {
     int t;
     bool add_bolt = true;
@@ -189,7 +189,7 @@ void trapfunc::shotgun(Game* g, int x, int y)
         g->m.tr_at(x, y) = tr_shotgun_1;
 }
 
-void trapfuncm::shotgun(Game* g, monster* z, int x, int y)
+void trapfuncm::shotgun(Game* g, Monster* z, int x, int y)
 {
     int t;
     bool seen = g->u_see(z, t);
@@ -227,7 +227,7 @@ void trapfunc::blade(Game* g, int x, int y)
     g->u.hit(g, bp_torso, 0, 12, 30);
 }
 
-void trapfuncm::blade(Game* g, monster* z, int x, int y)
+void trapfuncm::blade(Game* g, Monster* z, int x, int y)
 {
     int t;
     if (g->u_see(z, t))
@@ -246,7 +246,7 @@ void trapfunc::landmine(Game* g, int x, int y)
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfuncm::landmine(Game* g, monster* z, int x, int y)
+void trapfuncm::landmine(Game* g, Monster* z, int x, int y)
 {
     int t;
     if (g->u_see(x, y, t))
@@ -262,7 +262,7 @@ void trapfunc::telepad(Game* g, int x, int y)
     g->teleport();
 }
 
-void trapfuncm::telepad(Game* g, monster* z, int x, int y)
+void trapfuncm::telepad(Game* g, Monster* z, int x, int y)
 {
     g->sound(x, y, 6, "vvrrrRRMM*POP!*");
     int j;
@@ -286,7 +286,7 @@ void trapfunc::goo(Game* g, int x, int y)
     g->m.tr_at(x, y) = tr_null;
 }
 
-void trapfuncm::goo(Game* g, monster* z, int x, int y)
+void trapfuncm::goo(Game* g, Monster* z, int x, int y)
 {
     if (z->type->id == mon_blob) {
         z->speed += 15;
@@ -315,7 +315,7 @@ void trapfunc::dissector(Game* g, int x, int y)
     g->u.hit(g, bp_feet, 1, 0, 10);
 }
 
-void trapfuncm::dissector(Game* g, monster* z, int x, int y)
+void trapfuncm::dissector(Game* g, Monster* z, int x, int y)
 {
     g->sound(x, y, 10, "BRZZZAP!");
     if (z->hurt(60))
@@ -337,7 +337,7 @@ void trapfunc::pit(Game* g, int x, int y)
     g->u.add_disease(DI_IN_PIT, -1, g);
 }
 
-void trapfuncm::pit(Game* g, monster* z, int x, int y)
+void trapfuncm::pit(Game* g, Monster* z, int x, int y)
 {
     int junk;
     if (g->u_see(x, y, junk))
@@ -380,7 +380,7 @@ void trapfunc::pit_spikes(Game* g, int x, int y)
     g->u.add_disease(DI_IN_PIT, -1, g);
 }
 
-void trapfuncm::pit_spikes(Game* g, monster* z, int x, int y)
+void trapfuncm::pit_spikes(Game* g, Monster* z, int x, int y)
 {
     int junk;
     if (g->u_see(z, junk))
@@ -412,7 +412,7 @@ void trapfunc::sinkhole(Game* g, int x, int y)
                     g->add_msg("There's nowhere to pull yourself to, and you sink!");
                     g->u.use_up(itm_rope_30, 1);
                     g->m.add_item(g->u.posx + rng(-1, 1), g->u.posy + rng(-1, 1),
-                        g->itypes[itm_rope_30], g->turn);
+                                  g->itypes[itm_rope_30], g->turn);
                     g->m.tr_at(g->u.posx, g->u.posy) = tr_pit;
                     g->vertical_move(-1, true);
                 } else {
@@ -427,7 +427,7 @@ void trapfunc::sinkhole(Game* g, int x, int y)
                 g->u.moves -= 100;
                 g->u.use_up(itm_rope_30, 1);
                 g->m.add_item(g->u.posx + rng(-1, 1), g->u.posy + rng(-1, 1),
-                    g->itypes[itm_rope_30], g->turn);
+                              g->itypes[itm_rope_30], g->turn);
                 g->vertical_move(-1, true);
             }
         } else {
@@ -435,7 +435,7 @@ void trapfunc::sinkhole(Game* g, int x, int y)
             if (one_in((g->u.str_cur + g->u.dex_cur) / 3)) {
                 g->u.use_up(itm_rope_30, 1);
                 g->m.add_item(g->u.posx + rng(-1, 1), g->u.posy + rng(-1, 1),
-                    g->itypes[itm_rope_30], g->turn);
+                              g->itypes[itm_rope_30], g->turn);
             }
             g->m.tr_at(g->u.posx, g->u.posy) = tr_pit;
             g->vertical_move(-1, true);

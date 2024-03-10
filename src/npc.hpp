@@ -14,7 +14,7 @@
 namespace oocdda {
 class Game;
 class item;
-class monster;
+class Monster;
 class overmap;
 struct Point;
 
@@ -172,7 +172,7 @@ public:
     void move(Game* g);                      // Actual movement; depends on target and attitude
     int confident_range();                   // Range at which we have 50% chance of a shot hitting
     bool wont_shoot_friend(Game* g);         // Confident that we won't shoot a friend
-    monster* choose_monster_target(Game* g); // Most often, the closest to us
+    Monster* choose_monster_target(Game* g); // Most often, the closest to us
     bool want_to_attack_player(Game* g);
     int follow_distance(); // How closely do we follow the player?
     bool can_reload();
@@ -190,8 +190,8 @@ public:
     void move_to(Game* g, int x, int y);
     void move_away_from(Game* g, int x, int y);
     void move_pause();
-    void melee_monster(Game* g, monster* m);
-    void alt_attack(Game* g, monster* m, player* p);
+    void melee_monster(Game* g, Monster* m);
+    void alt_attack(Game* g, Monster* m, player* p);
     void find_items(Game* g);
     void pickup_items(Game* g);
     void melee_player(Game* g, player& foe);
@@ -203,7 +203,7 @@ public:
 
     void die(Game* g);
 
-    monster* target;         // Current monster we want to kill
+    Monster* target;         // Current monster we want to kill
     npc_attitude attitude;   // What we want to do to the player
     int wandx, wandy, wandf; // Location of heard sound, etc.
 

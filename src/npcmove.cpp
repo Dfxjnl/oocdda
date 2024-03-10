@@ -48,7 +48,7 @@ void npc::move(Game* g)
         path = line_to(posx, posy, g->u.posx, g->u.posy, linet);
         action = npc_heal_player;
     } else if (attitude == NPCATT_MUG
-        && g->m.sees(posx, posy, g->u.posx, g->u.posy, light, linet)) {
+               && g->m.sees(posx, posy, g->u.posx, g->u.posy, light, linet)) {
         path = line_to(posx, posy, g->u.posx, g->u.posy, linet);
         action = npc_mug_player;
     } else if (fetching_item())
@@ -58,7 +58,7 @@ void npc::move(Game* g)
 
     if (g->debugmon)
         debugmsg("%s chose action %s.  Mission is %d.", name.c_str(),
-            npc_action_name(action).c_str(), mission);
+                 npc_action_name(action).c_str(), mission);
 
     int oldmoves = moves;
 
@@ -72,8 +72,8 @@ void npc::move(Game* g)
         weapon.reload(*this, false);
         recoil = 6;
         if (g->u_see(posx, posy, linet))
-            g->add_msg(
-                "%s reloads %s %s.", name.c_str(), (male ? "his" : "her"), weapon.tname().c_str());
+            g->add_msg("%s reloads %s %s.", name.c_str(), (male ? "his" : "her"),
+                       weapon.tname().c_str());
         break;
 
     case npc_pickup:
@@ -127,10 +127,10 @@ void npc::move(Game* g)
 
     case npc_shoot_player:
         g->add_msg("%s shoots at you with %s %s!", name.c_str(), (male ? "his" : "her"),
-            weapon.tname().c_str());
+                   weapon.tname().c_str());
         // If we're at 1/3rd of our confident range, burst fire at the player
         g->fire(*this, g->u.posx, g->u.posy, path,
-            (trig_dist(posx, posy, g->u.posx, g->u.posy) <= confident_range() / 3));
+                (trig_dist(posx, posy, g->u.posx, g->u.posy) <= confident_range() / 3));
         break;
 
     case npc_alt_attack_player:
@@ -176,7 +176,7 @@ void npc::move(Game* g)
     }
 }
 
-monster* npc::choose_monster_target(Game* g)
+Monster* npc::choose_monster_target(Game* g)
 {
     int closest = 1000, plclosest = 1000, lowHP = 10000, pllowHP = 10000;
     int index = -1, plindex = -1;
@@ -294,11 +294,11 @@ void npc::pickup_items(Game* g)
     } else if (g->m.sees(posx, posy, itx, ity, light, linet)) {
         if (debug)
             debugmsg("We see our item(s).  NPC @ (%d:%d); items @ (%d:%d) (dist %d", posx, posy,
-                itx, ity, dist);
+                     itx, ity, dist);
         std::vector<Point> traj = line_to(posx, posy, itx, ity, linet);
         if (debug)
             debugmsg("Moving to (%d:%d), %s.", traj[0].x, traj[0].y,
-                g->m.tername(traj[0].x, traj[0].y).c_str());
+                     g->m.tername(traj[0].x, traj[0].y).c_str());
         move_to(g, traj[0].x, traj[0].y);
     } else { // Can't see that item anymore, so look for a new one
         if (debug)
@@ -362,7 +362,7 @@ npc_action npc::method_of_attacking_player(Game* g, std::vector<Point>& path)
                 if (path.size() <= 2)
                     return npc_melee_player;
                 else if (can_reload() && !g->u.weapon.is_gun()
-                    && (dist >= weapon.reload_time(*this) || g->u.hp_percentage() <= 25))
+                         && (dist >= weapon.reload_time(*this) || g->u.hp_percentage() <= 25))
                     return npc_reload;           // If we have time to reload OR you're almost dead
                 else if (alt_attack_available()) // Grenades, etc.
                     return npc_alt_attack_player;
@@ -392,7 +392,7 @@ npc_action npc::method_of_attacking_monster(Game* g, std::vector<Point>& path)
     }
     if (g->debugmon)
         debugmsg("method_of_attacking_monster(); %s (%d:%d)", target->name().c_str(), target->posx,
-            target->posy);
+                 target->posy);
     int linet, light = g->light_level();
     if (g->m.sees(posx, posy, target->posx, target->posy, light, linet))
         path = line_to(posx, posy, target->posx, target->posy, linet);
@@ -629,7 +629,7 @@ void npc::move_to(Game* g, int x, int y)
     if (x == posx && y == posy) // We're just pausing!
         moves -= 100;
     else if (g->mon_at(x, y) != -1) { // Shouldn't happen, but it might.
-        monster* m = &(g->z[g->mon_at(x, y)]);
+        Monster* m = &(g->z[g->mon_at(x, y)]);
         melee_monster(g, m);
     } else if (g->u.posx == x && g->u.posy == y) {
         say(g, "Excuse me, let me pass.");
@@ -691,7 +691,7 @@ void npc::move_pause()
     recoil = 0;
 }
 
-void npc::melee_monster(Game* g, monster* m)
+void npc::melee_monster(Game* g, Monster* m)
 {
     int dam = hit_mon(g, target);
     if (target->hurt(dam)) {
@@ -700,11 +700,11 @@ void npc::melee_monster(Game* g, monster* m)
     }
 }
 
-void npc::alt_attack(Game* g, monster* m, player* p)
+void npc::alt_attack(Game* g, Monster* m, player* p)
 {
     // In order of importance
     itype_id options[8] = {itm_mininuke_act, itm_dynamite_act, itm_grenade_act, itm_gasbomb_act,
-        itm_mininuke, itm_dynamite, itm_grenade, itm_gasbomb};
+                           itm_mininuke,     itm_dynamite,     itm_grenade,     itm_gasbomb};
     item used;
     bool throwing = false;
     int i, tx, ty, linet;
@@ -767,8 +767,8 @@ void npc::alt_attack(Game* g, monster* m, player* p)
             activated->charges = 20;
             activated->active = true;
             if (seen)
-                g->add_msg(
-                    "%s pulls the pin on %s gas canister.", name.c_str(), (male ? "his" : "her"));
+                g->add_msg("%s pulls the pin on %s gas canister.", name.c_str(),
+                           (male ? "his" : "her"));
             break;
         case itm_grenade:
             activated->make(g->itypes[itm_gasbomb_act]);
@@ -789,11 +789,11 @@ void npc::melee_player(Game* g, player& foe)
     bool hitit = hit_player(g->u, bphit, hit_dam, hit_cut);
     if (hitit) {
         g->add_msg("%s hits your %s with %s %s.", name.c_str(), body_part_name(bphit, side).c_str(),
-            (male ? "his" : "her"), weapname(false).c_str());
+                   (male ? "his" : "her"), weapname(false).c_str());
         g->u.hit(g, bphit, side, hit_dam, hit_cut);
     } else
         g->add_msg("%s swings %s %s at you, but misses.", name.c_str(), (male ? "his" : "her"),
-            weapname(false).c_str());
+                   weapname(false).c_str());
 }
 
 void npc::heal_player(Game* g, player& patient)
@@ -875,8 +875,8 @@ void npc::mug_player(Game* g, player& mark)
         mark.cash = 0;
     } else if (mark.weapon.type->id != 0 && mark.weapon.type->id < num_items) {
         if (mark.is_npc() && g->u_see(posx, posy, linet))
-            g->add_msg(
-                "%d takes %d's %d.", name.c_str(), mark.name.c_str(), mark.weapon.tname().c_str());
+            g->add_msg("%d takes %d's %d.", name.c_str(), mark.name.c_str(),
+                       mark.weapon.tname().c_str());
         else if (!mark.is_npc())
             g->add_msg("%d takes your %d.", name.c_str(), mark.weapon.tname().c_str());
         if (volume_carried() + mark.weapon.volume() <= volume_capacity()
@@ -909,7 +909,7 @@ void npc::mug_player(Game* g, player& mark)
             moves -= 100;
             if (mark.is_npc() && g->u_see(posx, posy, linet))
                 g->add_msg("%s takes %s's %s.", name.c_str(), mark.name.c_str(),
-                    mark.inv[index].tname().c_str());
+                           mark.inv[index].tname().c_str());
             else if (!mark.is_npc())
                 g->add_msg("%s takes your %s.", name.c_str(), mark.inv[index].tname().c_str());
             i_add(mark.inv[index]);

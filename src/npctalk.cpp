@@ -45,7 +45,7 @@ void npc::talk_to_u(Game* g)
     d.done = false;
     d.win = newwin(25, 80, 0, 0);
     wborder(d.win, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
-        LINE_XOOX);
+            LINE_XOOX);
     for (int i = 1; i < 24; i++)
         mvwputch(d.win, i, 41, c_ltgray, LINE_XOXO);
     mvwputch(d.win, 0, 41, c_ltgray, LINE_OXXX);
@@ -100,8 +100,8 @@ void say_hello(Game* g, dialogue& d)
 void say_ask_for(Game* g, dialogue& d, npc_need need)
 {
     int opt = d.opt(talk_needs[need][rng(0, 4)], "\"Okay, let's trade.\"",
-        "&\"Follow me, we'll search together.\"", "\"I don't have any, but...\"", "Ignore them",
-        NULL);
+                    "&\"Follow me, we'll search together.\"", "\"I don't have any, but...\"",
+                    "Ignore them", NULL);
     switch (opt) {
     case 1:
         trade(g, d, 0, "");
@@ -159,12 +159,13 @@ void say_put_em_up(Game* g, dialogue& d)
 void say_listen(Game* g, dialogue& d)
 {
     if (d.beta->is_following()) {
-        int opt = d.opt("Yes?", "\"I need...", "\"Tell me about...", "\"Let's do some trading.\"",
-            "\"We need to get out of here!\"",
-            (d.beta->attitude == NPCATT_DEFEND ? "\"I'm okay, just watch your own ass.\""
-                                               : "\"Help me!\""),
-            (d.beta->attitude == NPCATT_WAIT ? "\"Okay, let's go.\"" : "\"Wait here.\""),
-            "\"Stop following me.\"", "\"Nothing, let's go.\"", NULL);
+        int opt
+            = d.opt("Yes?", "\"I need...", "\"Tell me about...", "\"Let's do some trading.\"",
+                    "\"We need to get out of here!\"",
+                    (d.beta->attitude == NPCATT_DEFEND ? "\"I'm okay, just watch your own ass.\""
+                                                       : "\"Help me!\""),
+                    (d.beta->attitude == NPCATT_WAIT ? "\"Okay, let's go.\"" : "\"Wait here.\""),
+                    "\"Stop following me.\"", "\"Nothing, let's go.\"", NULL);
         switch (opt) {
         case 1:
             say_listen_need(g, d);
@@ -205,7 +206,7 @@ void say_listen(Game* g, dialogue& d)
         }
     } else {
         int opt = d.opt("Yes?", "\"I need...\"", "\"Want to travel together?\"",
-            "\"Want to trade?\"", "\"Nothing, bye.\"", NULL);
+                        "\"Want to trade?\"", "\"Nothing, bye.\"", NULL);
         switch (opt) {
         case 1:
             say_listen_need(g, d);
@@ -232,7 +233,7 @@ void say_listen_need(Game* g, dialogue& d)
     npc_opinion opinion = d.beta->op_of_u;
     int opt2;
     int opt = d.opt("What do you need, <name_g>?", "\"Healing.\"", "\"Directions to...\"",
-        "\"Never mind.\"", "\"Bye.\"", NULL);
+                    "\"Never mind.\"", "\"Bye.\"", NULL);
     switch (opt) {
     case 1:
         opinion.value--;
@@ -256,8 +257,8 @@ void say_listen_need(Game* g, dialogue& d)
     case 2:
         do {
             opt2 = d.opt("Directions to what?", "\"A gun store.\"", "\"A pharmacy.\"",
-                "\"A grocery store.\"", "\"A liquor store.\"", "\"A hardware store.\"", "\"Bye.\"",
-                NULL);
+                         "\"A grocery store.\"", "\"A liquor store.\"", "\"A hardware store.\"",
+                         "\"Bye.\"", NULL);
             oter_id look;
             switch (opt2) {
             case 1:
@@ -313,7 +314,7 @@ void say_listen_need(Game* g, dialogue& d)
                 } else
                     response = "I honestly have no idea.";
                 opt2 = d.opt(response, "\"Thanks.  I need more directions.\"",
-                    "\"Thanks.  Something else...\"", "\"Thanks, that's all.\"", NULL);
+                             "\"Thanks.  Something else...\"", "\"Thanks, that's all.\"", NULL);
             }
         } while (opt2 == 1);
         if (opt2 == 2)
@@ -333,7 +334,7 @@ void say_listen_need(Game* g, dialogue& d)
 void say_listen_about(Game* g, dialogue& d)
 {
     int opt = d.opt("About what?", "\"About you.\"", "\"About your faction.\"",
-        "\"About other factions.\"", "\"Never mind.\"", "\"Never mind, bye.\"", NULL);
+                    "\"About other factions.\"", "\"Never mind.\"", "\"Never mind, bye.\"", NULL);
     std::string describe;
     switch (opt) {
     case 1:
@@ -371,7 +372,8 @@ void say_listen_about(Game* g, dialogue& d)
 void say_why_join(Game* g, dialogue& d)
 {
     int opt = d.opt("Why should I travel with you?", "\"We'll be safer together.\"",
-        "\"I'll pay you.\"", "!\"I'll kill you if you don't.\"", "\"Never mind.  Bye.\"", NULL);
+                    "\"I'll pay you.\"", "!\"I'll kill you if you don't.\"",
+                    "\"Never mind.  Bye.\"", NULL);
     bool will_travel = false;
     switch (opt) {
     case 1:
@@ -381,7 +383,8 @@ void say_why_join(Game* g, dialogue& d)
                 + d.alpha->sklevel[sk_speech]
             > 8) {
             debugmsg("value (%d) * 4, - bravery (%d) * 3, + altruism (%d) * 2, + int",
-                d.beta->op_of_u.value, d.beta->personality.bravery, d.beta->personality.altruism);
+                     d.beta->op_of_u.value, d.beta->personality.bravery,
+                     d.beta->personality.altruism);
             d.beta->op_of_u.value++;
             d.beta->op_of_u.trust++;
             d.beta->say(g, "Alright, let's do it!");
@@ -409,8 +412,8 @@ void say_why_join(Game* g, dialogue& d)
             d.beta->say(g, "Fine, you monster!");
             will_travel = true;
         } else if (d.beta->op_of_u.fear - 2 * d.beta->personality.aggression
-                - d.beta->personality.bravery
-            < -4) {
+                       - d.beta->personality.bravery
+                   < -4) {
             d.beta->say(g, "Never!");
             d.beta->attitude = NPCATT_KILL;
             d.done = true;
@@ -431,7 +434,7 @@ void say_why_join(Game* g, dialogue& d)
         d.done = true;
     } else if (d.done == false) {
         opt = d.opt("Eh.  No thanks.", "\"Oh.  But what if...\"", "\"That's fine.  How about...\"",
-            "\"Alright.  Bye.\"", NULL);
+                    "\"Alright.  Bye.\"", NULL);
         switch (opt) {
         case 1:
             say_why_join(g, d);
@@ -612,7 +615,7 @@ bool trade(Game* g, dialogue& d, int cost, std::string deal)
 Trading with %s\n\
 Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n\
 ? to get information on an item",
-        d.beta->name.c_str());
+              d.beta->name.c_str());
 
     // Set up line drawings
     for (int i = 0; i < 80; i++)
@@ -631,12 +634,12 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
     // Adjust the prices based on your barter skill.
     for (int i = 0; i < their_price.size(); i++) {
         their_price[i] *= (price_adjustment(d.alpha->sklevel[sk_barter])
-            + (d.beta->int_cur - d.alpha->int_cur) / 15);
+                           + (d.beta->int_cur - d.alpha->int_cur) / 15);
         getting_theirs[i] = false;
     }
     for (int i = 0; i < your_price.size(); i++) {
         your_price[i] /= (price_adjustment(d.alpha->sklevel[sk_barter])
-            + (d.beta->int_cur - d.alpha->int_cur) / 15);
+                          + (d.beta->int_cur - d.alpha->int_cur) / 15);
         getting_yours[i] = false;
     }
 
@@ -654,10 +657,11 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             werase(w_you);
             for (int i = 1; i < 80; i++)
                 mvwputch(w_head, 3, i, c_white, LINE_OXOX);
-            mvwprintz(w_head, 3, 30,
+            mvwprintz(
+                w_head, 3, 30,
                 ((cash < 0 && d.alpha->cash >= cash * -1) || (cash >= 0 && d.beta->cash >= cash)
-                        ? c_green
-                        : c_red),
+                     ? c_green
+                     : c_red),
                 "%s $%d", (cash >= 0 ? "Profit" : "Cost"), abs(cash));
             if (deal != "")
                 mvwprintz(w_head, 3, 45, (cost < 0 ? c_ltred : c_ltgreen), deal.c_str());
@@ -666,21 +670,21 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             else
                 wattron(w_you, c_yellow);
             wborder(w_them, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX,
-                LINE_XXOO, LINE_XOOX);
+                    LINE_XXOO, LINE_XOOX);
             wborder(w_you, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX,
-                LINE_XXOO, LINE_XOOX);
+                    LINE_XXOO, LINE_XOOX);
             wattroff(w_them, c_yellow);
             wattroff(w_you, c_yellow);
             mvwprintz(w_them, 0, 1, (cash < 0 || d.beta->cash >= cash ? c_green : c_red), "%s: $%d",
-                d.beta->name.c_str(), d.beta->cash);
+                      d.beta->name.c_str(), d.beta->cash);
             mvwprintz(w_you, 0, 2, (cash > 0 || d.alpha->cash >= cash * -1 ? c_green : c_red),
-                "You: $%d", d.alpha->cash);
+                      "You: $%d", d.alpha->cash);
             // Draw their list of items, starting from them_off
             for (int i = them_off; i < theirs.size() && i < 17; i++)
                 mvwprintz(w_them, i - them_off + 1, 1, (getting_theirs[i] ? c_white : c_ltgray),
-                    "%c %c %s - $%d", char(i + 'a'), (getting_theirs[i] ? '+' : '-'),
-                    d.beta->inv[theirs[i + them_off]].tname().substr(0, 25).c_str(),
-                    their_price[i + them_off]);
+                          "%c %c %s - $%d", char(i + 'a'), (getting_theirs[i] ? '+' : '-'),
+                          d.beta->inv[theirs[i + them_off]].tname().substr(0, 25).c_str(),
+                          their_price[i + them_off]);
             if (them_off > 0)
                 mvwprintw(w_them, 19, 1, "< Back");
             if (them_off + 17 < theirs.size())
@@ -688,9 +692,9 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             // Draw your list of items, starting from you_off
             for (int i = you_off; i < yours.size() && i < 17; i++)
                 mvwprintz(w_you, i - you_off + 1, 1, (getting_yours[i] ? c_white : c_ltgray),
-                    "%c %c %s - $%d", char(i + 'a'), (getting_yours[i] ? '+' : '-'),
-                    d.alpha->inv[yours[i + you_off]].tname().substr(0, 25).c_str(),
-                    your_price[i + you_off]);
+                          "%c %c %s - $%d", char(i + 'a'), (getting_yours[i] ? '+' : '-'),
+                          d.alpha->inv[yours[i + you_off]].tname().substr(0, 25).c_str(),
+                          your_price[i + you_off]);
             if (you_off > 0)
                 mvwprintw(w_you, 19, 1, "< Back");
             if (you_off + 17 < yours.size())
@@ -736,7 +740,7 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             w_tmp = newwin(3, 21, 1, 30);
             mvwprintz(w_tmp, 1, 1, c_red, "Examine which item?");
             wborder(w_tmp, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX,
-                LINE_XXOO, LINE_XOOX);
+                    LINE_XXOO, LINE_XOOX);
             wrefresh(w_tmp);
             help = getch();
             help -= 'a';

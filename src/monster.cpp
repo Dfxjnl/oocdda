@@ -23,7 +23,7 @@ namespace oocdda {
 #define SGN(a) (((a) < 0) ? -1 : 1)
 #define SQR(a) (a * a)
 
-monster::monster()
+Monster::Monster()
 {
     /*
      mvprintz(10, 30, c_red, "INVALID MONSTER!");
@@ -45,7 +45,7 @@ monster::monster()
     dead = false;
 }
 
-monster::monster(MonsterType* t)
+Monster::Monster(MonsterType* t)
 {
     posx = 20;
     posy = 10;
@@ -65,7 +65,7 @@ monster::monster(MonsterType* t)
     dead = false;
 }
 
-monster::monster(MonsterType* t, int x, int y)
+Monster::Monster(MonsterType* t, int x, int y)
 {
     posx = x;
     posy = y;
@@ -85,7 +85,7 @@ monster::monster(MonsterType* t, int x, int y)
     dead = false;
 }
 
-void monster::poly(MonsterType* t)
+void Monster::poly(MonsterType* t)
 {
     type = t;
     moves = 0;
@@ -94,17 +94,15 @@ void monster::poly(MonsterType* t)
     sp_timeout = type->sp_freq;
 }
 
-void monster::spawn(int x, int y)
+void Monster::spawn(int x, int y)
 {
     posx = x;
     posy = y;
 }
 
-monster::~monster() { }
+std::string Monster::name() { return type->name; }
 
-std::string monster::name() { return type->name; }
-
-void monster::print_info(Game* g, WINDOW* w)
+void Monster::print_info(Game* g, WINDOW* w)
 {
     // First line of w is the border; the next two are terrain info, and after that
     // is a blank line. w is 13 characters tall, and we can't use the last one
@@ -155,9 +153,9 @@ void monster::print_info(Game* g, WINDOW* w)
     } while (pos != std::string::npos && line < 12);
 }
 
-char monster::symbol() { return type->sym; }
+char Monster::symbol() { return type->sym; }
 
-void monster::draw(WINDOW* w, int plx, int ply, bool inv)
+void Monster::draw(WINDOW* w, int plx, int ply, bool inv)
 {
     int x = SEEX + posx - plx;
     int y = SEEY + posy - ply;
@@ -170,16 +168,16 @@ void monster::draw(WINDOW* w, int plx, int ply, bool inv)
         mvwputch(w, y, x, color, type->sym);
 }
 
-bool monster::has_flag(m_flags f) { return type->flags & flag_to_bit_position(f); }
+bool Monster::has_flag(m_flags f) { return type->flags & flag_to_bit_position(f); }
 
-bool monster::made_of(material m)
+bool Monster::made_of(material m)
 {
     if (type->mat == m)
         return true;
     return false;
 }
 
-void monster::load_info(std::string data, std::vector<MonsterType*>* mtypes)
+void Monster::load_info(std::string data, std::vector<MonsterType*>* mtypes)
 {
     std::stringstream dump;
     int idtmp, plansize;
@@ -194,7 +192,7 @@ void monster::load_info(std::string data, std::vector<MonsterType*>* mtypes)
     }
 }
 
-std::string monster::save_info()
+std::string Monster::save_info()
 {
     std::stringstream pack;
     pack << int(type->id) << " " << posx << " " << posy << " " << wandx << " " << wandy << " "
@@ -206,7 +204,7 @@ std::string monster::save_info()
     return pack.str();
 }
 
-void monster::debug(player& u)
+void Monster::debug(player& u)
 {
     char buff[2];
     debugmsg("%s has %d steps planned.", name().c_str(), plans.size());
@@ -221,7 +219,7 @@ void monster::debug(player& u)
     getch();
 }
 
-void monster::shift(int sx, int sy)
+void Monster::shift(int sx, int sy)
 {
     posx -= sx * SEEX;
     posy -= sy * SEEY;
@@ -231,7 +229,7 @@ void monster::shift(int sx, int sy)
     }
 }
 
-bool monster::is_fleeing(player& u)
+bool Monster::is_fleeing(player& u)
 {
     // fleefactor is by default the agressiveness of the animal, minus the
     //  percentage of remaining HP times five.  So, aggresiveness of 5 has a
@@ -256,7 +254,7 @@ bool monster::is_fleeing(player& u)
     return true;
 }
 
-int monster::hit(player& p, body_part& bp_hit)
+int Monster::hit(player& p, body_part& bp_hit)
 {
     int numdice = type->melee_skill;
     if (dice(numdice, 10) <= dice(p.dodge(), 10))
@@ -307,10 +305,10 @@ int monster::hit(player& p, body_part& bp_hit)
     return ret;
 }
 
-void monster::hit_monster(Game* g, int i)
+void Monster::hit_monster(Game* g, int i)
 {
     int junk;
-    monster* target = &(g->z[i]);
+    Monster* target = &(g->z[i]);
 
     int numdice = type->melee_skill;
     int dodgedice = target->type->sk_dodge;
@@ -341,7 +339,7 @@ void monster::hit_monster(Game* g, int i)
         g->kill_mon(i);
 }
 
-bool monster::hurt(int dam)
+bool Monster::hurt(int dam)
 {
     hp -= dam;
     if (hp < 1)
@@ -349,13 +347,13 @@ bool monster::hurt(int dam)
     return false;
 }
 
-int monster::armor()
+int Monster::armor()
 {
     // TODO: Add support for worn armor?
     return int(type->armor);
 }
 
-void monster::die(Game* g)
+void Monster::die(Game* g)
 {
     // Drop goodies
     int total_chance = 0, total_it_chance, cur_chance, selected_location, selected_item;
@@ -364,7 +362,7 @@ void monster::die(Game* g)
     std::vector<itype_id> mapit;
     if (type->item_chance != 0 && g->monitems[type->id].size() == 0)
         debugmsg("Type %s has item_chance %d but no items assigned!", type->name.c_str(),
-            type->item_chance);
+                 type->item_chance);
     for (int i = 0; i < it.size(); i++)
         total_chance += it[i].chance;
 
@@ -395,7 +393,7 @@ void monster::die(Game* g)
     (md.*type->dies)(g, this);
 }
 
-bool monster::make_fungus(Game* g)
+bool Monster::make_fungus(Game* g)
 {
     switch (mon_id(type->id)) {
     case mon_ant:
@@ -432,7 +430,7 @@ bool monster::make_fungus(Game* g)
     return false;
 }
 
-void monster::make_friendly()
+void Monster::make_friendly()
 {
     plans.clear();
     friendly = rng(5, 30) + rng(0, 20);

@@ -1,9 +1,11 @@
 ---
 Language: Cpp
 BasedOnStyle: WebKit
+AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Left
 AlignTrailingComments:
   Kind: Always
+BinPackParameters: false
 BraceWrapping:
   AfterFunction: true
 BreakBeforeBraces: Custom
