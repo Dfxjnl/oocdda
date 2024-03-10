@@ -95,7 +95,7 @@ item::item(itype* it, unsigned int turn, char let)
     invlet = let;
 }
 
-void item::make_corpse(itype* it, mtype* mt, unsigned int turn)
+void item::make_corpse(itype* it, MonsterType* mt, unsigned int turn)
 {
     name = "";
     charges = -1;

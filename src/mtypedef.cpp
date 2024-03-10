@@ -19,14 +19,14 @@ void Game::init_mtypes()
 {
     int id = 0;
     // Null monster named "None".
-    mtypes.push_back(new mtype);
+    mtypes.push_back(new MonsterType);
 
 #define mon(name, sym, color, size, mat, flags, freq, diff, agro, speed, melee_skill, melee_dice,  \
     melee_sides, melee_cut, dodge, armor, item_chance, HP, sp_freq, death, sp_att, desc)           \
     id++;                                                                                          \
-    mtypes.push_back(new mtype(id, name, sym, color, size, mat, flags, freq, diff, agro, speed,    \
-        melee_skill, melee_dice, melee_sides, melee_cut, dodge, armor, item_chance, HP, sp_freq,   \
-        death, sp_att, desc))
+    mtypes.push_back(new MonsterType(id, name, sym, color, size, mat, flags, freq, diff, agro,     \
+        speed, melee_skill, melee_dice, melee_sides, melee_cut, dodge, armor, item_chance, HP,     \
+        sp_freq, death, sp_att, desc))
 
     // PLEASE NOTE: The description is AT MAX 4 lines of 46 characters each.
 

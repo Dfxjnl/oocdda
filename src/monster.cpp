@@ -45,7 +45,7 @@ monster::monster()
     dead = false;
 }
 
-monster::monster(mtype* t)
+monster::monster(MonsterType* t)
 {
     posx = 20;
     posy = 10;
@@ -65,7 +65,7 @@ monster::monster(mtype* t)
     dead = false;
 }
 
-monster::monster(mtype* t, int x, int y)
+monster::monster(MonsterType* t, int x, int y)
 {
     posx = x;
     posy = y;
@@ -85,7 +85,7 @@ monster::monster(mtype* t, int x, int y)
     dead = false;
 }
 
-void monster::poly(mtype* t)
+void monster::poly(MonsterType* t)
 {
     type = t;
     moves = 0;
@@ -179,7 +179,7 @@ bool monster::made_of(material m)
     return false;
 }
 
-void monster::load_info(std::string data, std::vector<mtype*>* mtypes)
+void monster::load_info(std::string data, std::vector<MonsterType*>* mtypes)
 {
     std::stringstream dump;
     int idtmp, plansize;

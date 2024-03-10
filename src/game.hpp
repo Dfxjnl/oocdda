@@ -73,7 +73,7 @@ public:
     void remove_item(item* it);
 
     std::vector<itype*> itypes;
-    std::vector<mtype*> mtypes;
+    std::vector<MonsterType*> mtypes;
     std::vector<trap*> traps;
     std::vector<itype_id> mapitems[num_itloc]; // Items at various map types
     std::vector<items_location_and_chance> monitems[num_monsters];

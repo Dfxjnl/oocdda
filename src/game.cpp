@@ -1269,7 +1269,7 @@ void Game::draw_overmap()
 void Game::disp_kills()
 {
     WINDOW* w = newwin(25, 80, 0, 0);
-    std::vector<mtype*> types;
+    std::vector<MonsterType*> types;
     std::vector<int> count;
     for (int i = 0; i < num_monsters; i++) {
         if (kills[i] > 0) {
@@ -4346,7 +4346,7 @@ void Game::butcher()
     // We do it backwards to prevent the deletion of a corpse from corrupting our
     // vector of indices.
     for (int i = corpses.size() - 1; i >= 0; i--) {
-        mtype* corpse = m.i_at(u.posx, u.posy)[corpses[i]].corpse;
+        MonsterType* corpse = m.i_at(u.posx, u.posy)[corpses[i]].corpse;
         if (query_yn("Butcher the %s corpse?", corpse->name.c_str())) {
             int age = m.i_at(u.posx, u.posy)[corpses[i]].bday;
             m.i_rem(u.posx, u.posy, corpses[i]);

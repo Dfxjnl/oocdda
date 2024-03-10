@@ -19,10 +19,10 @@ class player;
 class monster {
 public:
     monster();
-    monster(mtype* t);
-    monster(mtype* t, int x, int y);
+    monster(MonsterType* t);
+    monster(MonsterType* t, int x, int y);
     ~monster();
-    void poly(mtype* t);
+    void poly(MonsterType* t);
     void spawn(int x, int y); // All this does is moves the monster to x,y
 
     // Access
@@ -33,7 +33,7 @@ public:
     // Inverts color if inv==true
     bool has_flag(m_flags f); // Returns true if f is set (see mtype.h)
     bool made_of(material m); // Returns true if it's made of m
-    void load_info(std::string data, std::vector<mtype*>* mtypes);
+    void load_info(std::string data, std::vector<MonsterType*>* mtypes);
     std::string save_info(); // String of all data, for save files
     void debug(player& u);   // Gives debug info
 
@@ -81,7 +81,7 @@ public:
     int hp;
     int sp_timeout;
     int friendly;
-    mtype* type;
+    MonsterType* type;
     bool dead;
 
 private:

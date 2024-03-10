@@ -123,7 +123,7 @@ enum m_flags {
     MF_MAX          // Sets the length of the flags - obviously MUST be last
 };
 
-struct mtype {
+struct MonsterType {
     int id;
     std::string name;
     std::string description;
@@ -154,7 +154,7 @@ struct mtype {
     void (mattack::*sp_attack)(Game*, monster*); // This monster's special attack
 
     // Default constructor
-    mtype()
+    MonsterType()
     {
         id = 0;
         name = "human";
@@ -181,7 +181,7 @@ struct mtype {
         sp_attack = NULL;
     }
     // Non-default (messy)
-    mtype(int pid, std::string pname, char psym, nc_color pcolor, m_size psize, material pmat,
+    MonsterType(int pid, std::string pname, char psym, nc_color pcolor, m_size psize, material pmat,
         unsigned pflags, unsigned char pfreq, unsigned int pdiff, signed char pagro,
         unsigned int pspeed, unsigned char pml_skill, unsigned char pml_dice,
         unsigned char pml_sides, unsigned char pml_cut, unsigned char pdodge, unsigned char parmor,

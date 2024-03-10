@@ -12,14 +12,14 @@
 namespace oocdda {
 class Game;
 class player;
-struct mtype;
+struct MonsterType;
 
 class item {
 public:
     item();
     item(itype* it, unsigned int turn);
     item(itype* it, unsigned int turn, char let);
-    void make_corpse(itype* it, mtype* mt, unsigned int turn); // Corpse
+    void make_corpse(itype* it, MonsterType* mt, unsigned int turn); // Corpse
     item(std::string itemdata, Game* g);
     ~item();
     void make(itype* it);
@@ -76,7 +76,7 @@ public:
     bool is_tool();
 
     itype* type;
-    mtype* corpse;
+    MonsterType* corpse;
     it_ammo* curammo;
 
     std::vector<item> contents;
