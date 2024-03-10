@@ -5,21 +5,22 @@ AlignArrayOfStructures: Left
 AlignTrailingComments:
   Kind: Always
 BraceWrapping:
-    AfterFunction: true
+  AfterFunction: true
 BreakBeforeBraces: Custom
 BreakBeforeInheritanceComma: true
 BreakConstructorInitializers: BeforeComma
 ColumnLimit: 100
+Cpp11BracedListStyle: true
 FixNamespaceComments: true
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex: '^<[a-z_]+>'
+  - Regex: "^<[a-z_]+>"
     Priority: -1
   - Regex: '^<.+\.h(pp)?>'
     Priority: 1
-  - Regex: '^<.*'
+  - Regex: "^<.*"
     Priority: 2
-  - Regex: '.*'
+  - Regex: ".*"
     Priority: 3
 IndentPPDirectives: AfterHash
 IndentRequiresClause: false
@@ -31,4 +32,3 @@ RequiresExpressionIndentation: OuterScope
 ShortNamespaceLines: 0
 SortIncludes: CaseSensitive
 SpaceAfterTemplateKeyword: false
-...

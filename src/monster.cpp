@@ -187,7 +187,7 @@ void monster::load_info(std::string data, std::vector<mtype*>* mtypes)
     dump >> idtmp >> posx >> posy >> wandx >> wandy >> wandf >> moves >> speed >> hp >> sp_timeout
         >> plansize >> friendly >> dead;
     type = (*mtypes)[idtmp];
-    point ptmp;
+    Point ptmp;
     for (int i = 0; i < plansize; i++) {
         dump >> ptmp.x >> ptmp.y;
         plans.push_back(ptmp);

@@ -17,20 +17,21 @@
 #include "npc.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 
 namespace oocdda {
 void mattack::antqueen(Game* g, monster* z)
 {
-    std::vector<point> egg_points;
+    std::vector<Point> egg_points;
     z->moves = -200;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
     for (int x = z->posx - 1; x <= z->posx + 1; x++) {
         for (int y = z->posy - 1; y <= z->posy + 1; y++) {
             for (int i = 0; i < g->m.i_at(x, y).size(); i++) {
                 if (g->m.i_at(x, y)[i].type->id == itm_ant_egg)
-                    egg_points.push_back(point(x, y));
+                    egg_points.push_back(Point(x, y));
             }
         }
     }
@@ -102,7 +103,7 @@ void mattack::shockstorm(Game* g, monster* z)
     int tarx = g->u.posx + rng(-3, 3), tary = g->u.posy + rng(-3, 3);
     if (!g->m.sees(z->posx, z->posy, tarx, tary, -1, t))
         t = 0;
-    std::vector<point> bolt = line_to(z->posx, z->posy, tarx, tary, t);
+    std::vector<Point> bolt = line_to(z->posx, z->posy, tarx, tary, t);
     for (int i = 0; i < bolt.size(); i++) {
         if (!one_in(4))
             g->m.add_field(g, bolt[i].x, bolt[i].y, fd_electricity, rng(1, 3));
@@ -121,7 +122,7 @@ void mattack::boomer(Game* g, monster* z)
     if (abs(g->u.posx - z->posx) > 3 || abs(g->u.posy - z->posy) > 3
         || !g->sees_u(z->posx, z->posy, j))
         return; // Out of range
-    std::vector<point> line = line_to(z->posx, z->posy, g->u.posx, g->u.posy, j);
+    std::vector<Point> line = line_to(z->posx, z->posy, g->u.posx, g->u.posy, j);
     z->sp_timeout = z->type->sp_freq; // Reset timer
     z->moves = -250;                  // It takes a while
     bool u_see = g->u_see(z->posx, z->posy, j);
@@ -145,13 +146,13 @@ void mattack::boomer(Game* g, monster* z)
 
 void mattack::resurrect(Game* g, monster* z)
 {
-    std::vector<point> corpses;
+    std::vector<Point> corpses;
     for (int x = z->posx - 6; x <= z->posx + 6; x++) {
         for (int y = z->posy - 6; y <= z->posy + 6; y++) {
             if (g->mon_at(x, y) == -1) {
                 for (int i = 0; i < g->m.i_at(x, y).size(); i++) {
                     if (g->m.i_at(x, y)[i].type->id == itm_corpse)
-                        corpses.push_back(point(x, y));
+                        corpses.push_back(Point(x, y));
                 }
             }
         }
@@ -415,7 +416,7 @@ void mattack::stare(Game* g, monster* z)
         g->u.add_disease(DI_TELEGLOW, 800, g);
     } else {
         g->add_msg("A piercing beam of light bursts forth!");
-        std::vector<point> sight = line_to(z->posx, z->posy, g->u.posx, g->u.posy, 0);
+        std::vector<Point> sight = line_to(z->posx, z->posy, g->u.posx, g->u.posy, 0);
         for (int i = 0; i < sight.size(); i++) {
             if (g->m.ter(sight[i].x, sight[i].y) == t_reinforced_glass_h
                 || g->m.ter(sight[i].x, sight[i].y) == t_reinforced_glass_v)
@@ -463,7 +464,7 @@ void mattack::smg(Game* g, monster* z)
     tmp.weapon = item(g->itypes[itm_hk_mp7], 0);
     tmp.weapon.curammo = dynamic_cast<it_ammo*>(g->itypes[itm_46mm]);
     tmp.weapon.charges = 10;
-    std::vector<point> traj = line_to(z->posx, z->posy, g->u.posx, g->u.posy, t);
+    std::vector<Point> traj = line_to(z->posx, z->posy, g->u.posx, g->u.posy, t);
     g->fire(tmp, g->u.posx, g->u.posy, traj, true);
 }
 
@@ -475,7 +476,7 @@ void mattack::flamethrower(Game* g, monster* z)
         return;                       // Out of range
     z->sp_timeout = z->type->sp_freq; // Reset timer
     z->moves = -500;                  // It takes a while
-    std::vector<point> traj = line_to(z->posx, z->posy, g->u.posx, g->u.posy, t);
+    std::vector<Point> traj = line_to(z->posx, z->posy, g->u.posx, g->u.posy, t);
     for (int i = 0; i < traj.size(); i++)
         g->m.add_field(g, traj[i].x, traj[i].y, fd_fire, 1);
     g->u.add_disease(DI_ONFIRE, 8, g);

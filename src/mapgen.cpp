@@ -12,15 +12,12 @@
 #include "omdata.hpp"
 #include "output.hpp"
 #include "overmap.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "trap.hpp"
 
 namespace oocdda {
 class Game;
-
-#ifndef sgn
-#    define sgn(x) (((x) < 0) ? -1 : 1)
-#endif
 
 ter_id grass_or_dirt()
 {
@@ -1794,39 +1791,39 @@ void map::draw_map(oter_id terrain_type, oter_id t_north, oter_id t_east, oter_i
                     ter(SEEX, SEEY * 2 - 1) = t_door_metal_c;
                 }
                 if (terrain_type == ot_lab_stairs) { // Stairs going down
-                    std::vector<point> stair_points;
+                    std::vector<Point> stair_points;
                     if (tw != 0) {
-                        stair_points.push_back(point(SEEX - 1, 2));
-                        stair_points.push_back(point(SEEX - 1, 2));
-                        stair_points.push_back(point(SEEX, 2));
-                        stair_points.push_back(point(SEEX, 2));
+                        stair_points.push_back(Point(SEEX - 1, 2));
+                        stair_points.push_back(Point(SEEX - 1, 2));
+                        stair_points.push_back(Point(SEEX, 2));
+                        stair_points.push_back(Point(SEEX, 2));
                     }
                     if (rw != 1) {
-                        stair_points.push_back(point(SEEX * 2 - 3, SEEY - 1));
-                        stair_points.push_back(point(SEEX * 2 - 3, SEEY - 1));
-                        stair_points.push_back(point(SEEX * 2 - 3, SEEY));
-                        stair_points.push_back(point(SEEX * 2 - 3, SEEY));
+                        stair_points.push_back(Point(SEEX * 2 - 3, SEEY - 1));
+                        stair_points.push_back(Point(SEEX * 2 - 3, SEEY - 1));
+                        stair_points.push_back(Point(SEEX * 2 - 3, SEEY));
+                        stair_points.push_back(Point(SEEX * 2 - 3, SEEY));
                     }
                     if (bw != 1) {
-                        stair_points.push_back(point(SEEX - 1, SEEY * 2 - 3));
-                        stair_points.push_back(point(SEEX - 1, SEEY * 2 - 3));
-                        stair_points.push_back(point(SEEX, SEEY * 2 - 3));
-                        stair_points.push_back(point(SEEX, SEEY * 2 - 3));
+                        stair_points.push_back(Point(SEEX - 1, SEEY * 2 - 3));
+                        stair_points.push_back(Point(SEEX - 1, SEEY * 2 - 3));
+                        stair_points.push_back(Point(SEEX, SEEY * 2 - 3));
+                        stair_points.push_back(Point(SEEX, SEEY * 2 - 3));
                     }
                     if (lw != 0) {
-                        stair_points.push_back(point(2, SEEY - 1));
-                        stair_points.push_back(point(2, SEEY - 1));
-                        stair_points.push_back(point(2, SEEY));
-                        stair_points.push_back(point(2, SEEY));
+                        stair_points.push_back(Point(2, SEEY - 1));
+                        stair_points.push_back(Point(2, SEEY - 1));
+                        stair_points.push_back(Point(2, SEEY));
+                        stair_points.push_back(Point(2, SEEY));
                     }
-                    stair_points.push_back(point(int(SEEX / 2), SEEY));
-                    stair_points.push_back(point(int(SEEX / 2), SEEY - 1));
-                    stair_points.push_back(point(int(SEEX / 2) + SEEX, SEEY));
-                    stair_points.push_back(point(int(SEEX / 2) + SEEX, SEEY - 1));
-                    stair_points.push_back(point(SEEX, int(SEEY / 2)));
-                    stair_points.push_back(point(SEEX + 2, int(SEEY / 2)));
-                    stair_points.push_back(point(SEEX, int(SEEY / 2) + SEEY));
-                    stair_points.push_back(point(SEEX + 2, int(SEEY / 2) + SEEY));
+                    stair_points.push_back(Point(int(SEEX / 2), SEEY));
+                    stair_points.push_back(Point(int(SEEX / 2), SEEY - 1));
+                    stair_points.push_back(Point(int(SEEX / 2) + SEEX, SEEY));
+                    stair_points.push_back(Point(int(SEEX / 2) + SEEX, SEEY - 1));
+                    stair_points.push_back(Point(SEEX, int(SEEY / 2)));
+                    stair_points.push_back(Point(SEEX + 2, int(SEEY / 2)));
+                    stair_points.push_back(Point(SEEX, int(SEEY / 2) + SEEY));
+                    stair_points.push_back(Point(SEEX + 2, int(SEEY / 2) + SEEY));
                     rn = rng(0, stair_points.size() - 1);
                     ter(stair_points[rn].x, stair_points[rn].y) = t_stairs_down;
                 }

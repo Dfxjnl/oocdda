@@ -9,7 +9,6 @@
 
 #include "color.hpp"
 #include "dialogue.hpp"
-#include "enums.hpp"
 #include "faction.hpp"
 #include "game.hpp"
 #include "item.hpp"
@@ -22,6 +21,7 @@
 #include "output.hpp"
 #include "overmap.hpp"
 #include "player.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 
@@ -228,7 +228,7 @@ void say_listen(Game* g, dialogue& d)
 void say_listen_need(Game* g, dialogue& d)
 {
     std::string response;
-    point lookp;
+    Point lookp;
     npc_opinion opinion = d.beta->op_of_u;
     int opt2;
     int opt = d.opt("What do you need, <name_g>?", "\"Healing.\"", "\"Directions to...\"",
@@ -282,7 +282,7 @@ void say_listen_need(Game* g, dialogue& d)
             if (opt2 != 0) {
                 int dist = 50;
                 lookp
-                    = g->cur_om.find_closest(point(g->levx / 2, g->levy / 2), look, 4, dist, false);
+                    = g->cur_om.find_closest(Point(g->levx / 2, g->levy / 2), look, 4, dist, false);
                 if (lookp.x != -1) {
                     lookp.x = lookp.x * 2 - 1;
                     lookp.y = lookp.y * 2 - 1;

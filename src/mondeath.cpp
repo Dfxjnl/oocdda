@@ -15,6 +15,7 @@
 #include "mtype.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 
 namespace oocdda {
@@ -105,7 +106,7 @@ void mdeath::worm(Game* g, monster* z)
     if (g->u_see(z, j))
         g->add_msg("The %s splits in two!", z->name().c_str());
 
-    std::vector<point> wormspots;
+    std::vector<Point> wormspots;
     int wormx, wormy;
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
@@ -113,7 +114,7 @@ void mdeath::worm(Game* g, monster* z)
             wormy = z->posy + i;
             if (g->m.has_flag(diggable, wormx, wormy) && g->mon_at(wormx, wormy) == -1
                 && !(g->u.posx == wormx && g->u.posy == wormy)) {
-                wormspots.push_back(point(wormx, wormy));
+                wormspots.push_back(Point(wormx, wormy));
             }
         }
     }
@@ -154,14 +155,14 @@ void mdeath::blobsplit(Game* g, monster* z)
     if (g->u_see(z, j))
         g->add_msg("The %s splits!", z->name().c_str());
     blob.hp = blob.speed;
-    std::vector<point> valid;
+    std::vector<Point> valid;
 
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
             if (g->m.move_cost(z->posx + i, z->posy + j) > 0
                 && g->mon_at(z->posx + i, z->posy + j) == -1
                 && (g->u.posx != z->posx + i || g->u.posy != z->posy + j))
-                valid.push_back(point(z->posx + i, z->posy + j));
+                valid.push_back(Point(z->posx + i, z->posy + j));
         }
     }
 

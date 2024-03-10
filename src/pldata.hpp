@@ -18,10 +18,10 @@ enum character_type {
     PLTYPE_MAX
 };
 
-const std::string pltype_name[PLTYPE_MAX] = { "Custom Character", "Random Character", "Student",
-    "Farmer", "Mechanic", "Clerk", "Police Officer", "Survivalist", "Programmer", "Doctor" };
+const std::string pltype_name[PLTYPE_MAX] = {"Custom Character", "Random Character", "Student",
+    "Farmer", "Mechanic", "Clerk", "Police Officer", "Survivalist", "Programmer", "Doctor"};
 
-const std::string pltype_desc[PLTYPE_MAX] = { "\
+const std::string pltype_desc[PLTYPE_MAX] = {"\
 A custom character you design yourself.  A pool of points is used for\n\
 statistics, traits, and skills.",
     "\
@@ -53,7 +53,7 @@ possibly one or two other technical areas.",
     "\
 Possessed of a mind and stamina capable of carrying you through law school,\n\
 you're highly skilled both with first aid and more serious medical procedure,\n\
-but less so with fighting." };
+but less so with fighting."};
 
 enum dis_type {
     DI_NULL,
@@ -270,239 +270,239 @@ struct trait {
 };
 
 const trait traits[] = {
-    {"Fleet-Footed",           3,   false, "\
+    {"Fleet-Footed",          3,   false, "\
 You can run more quickly than most, resulting in a 15%% speed bonus on sure\n\
 footing."                                                    },
-    { "Parkour Expert",        1,   false, "\
+    {"Parkour Expert",        1,   false, "\
 You're skilled at clearing obstacles; terrain like railings or counters are\n\
 as easy for you to move on as solid ground."                                                    },
-    { "Quick",                 3,   false, "\
+    {"Quick",                 3,   false, "\
 You're just generally quick!  You get a 10%% bonus to action points."                                                    },
-    { "Optimist",              2,   false, "\
+    {"Optimist",              2,   false, "\
 Nothing gets you down!  Your morale will generally be higher than average."                                                    },
-    { "Fast Healer",           2,   false, "\
+    {"Fast Healer",           2,   false, "\
 You heal a little faster than most; sleeping will heal more lost HP."                                                    },
-    { "Light Eater",           3,   false, "\
+    {"Light Eater",           3,   false, "\
 Your metabolism is a little slower, and you require less food than most."                                                    },
-    { "Pain Resistant",        4,   false, "\
+    {"Pain Resistant",        4,   false, "\
 You have a high tolerance for pain."                                                    },
-    { "Night Vision",          1,   false, "\
+    {"Night Vision",          1,   false, "\
 You possess natural night vision, and can see two squares instead of one in\n\
 pitch blackness."                                                    },
-    { "Poison Resistant",      1,   false, "\
+    {"Poison Resistant",      1,   false, "\
 Your system is rather tolerant of poisons and toxins, and most will affect\n\
 you less."                                                    },
-    { "Fast Reader",           1,   false, "\
+    {"Fast Reader",           1,   false, "\
 You're a quick reader, and can get through books a lot faster than most."                                                    },
-    { "Tough",                 5,   false, "\
+    {"Tough",                 5,   false, "\
 It takes a lot to bring you down!  You get a 20%% bonus to all hit points."                                                    },
-    { "Thick-Skinned",         2,   true,  "\
+    {"Thick-Skinned",         2,   true,  "\
 Your skin is tough.  Cutting damage is slightly reduced for you."                                                    },
-    { "Packmule",              3,   false, "\
+    {"Packmule",              3,   false, "\
 You can manage to find space for anything!  You can carry 40%% more volume."                                                    },
-    { "Fast Learner",          4,   false, "\
+    {"Fast Learner",          4,   false, "\
 You learn skills at twice the normal rate!  Note that this only applies to\n\
 real-world experience, not to skill gain from other sources like books."                                                    },
-    { "Deft",                  2,   false, "\
+    {"Deft",                  2,   false, "\
 While you're not any better at melee combat, you are better at recovering\n\
 from a miss, and will be able to attempt another strike faster."                                                    },
-    { "Drunken Master",        2,   false, "\
+    {"Drunken Master",        2,   false, "\
 The martial art technique of Zui Quan, or Drunken Fist, comes naturally to\n\
 you.  While under the influence of alcohol, your melee skill will rise\n\
 considerably, especially unarmed combat."                                                    },
-    { "Gourmand",              2,   false, "\
+    {"Gourmand",              2,   false, "\
 You eat faster, and can eat and drink more, than anyone else!  You also enjoy\n\
 food more; delicious food is better for your morale, and you don't mind some\n\
 unsavory meals."                                                    },
-    { "Supertaster",           1,   false, "\
+    {"Supertaster",           1,   false, "\
 You can tell if food is even a little spoiled before eating it."                                                    },
-    { "Animal Empathy",        1,   false, "\
+    {"Animal Empathy",        1,   false, "\
 Peaceful animals will not run away from you, and even aggressive animals are\n\
 less likely to attack.  This only applies to natural animals such as woodland\n\
 creatures."                                                    },
-    { "Terrifying",            2,   false, "\
+    {"Terrifying",            2,   false, "\
 There's something about you that creatures find frightening, and they are\n\
 more likely to try to flee."                                                    },
-    { "Disease Resistant",     1,   false, "\
+    {"Disease Resistant",     1,   false, "\
 It's very unlikely that you will catch ambient diseases like a cold or the\n\
 flu."                                                    },
-    { "High Adrenaline",       3,   false, "\
+    {"High Adrenaline",       3,   false, "\
 If you are in a very dangerous situation, you may experience a temporary rush\n\
 which increases your speed and strength significantly."                                                    },
-    { "Inconspicuous",         2,   false, "\
+    {"Inconspicuous",         2,   false, "\
 While sleeping or staying still, it is less likely that monsters will wander\n\
 close to you."                                                    },
-    { "Masochist",             2,   false, "\
+    {"Masochist",             2,   false, "\
 Although you still suffer the negative effects of pain, it also brings a\n\
 unique pleasure to you."                                                    },
-    { "Light Step",            1,   false, "\
+    {"Light Step",            1,   false, "\
 You make less noise while walking.  You're also less likely to set off traps."                                                    },
-    { "Heartless",             2,   false, "\
+    {"Heartless",             2,   false, "\
 You have few qualms, and no capacity for pity. Killing the helpless, the\n\
 young, and your friends will not affect your morale at all."                                                    },
-    { "Android",               4,   false, "\
+    {"Android",               4,   false, "\
 At some point in the past you had a bionic upgrade installed in your body.\n\
 You start the game with a power system, and one random bionic enhancement."                                                    },
-    { "Robust Genetics",       2,   false, "\
+    {"Robust Genetics",       2,   false, "\
 You have a very strong genetic base.  If you mutate, the odds that the\n\
 mutation will be beneficial are greatly increased."                                                    },
 
-    { "NULL",                  0,   false, " -------------------------------------------------- "},
+    {"NULL",                  0,   false, " -------------------------------------------------- "},
 
-    { "Near-Sighted",          -2,  true,  "\
+    {"Near-Sighted",          -2,  true,  "\
 Without your glasses, your seeing radius is severely reduced!  However, while\n\
 wearing glasses this trait has no effect, and you are guaranteed to start\n\
 with a pair."                                                    },
-    { "Heavy Sleeper",         -2,  false, "\
+    {"Heavy Sleeper",         -2,  false, "\
 You're quite the heavy sleeper.  Noises are unlikely to wake you up."                                                    },
-    { "Asthmatic",             -4,  true,  "\
+    {"Asthmatic",             -4,  true,  "\
 You will occasionally need to use an inhaler, or else suffer severe physical\n\
 limitations.  However, you are guaranteed to start with an inhaler."                                                    },
-    { "Bad Back",              -3,  true,  "\
+    {"Bad Back",              -3,  true,  "\
 You simply can not carry as much as people with a similar strength could.\n\
 Your maximum weight carried is reduced by 35%%."                                                    },
-    { "Illiterate",            -5,  false, "\
+    {"Illiterate",            -5,  false, "\
 You never learned to read!  Books are totally off-limits to you."                                                    },
-    { "Poor Hearing",          -2,  true,  "\
+    {"Poor Hearing",          -2,  true,  "\
 Your hearing is poor, and you may not hear quiet or far-off noises."                                                    },
-    { "Insomniac",             -2,  false, "\
+    {"Insomniac",             -2,  false, "\
 You have a hard time falling asleep, even under the best circumstances!"                                                    },
-    { "Vegetarian",            -3,  false, "\
+    {"Vegetarian",            -3,  false, "\
 You have moral objections to eating meat.  You may consume it, but doing so\n\
 will hurt your morale."                                                    },
-    { "Glass Jaw",             -3,  false, "\
+    {"Glass Jaw",             -3,  false, "\
 Your head can't take much abuse.  Its maximum HP is 15%% lower than usual."                                                    },
-    { "Forgetful",             -3,  false, "\
+    {"Forgetful",             -3,  false, "\
 You have a hard time remembering things.  Your skills will erode slightly\n\
 faster than usual."                                                    },
-    { "Lightweight",           -1,  false, "\
+    {"Lightweight",           -1,  false, "\
 Alcohol and drugs go straight to your head.  You suffer the negative effects\n\
 of these for longer."                                                    },
-    { "Addictive Personality", -3,  false, "\
+    {"Addictive Personality", -3,  false, "\
 It's easier for you to become addicted to substances, and harder to rid\n\
 yourself of these addictions."                                                    },
-    { "Trigger Happy",         -2,  false, "\
+    {"Trigger Happy",         -2,  false, "\
 On rare occasion, you will go full-auto when you intended to fire a single\n\
 shot.  This has no effect when firing handguns or other semi-automatic\n\
 firearms."                                                    },
-    { "Smelly",                -1,  false, "\
+    {"Smelly",                -1,  false, "\
 Your scent is particularly strong.  It's not offensive to humans, but animals\n\
 that track your scent will do so more easily."                                                    },
-    { "Chemical Imbalance",    -2,  true,  "\
+    {"Chemical Imbalance",    -2,  true,  "\
 You suffer from a minor chemical imbalance, whether mental or physical. Minor\n\
 changes to your internal chemistry will manifest themselves on occasion,\n\
 such as hunger, sleepiness, narcotic effects, etc."                                                    },
-    { "Schizophrenic",         -5,  false, "\
+    {"Schizophrenic",         -5,  false, "\
 You will periodically suffer from delusions, ranging from minor effects to\n\
 full visual hallucinations.  Some of these effects may be controlled through\n\
 the use of medication."                                                    },
-    { "Jittery",               -3,  false, "\
+    {"Jittery",               -3,  false, "\
 During moments of great stress or under the effects of stimulants, you may\n\
 find your hands shaking uncontrollably, severely reducing your dexterity."                                                    },
-    { "Hoarder",               -3,  false, "\
+    {"Hoarder",               -3,  false, "\
 You don't feel right unless you're carrying as much as you can.  You suffer\n\
 morale penalties for carrying less than maximum volume (weight is ignored).\n\
 Benzodiazepines can help control this anxiety."                                                    },
-    { "Savant",                -4,  false, "\
+    {"Savant",                -4,  false, "\
 You tend to specialize in one skill and be poor at all others.  You advance\n\
 at half speed in all skills except your best one. Note that combining this\n\
 with Fast Learner will come out to a slower rate of learning for all skills."                                                    },
-    { "Mood Swings",           -1,  false, "\
+    {"Mood Swings",           -1,  false, "\
 Your morale will shift up and down at random, often dramatically."                                                    },
-    { "Weak Stomach",          -1,  false, "\
+    {"Weak Stomach",          -1,  false, "\
 You are more likely to throw up from food poisoning, alcohol, etc."                                                    },
-    { "Wool Allergy",          -1,  false, "\
+    {"Wool Allergy",          -1,  false, "\
 You are badly allergic to wool, and can not wear any clothing made of the\n\
 substance."                                                    },
-    { "HP Ignorant",           -2,  false, "\
+    {"HP Ignorant",           -2,  false, "\
 You do not get to see your exact amount of HP remaining, but do have a vague\n\
 idea of whether you're in good condition or not."                                                    },
 
-    { "Bug - PF_MAX",          0,   false, "\
+    {"Bug - PF_MAX",          0,   false, "\
 This shouldn't be here!  You have the trait PF_MAX toggled.  Weird."                                                    },
 
-    { "High Night Vision",     3,   true,  "\
+    {"High Night Vision",     3,   true,  "\
 You can see incredibly well in the dark!"                                                    },
-    { "Infrared Vision",       3,   true,  "\
+    {"Infrared Vision",       3,   true,  "\
 Your eyes have mutated to pick up radiation in the infrared spectrum."                                                    },
-    { "Regeneration",          8,   true,  "\
+    {"Regeneration",          8,   true,  "\
 Your flesh regenerates from wounds incredibly quickly."                                                    },
-    { "Fangs",                 2,   true,  "\
+    {"Fangs",                 2,   true,  "\
 Your teeth have grown into two-inch-long fangs, allowing you to make an extra\n\
 attack when conditions favor it."                                                    },
-    { "Nictating Membrane",    1,   true,  "\
+    {"Nictating Membrane",    1,   true,  "\
 You have a second set of clear eyelids which lower while underwater, allowing\n\
 you to see as though you were wearing goggles."                                                    },
-    { "Gills",                 1,   true,  "\
+    {"Gills",                 1,   true,  "\
 You've grown a set of gills in your neck, allowing you to breathe underwater."                                                    },
-    { "Scales",                4,   true,  "\
+    {"Scales",                4,   true,  "\
 A set of flexible green scales have grown to cover your body, acting as a\n\
 natural armor."                                                    },
-    { "Furry",                 2,   true,  "\
+    {"Furry",                 2,   true,  "\
 Thick black fur has grown to cover your entire body, providing a marginal\n\
 protection against attacks, and considerable protection from cold."                                                    },
-    { "Chitinous Armor",       2,   true,  "\
+    {"Chitinous Armor",       2,   true,  "\
 You've grow a chitin exoskeleton, much like that of an insect.  It provides\n\
 considerable physical protection, but reduces your dexterity by 3."                                                    },
-    { "Spines",                1,   true,  "\
+    {"Spines",                1,   true,  "\
 Your skin is covered with fine spines.  Whenever an unarmed opponent strikes\n\
 a part of your body that is not covered by clothing, they will receive minor\n\
 damage."                                                    },
-    { "Quills",                3,   true,  "\
+    {"Quills",                3,   true,  "\
 Your body is covered with large quills.  Whenever an unarmed opponent strikes\n\
 a part of your body that is not covered by clothing, they will receive\n\
 significant damage."                                                    },
-    { "Large Talons",          2,   true,  "\
+    {"Large Talons",          2,   true,  "\
 Your index fingers have grown into huge talons.  After a bit of practice, you\n\
 find that this does not affect your dexterity, but allows for a deadly\n\
 unarmed attack."                                                    },
-    { "Radiogenic",            3,   true,  "\
+    {"Radiogenic",            3,   true,  "\
 Your system has adapted to radiation.  While irradiated, you will actually\n\
 heal slowly, converting the radiation into hit points."                                                    },
 
-    { "Deformed",              -2,  true,  "\
+    {"Deformed",              -2,  true,  "\
 You're minorly deformed.  Some people will react badly to your appearance."                                                    },
-    { "Badly Deformed",        -3,  true,  "\
+    {"Badly Deformed",        -3,  true,  "\
 You're hideously deformed.  Some people will have a strong negative reaction\n\
 to your appearance."                                                    },
-    { "Vomitous",              -4,  true,  "\
+    {"Vomitous",              -4,  true,  "\
 You have a major digestive disorder, which causes you to vomit frequently."                                                    },
-    { "Fast Metabolism",       -2,  true,  "\
+    {"Fast Metabolism",       -2,  true,  "\
 You require more food than most people."                                                    },
-    { "High Thirst",           -3,  true,  "\
+    {"High Thirst",           -3,  true,  "\
 Your body dries out easily; you need to drink a lot more water."                                                    },
-    { "Disintegration",        -10, true,  "\
+    {"Disintegration",        -10, true,  "\
 Your body is slowly wasting away!"                                                    },
-    { "Albino",                -2,  true,  "\
+    {"Albino",                -2,  true,  "\
 Your skin lacks pigment, and is nearly transparent.  You suffer serious burns\n\
 in direct sunlight."                                                    },
-    { "Sores",                 -2,  true,  "\
+    {"Sores",                 -2,  true,  "\
 Your body is covered in painful sores.  The pain is worse when they are\n\
 covered in clothing."                                                    },
-    { "Light Sensitive",       -3,  true,  "\
+    {"Light Sensitive",       -3,  true,  "\
 Sunlight makes you extremely uncomfortable, resulting in large penalties to\n\
 all stats."                                                    },
-    { "Webbed Hands",          -1,  true,  "\
+    {"Webbed Hands",          -1,  true,  "\
 Your hands and feet are heavily webbed, reducing your dexterity by 1 and\n\
 preventing you from wearing gloves.  However, you can swim much faster."                                                    },
-    { "Beak",                  -1,  true,  "\
+    {"Beak",                  -1,  true,  "\
 You have a beak for a mouth.  You can occasionally use it to peck at your\n\
 enemies, but it is impossible for you to wear mouthgear."                                                    },
-    { "Genetically Unstable",  -4,  true,  "\
+    {"Genetically Unstable",  -4,  true,  "\
 Your DNA has been damaged in a way that causes you to continually develop\n\
 more mutations."                                                    },
-    { "Radioactive",           -4,  true,  "\
+    {"Radioactive",           -4,  true,  "\
 Your body has become radioactive!  You continuously emit low levels of\n\
 radiation, some of which will be absorbed by you, and some of which will\n\
 contaminate the world around you."                                                    },
-    { "Slimy",                 -1,  true,  "\
+    {"Slimy",                 -1,  true,  "\
 Your body is coated with a fine slime, which oozes off of you, leaving a\n\
 trail."                                                    },
-    { "Herbivore",             -3,  true,  "\
+    {"Herbivore",             -3,  true,  "\
 Your body's ability to digest meat is severely hampered.  Eating meat has a\n\
 good chance of making you vomit it back up; even if you manage to keep it\n\
 down, its nutritional value is greatly reduced."                                                    },
-    { "Carnivore",             -2,  true,  "\
+    {"Carnivore",             -2,  true,  "\
 Your body's ability to digest fruits, vegetables and grainss is severely\n\
 hampered.  You cannot eat anything besides meat."                                                    }
 };

@@ -9,6 +9,7 @@
 #include "bodypart.hpp"
 #include "enums.hpp"
 #include "mtype.hpp"
+#include "point.hpp"
 
 namespace oocdda {
 class Game;
@@ -50,8 +51,8 @@ public:
     void move(Game* g); // Actual movement
     void friendly_move(Game* g);
 
-    point scent_move(Game* g);
-    point sound_move(Game* g);
+    Point scent_move(Game* g);
+    Point sound_move(Game* g);
     void hit_player(Game* g, player& p);
     void move_to(Game* g, int x, int y);
     void stumble(Game* g, bool moved);
@@ -84,7 +85,7 @@ public:
     bool dead;
 
 private:
-    std::vector<point> plans;
+    std::vector<Point> plans;
 };
 } // namespace oocdda
 

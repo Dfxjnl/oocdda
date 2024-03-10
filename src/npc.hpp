@@ -16,7 +16,7 @@ class Game;
 class item;
 class monster;
 class overmap;
-struct point;
+struct Point;
 
 #define NPC_LOW_VALUE 5
 #define NPC_HI_VALUE 8
@@ -180,9 +180,9 @@ public:
     bool saw_player_recently();  // Do we have an idea of where u are?
     bool has_destination();      // Do we have a long-term destination?
     bool alt_attack_available(); // Do we have grenades, molotov, etc?
-    npc_action method_of_attacking_player(Game* g, std::vector<point>& path);
-    npc_action method_of_attacking_monster(Game* g, std::vector<point>& path);
-    npc_action long_term_goal_action(Game* g, std::vector<point>& path);
+    npc_action method_of_attacking_player(Game* g, std::vector<Point>& path);
+    npc_action method_of_attacking_monster(Game* g, std::vector<Point>& path);
+    npc_action long_term_goal_action(Game* g, std::vector<Point>& path);
     void set_destination(Game* g); // Pick a place to go
     void go_to_destination(Game* g);
 

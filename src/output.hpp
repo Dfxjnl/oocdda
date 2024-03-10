@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <ncurses/curses.h>
+
 #include "color.hpp"
 
 namespace oocdda {

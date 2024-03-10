@@ -18,6 +18,7 @@
 #include "output.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 
 namespace oocdda {
@@ -52,7 +53,7 @@ void player::activate_bionic(int b, Game* g)
     }
 
     std::string junk;
-    std::vector<point> traj;
+    std::vector<Point> traj;
     std::vector<std::string> good;
     std::vector<std::string> bad;
     WINDOW* w;

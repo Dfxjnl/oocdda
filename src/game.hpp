@@ -7,7 +7,6 @@
 #include <ncurses/curses.h>
 
 #include "crafting.hpp"
-#include "enums.hpp"
 #include "event.hpp"
 #include "faction.hpp"
 #include "itype.hpp"
@@ -21,6 +20,7 @@
 #include "omdata.hpp"
 #include "overmap.hpp"
 #include "player.hpp"
+#include "point.hpp"
 #include "tutorial.hpp"
 
 namespace oocdda {
@@ -54,8 +54,8 @@ public:
     void kill_mon(int index); // Kill that monster; fixes any pointers etc
     void plfire(bool burst);  // Player fires a gun (setup of target)...
     // ... a gun is fired, maybe by an NPC (actual damage, etc.).
-    void fire(player& p, int tarx, int tary, std::vector<point>& trajectory, bool burst);
-    void throw_item(player& p, int tarx, int tary, item& thrown, std::vector<point>& trajectory);
+    void fire(player& p, int tarx, int tary, std::vector<Point>& trajectory, bool burst);
+    void throw_item(player& p, int tarx, int tary, item& thrown, std::vector<Point>& trajectory);
     void cancel_activity();
     void cancel_activity_query(std::string message);
     void teleport();
@@ -69,7 +69,7 @@ public:
 
     char inv(std::string title = "INVENTORY:");
     faction* list_factions(std::string title = "FACTIONS:");
-    point find_item(item* it);
+    Point find_item(item* it);
     void remove_item(item* it);
 
     std::vector<itype*> itypes;
@@ -149,7 +149,7 @@ private:
     void read();
     void chat(); // Chat to an NPC
     void plthrow();
-    std::vector<point> target(int& x, int& y, int lowx, int lowy, int hix, int hiy,
+    std::vector<Point> target(int& x, int& y, int lowx, int lowy, int hix, int hiy,
         std::vector<monster> t, int& target, item* relevent);
     void help();
 

@@ -6,7 +6,6 @@
 
 #include "bionics.hpp"
 #include "bodypart.hpp"
-#include "enums.hpp"
 #include "game.hpp"
 #include "line.hpp"
 #include "map.hpp"
@@ -17,6 +16,7 @@
 #include "npc.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 #include "trap.hpp"
@@ -180,7 +180,7 @@ void monster::move(Game* g)
     moves -= 100;
     int rn = 0, hmove = 0;
     bool moved = false, xbest = false;
-    point next;
+    Point next;
     int x, x2, x3, y, y2, y3, junk;
     rn = rng(0, 50);
     hmove = rng(0, 5);
@@ -196,14 +196,14 @@ void monster::move(Game* g)
     } else if (has_flag(MF_SMELLS)) {
         // No sight... or our plans are invalid (e.g. moving through a transparent, but
         //  solid, square of terrain).  Fall back to smell if we have it.
-        point tmp = scent_move(g);
+        Point tmp = scent_move(g);
         if (tmp.x != -1) {
             next = tmp;
             moved = true;
         }
     }
     if (wandf > 0 && !moved) { // No LOS, no scent, so as a fall-back follow sound
-        point tmp = sound_move(g);
+        Point tmp = sound_move(g);
         if (tmp.x != posx || tmp.y != posy) {
             next = tmp;
             moved = true;
@@ -242,7 +242,7 @@ void monster::move(Game* g)
 
 void monster::friendly_move(Game* g)
 {
-    point next;
+    Point next;
     bool moved = false;
     moves -= 100;
     if (plans.size() > 0 && (plans[0].x != g->u.posx || plans[0].y != g->u.posy)
@@ -275,13 +275,13 @@ void monster::friendly_move(Game* g)
     }
 }
 
-point monster::scent_move(Game* g)
+Point monster::scent_move(Game* g)
 {
     plans.clear();
-    std::vector<point> smoves;
+    std::vector<Point> smoves;
     int maxsmell = 1; // Squares with smell 0 are not eligable targets
     int minsmell = 9999;
-    point pbuff, next(-1, -1);
+    Point pbuff, next(-1, -1);
     unsigned int smell;
     for (int x = -1; x <= 1; x++) {
         for (int y = -1; y <= 1; y++) {
@@ -314,10 +314,10 @@ point monster::scent_move(Game* g)
     return next;
 }
 
-point monster::sound_move(Game* g)
+Point monster::sound_move(Game* g)
 {
     plans.clear();
-    point next;
+    Point next;
     bool xbest = true;
     if (abs(wandy - posy) > abs(wandx - posx)) // which is more important
         xbest = false;
@@ -484,13 +484,13 @@ void monster::move_to(Game* g, int x, int y)
  */
 void monster::stumble(Game* g, bool moved)
 {
-    std::vector<point> valid_stumbles;
+    std::vector<Point> valid_stumbles;
     for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
             if (can_move_to(g->m, posx + i, posy + j)
                 && (g->u.posx != posx + i || g->u.posy != posy + j)
                 && (g->mon_at(posx + i, posy + j) == -1 || (i == 0 && j == 0))) {
-                point tmp(posx + i, posy + j);
+                Point tmp(posx + i, posy + j);
                 valid_stumbles.push_back(tmp);
             }
         }
@@ -507,7 +507,7 @@ void monster::stumble(Game* g, bool moved)
             int tc;
             if (g->m.sees(posx, posy, plans[0].x, plans[0].y, -1, tc)) {
                 // Copy out old plans...
-                std::vector<point> plans2;
+                std::vector<Point> plans2;
                 for (int i = 0; i < plans.size(); i++)
                     plans2.push_back(plans[i]);
                 // Set plans to a route between where we are now, and where we were

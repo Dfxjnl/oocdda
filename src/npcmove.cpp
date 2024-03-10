@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "bodypart.hpp"
-#include "enums.hpp"
 #include "faction.hpp"
 #include "game.hpp"
 #include "item.hpp"
@@ -19,6 +18,7 @@
 #include "overmap.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 
@@ -29,7 +29,7 @@ void npc::move(Game* g)
 {
     int light = g->light_level();
     int linet;
-    std::vector<point> path;
+    std::vector<Point> path;
     npc_action action = npc_pause;
     target = choose_monster_target(g); // Set a target
     // If we aren't moving towards an item or a monster, find an item
@@ -295,7 +295,7 @@ void npc::pickup_items(Game* g)
         if (debug)
             debugmsg("We see our item(s).  NPC @ (%d:%d); items @ (%d:%d) (dist %d", posx, posy,
                 itx, ity, dist);
-        std::vector<point> traj = line_to(posx, posy, itx, ity, linet);
+        std::vector<Point> traj = line_to(posx, posy, itx, ity, linet);
         if (debug)
             debugmsg("Moving to (%d:%d), %s.", traj[0].x, traj[0].y,
                 g->m.tername(traj[0].x, traj[0].y).c_str());
@@ -327,7 +327,7 @@ int npc::follow_distance()
     return (ret < 2 ? 2 : ret);
 }
 
-npc_action npc::method_of_attacking_player(Game* g, std::vector<point>& path)
+npc_action npc::method_of_attacking_player(Game* g, std::vector<Point>& path)
 {
     if (g->debugmon)
         debugmsg("method_of_attacking_player()");
@@ -384,7 +384,7 @@ npc_action npc::method_of_attacking_player(Game* g, std::vector<point>& path)
     }
 }
 
-npc_action npc::method_of_attacking_monster(Game* g, std::vector<point>& path)
+npc_action npc::method_of_attacking_monster(Game* g, std::vector<Point>& path)
 {
     if (target == NULL) {
         debugmsg("Tried to figure out how to attack a null monster!");
@@ -470,7 +470,7 @@ bool npc::alt_attack_available()
     return false;
 }
 
-npc_action npc::long_term_goal_action(Game* g, std::vector<point>& path)
+npc_action npc::long_term_goal_action(Game* g, std::vector<Point>& path)
 {
     if (g->debugmon)
         debugmsg("long_term_goal_action()");
@@ -569,7 +569,7 @@ void npc::set_destination(Game* g)
             break;
         }
         int dist = 0;
-        point p = g->cur_om.find_closest(point(mapx, mapy), dest_type, 4, dist, false);
+        Point p = g->cur_om.find_closest(Point(mapx, mapy), dest_type, 4, dist, false);
         goalx = p.x;
         goaly = p.y;
     }
@@ -590,7 +590,7 @@ void npc::go_to_destination(Game* g)
             for (int dx = 0 - i; dx <= i; dx++) {
                 for (int dy = 0 - i; dy <= i; dy++) {
                     if (g->m.sees(posx, posy, x + dx, y + dy, light, linet)) {
-                        std::vector<point> path = line_to(posx, posy, x + dx, y + dy, linet);
+                        std::vector<Point> path = line_to(posx, posy, x + dx, y + dy, linet);
                         if (can_move_to(g, path[0].x, path[0].y)) {
                             move_to(g, path[0].x, path[0].y);
                             return;
@@ -703,8 +703,8 @@ void npc::melee_monster(Game* g, monster* m)
 void npc::alt_attack(Game* g, monster* m, player* p)
 {
     // In order of importance
-    itype_id options[8] = { itm_mininuke_act, itm_dynamite_act, itm_grenade_act, itm_gasbomb_act,
-        itm_mininuke, itm_dynamite, itm_grenade, itm_gasbomb };
+    itype_id options[8] = {itm_mininuke_act, itm_dynamite_act, itm_grenade_act, itm_gasbomb_act,
+        itm_mininuke, itm_dynamite, itm_grenade, itm_gasbomb};
     item used;
     bool throwing = false;
     int i, tx, ty, linet;
@@ -735,7 +735,7 @@ void npc::alt_attack(Game* g, monster* m, player* p)
     }
     if (throwing) {
         int light = g->light_level();
-        std::vector<point> trajectory;
+        std::vector<Point> trajectory;
         if (g->m.sees(posx, posy, tx, ty, light, linet))
             trajectory = line_to(posx, posy, tx, ty, linet);
         else

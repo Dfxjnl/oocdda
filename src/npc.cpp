@@ -794,8 +794,8 @@ void npc::set_name()
     std::ifstream fin;
     char buff[256];
 
-    const std::filesystem::path male_names_file { "data/NAMES_MALE" };
-    const std::filesystem::path female_names_file { "data/NAMES_FEMALE" };
+    const std::filesystem::path male_names_file {"data/NAMES_MALE"};
+    const std::filesystem::path female_names_file {"data/NAMES_FEMALE"};
 
     if (male) {
         fin.open(male_names_file);
@@ -816,7 +816,7 @@ void npc::set_name()
     fin.close();
 
     std::string lastname;
-    const std::filesystem::path last_names_file { "data/NAMES_LAST" };
+    const std::filesystem::path last_names_file {"data/NAMES_LAST"};
     fin.open(last_names_file);
 
     if (!fin.is_open()) {
@@ -952,7 +952,7 @@ bool npc::wear_if_wanted(item it)
         return false;
 
     it_armor* armor = dynamic_cast<it_armor*>(it.type);
-    int max_encumb[num_bp] = { 2, 3, 3, 4, 3, 3, 3, 2 };
+    int max_encumb[num_bp] = {2, 3, 3, 4, 3, 3, 3, 2};
     bool encumb_ok = true;
     for (int i = 0; i < num_bp && encumb_ok; i++) {
         if (armor->covers & flag_to_bit_position(i)

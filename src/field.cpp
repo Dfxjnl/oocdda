@@ -13,11 +13,10 @@
 #include "output.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 
 namespace oocdda {
-bool vector_has(std::vector<item> vec, itype_id type);
-
 bool map::process_fields(Game* g)
 {
     bool found_field = false;
@@ -175,18 +174,18 @@ bool map::process_fields(Game* g)
                         g->scent(x + i, y + j) = 0;
                 }
                 if (one_in(3)) {
-                    std::vector<point> spread;
+                    std::vector<Point> spread;
                     for (int a = -1; a <= 1; a++) {
                         for (int b = -1; b <= 1; b++) {
                             if ((field_at(x + a, y + b).type == fd_smoke
                                     && field_at(x + a, y + b).density < 3)
                                 || (field_at(x + a, y + b).is_null()
                                     && move_cost(x + a, y + b) > 0))
-                                spread.push_back(point(x + a, y + b));
+                                spread.push_back(Point(x + a, y + b));
                         }
                     }
                     if (cur->density > 0 && cur->age > 0 && spread.size() > 0) {
-                        point p = spread[rng(0, spread.size() - 1)];
+                        Point p = spread[rng(0, spread.size() - 1)];
                         if (field_at(p.x, p.y).type == fd_smoke && field_at(p.x, p.y).density < 3) {
                             field_at(p.x, p.y).density++;
                             cur->density--;
@@ -207,7 +206,7 @@ bool map::process_fields(Game* g)
                 }
                 // One in three chance that it spreads (less than smoke!)
                 if (one_in(3)) {
-                    std::vector<point> spread;
+                    std::vector<Point> spread;
                     // Pick all eligible points to spread to
                     for (int a = -1; a <= 1; a++) {
                         for (int b = -1; b <= 1; b++) {
@@ -216,12 +215,12 @@ bool map::process_fields(Game* g)
                                     && field_at(x + a, y + b).density < 3)
                                 || (field_at(x + a, y + b).is_null()
                                     && move_cost(x + a, y + b) > 0))
-                                spread.push_back(point(x + a, y + b));
+                                spread.push_back(Point(x + a, y + b));
                         }
                     }
                     // Then, spread to a nearby point
                     if (cur->density > 0 && cur->age > 0 && spread.size() > 0) {
-                        point p = spread[rng(0, spread.size() - 1)];
+                        Point p = spread[rng(0, spread.size() - 1)];
                         // Nearby teargas grows thicker
                         if (field_at(p.x, p.y).type == fd_tear_gas
                             && field_at(p.x, p.y).density < 3) {
@@ -249,7 +248,7 @@ bool map::process_fields(Game* g)
                 // Increase long-term radiation in the land underneath
                 radiation(x, y) += rng(0, cur->density);
                 if (one_in(2)) {
-                    std::vector<point> spread;
+                    std::vector<Point> spread;
                     // Pick all eligible points to spread to
                     for (int a = -1; a <= 1; a++) {
                         for (int b = -1; b <= 1; b++) {
@@ -259,12 +258,12 @@ bool map::process_fields(Game* g)
                                     && field_at(x + a, y + b).density < 3)
                                 || (field_at(x + a, y + b).is_null()
                                     && move_cost(x + a, y + b) > 0))
-                                spread.push_back(point(x + a, y + b));
+                                spread.push_back(Point(x + a, y + b));
                         }
                     }
                     // Then, spread to a nearby point
                     if (cur->density > 0 && cur->age > 0 && spread.size() > 0) {
-                        point p = spread[rng(0, spread.size() - 1)];
+                        Point p = spread[rng(0, spread.size() - 1)];
                         // Nearby nukegas grows thicker
                         if (field_at(p.x, p.y).type == fd_nuke_gas
                             && field_at(p.x, p.y).density < 3) {
@@ -285,7 +284,7 @@ bool map::process_fields(Game* g)
                 break;
             case fd_electricity:
                 if (!one_in(5)) { // 4 in 5 chance to spread
-                    std::vector<point> valid;
+                    std::vector<Point> valid;
                     if (move_cost(x, y) == 0 && cur->density > 1) { // We're grounded
                         int tries = 0;
                         while (tries < 10 && cur->age < 50) {
@@ -302,7 +301,7 @@ bool map::process_fields(Game* g)
                             for (int b = -1; b <= 1; b++) {
                                 if (move_cost(x + a, y + b) == 0 && // Grounded tiles first
                                     field_at(x + a, y + b).is_null())
-                                    valid.push_back(point(x + a, y + b));
+                                    valid.push_back(Point(x + a, y + b));
                             }
                         }
                         if (valid.size() == 0) { // Spread to adjacent space, then
@@ -501,14 +500,5 @@ void map::mon_in_field(int x, int y, Game* g, monster* z)
         break;
     }
     z->hurt(dam);
-}
-
-bool vector_has(std::vector<item> vec, itype_id type)
-{
-    for (int i = 0; i < vec.size(); i++) {
-        if (vec[i].type->id == type)
-            return true;
-    }
-    return false;
 }
 } // namespace oocdda

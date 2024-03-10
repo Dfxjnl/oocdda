@@ -7,9 +7,9 @@
 namespace oocdda {
 #define SGN(a) (((a) < 0) ? -1 : 1)
 
-std::vector<point> line_to(int x1, int y1, int x2, int y2, int t)
+std::vector<Point> line_to(int x1, int y1, int x2, int y2, int t)
 {
-    std::vector<point> ret;
+    std::vector<Point> ret;
     int dx = x2 - x1;
     int dy = y2 - y1;
     int ax = abs(dx) << 1;
@@ -20,7 +20,7 @@ std::vector<point> line_to(int x1, int y1, int x2, int y2, int t)
         sy = 0;
     if (dx == 0)
         sx = 0;
-    point cur;
+    Point cur;
     cur.x = x1;
     cur.y = y1;
 

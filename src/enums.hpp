@@ -26,7 +26,7 @@ namespace oocdda {
  */
 [[nodiscard]] constexpr auto flag_to_bit_position(const unsigned int value) -> unsigned int
 {
-    constexpr unsigned int max_value { sizeof(unsigned int) * 8 - 1 };
+    constexpr unsigned int max_value {sizeof(unsigned int) * 8 - 1};
 
     if (value > max_value) {
         throw std::out_of_range("value out of range");
@@ -56,17 +56,6 @@ enum material {
     IRON,
     STEEL,
     SILVER
-};
-
-struct point {
-    int x;
-    int y;
-    point(int X = 0, int Y = 0)
-        : x(X)
-        , y(Y)
-    {
-    }
-    ~point() { }
 };
 } // namespace oocdda
 

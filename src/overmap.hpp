@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "enums.hpp"
 #include "mongroup.hpp"
 #include "npc.hpp"
 #include "omdata.hpp"
+#include "point.hpp"
 #include "settlement.hpp"
 
 namespace oocdda {
@@ -65,7 +65,7 @@ public:
     void generate_sub(overmap* above);
     void make_tutorial();
 
-    point find_closest(point origin, oter_id type, int type_range, int& dist, bool must_be_seen);
+    Point find_closest(Point origin, oter_id type, int type_range, int& dist, bool must_be_seen);
     void first_house(int& x, int& y);
 
     oter_id& ter(int x, int y);
@@ -90,7 +90,7 @@ private:
     bool nullbool;
     std::vector<om_note> notes;
     // Overall terrain
-    void place_river(point pa, point pb);
+    void place_river(Point pa, Point pb);
     void place_forest();
     void place_settlements(Game* g);
     void settlement_building(settlement& set, int x, int y);
@@ -105,7 +105,7 @@ private:
     void place_rifts();
     // Connection highways
     void place_hiways(std::vector<city> cities, oter_id base);
-    void place_subways(std::vector<point> stations);
+    void place_subways(std::vector<Point> stations);
     void make_hiway(int x1, int y1, int x2, int y2, oter_id base);
     void building_on_hiway(int x, int y, int dir);
     // Polishing

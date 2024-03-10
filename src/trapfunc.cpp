@@ -1,7 +1,6 @@
 #include <vector>
 
 #include "bodypart.hpp"
-#include "enums.hpp"
 #include "game.hpp"
 #include "itype.hpp"
 #include "map.hpp"
@@ -11,6 +10,7 @@
 #include "output.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 #include "trap.hpp"
@@ -71,11 +71,11 @@ void trapfuncm::board(Game* g, monster* z, int x, int y)
 void trapfunc::tripwire(Game* g, int x, int y)
 {
     g->add_msg("You trip over a tripwire!");
-    std::vector<point> valid;
+    std::vector<Point> valid;
     for (int j = x - 1; j <= x + 1; j++) {
         for (int k = y - 1; k <= y + 1; k++) {
             if (g->m.move_cost(j, k) != 0 && g->mon_at(j, k) == -1 && g->npc_at(j, k) == -1)
-                valid.push_back(point(j, k));
+                valid.push_back(Point(j, k));
         }
     }
     if (valid.size() > 0) {
@@ -401,11 +401,11 @@ void trapfunc::sinkhole(Game* g, int x, int y)
             g->add_msg("The rope catches something!");
             if (rng(g->u.sklevel[sk_unarmed], g->u.sklevel[sk_unarmed] + g->u.str_cur) > 6) {
                 // Determine safe places for the character to get pulled to
-                std::vector<point> safe;
+                std::vector<Point> safe;
                 for (int i = g->u.posx - 1; i <= g->u.posx + 1; i++) {
                     for (int j = g->u.posx - 1; j <= g->u.posx + 1; j++) {
                         if (g->m.move_cost(i, j) > 0 && g->m.tr_at(i, j) != tr_pit)
-                            safe.push_back(point(i, j));
+                            safe.push_back(Point(i, j));
                     }
                 }
                 if (safe.size() == 0) {

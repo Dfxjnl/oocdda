@@ -15,6 +15,7 @@
 #include "bionics.hpp"
 #include "bodypart.hpp"
 #include "color.hpp"
+#include "enums.hpp"
 #include "file_utils.hpp"
 #include "item.hpp"
 #include "keypress.hpp"
@@ -32,8 +33,7 @@ namespace oocdda {
 #define EXPLOSION_SPEED 70000000
 
 void intro();
-nc_color sev(int a);             // Right now, ONLY used for scent debugging....
-moncat_id mt_to_mc(mon_id type); // Pick the moncat that contains type
+nc_color sev(int a); // Right now, ONLY used for scent debugging....
 
 // This is the main game set-up process.
 Game::Game()
@@ -1244,8 +1244,8 @@ void Game::draw_overmap()
                     else if (i == ot_lab)
                         range = 2;
                     int maxdist = OMAPX;
-                    point found = cur_om.find_closest(
-                        point(cursx, cursy), oter_id(i), range, maxdist, true);
+                    Point found = cur_om.find_closest(
+                        Point(cursx, cursy), oter_id(i), range, maxdist, true);
                     i = num_ter_types;
                     if (found.x != -1) {
                         cursx = found.x;
@@ -1825,25 +1825,25 @@ bool Game::pl_sees(player* p, monster* mon, int& t)
     return m.sees(p->posx, p->posy, mon->posx, mon->posy, range, t);
 }
 
-point Game::find_item(item* it)
+Point Game::find_item(item* it)
 {
     if (u.has_item(it))
-        return point(u.posx, u.posy);
-    point ret = m.find_item(it);
+        return Point(u.posx, u.posy);
+    Point ret = m.find_item(it);
     if (ret.x != -1 && ret.y != -1)
         return ret;
     for (int i = 0; i < active_npc.size(); i++) {
         for (int j = 0; j < active_npc[i].inv.size(); j++) {
             if (it == &(active_npc[i].inv[j]))
-                return point(active_npc[i].posx, active_npc[i].posy);
+                return Point(active_npc[i].posx, active_npc[i].posy);
         }
     }
-    return point(-999, -999);
+    return Point(-999, -999);
 }
 
 void Game::remove_item(item* it)
 {
-    point ret;
+    Point ret;
     if (it == &u.weapon) {
         u.remove_weapon();
         return;
@@ -2349,7 +2349,7 @@ void Game::explosion(int x, int y, int power, int shrapnel, bool fire)
     if (shrapnel <= 0)
         return;
     int sx, sy, t, ijunk, tx, ty;
-    std::vector<point> traj;
+    std::vector<Point> traj;
     ts.tv_sec = 0;
     ts.tv_nsec = BULLET_SPEED; // Reset for animation of bullets
     for (int i = 0; i < shrapnel; i++) {
@@ -2504,17 +2504,17 @@ void Game::use_computer(int x, int y)
             if (!query_yn("WARNING: Resonance Cascade carries severe risk!  Continue?"))
                 return;
             if (success > 5) {
-                std::vector<point> cascade_points;
+                std::vector<Point> cascade_points;
                 for (int i = x - 10; i <= x + 10; i++) {
                     for (int j = y - 10; j <= y + 10; j++) {
                         if (m.ter(i, j) == t_radio_tower)
-                            cascade_points.push_back(point(i, j));
+                            cascade_points.push_back(Point(i, j));
                     }
                 }
                 if (cascade_points.size() == 0)
                     resonance_cascade(u.posx, u.posy);
                 else {
-                    point p = cascade_points[rng(0, cascade_points.size() - 1)];
+                    Point p = cascade_points[rng(0, cascade_points.size() - 1)];
                     resonance_cascade(p.x, p.y);
                 }
             } else
@@ -2548,8 +2548,8 @@ void Game::use_computer(int x, int y)
                 int lines = 0, notes = 0;
                 std::string log, tmp;
                 int ch;
-                const std::filesystem::path lab_notes_file { "data/LAB_NOTES" };
-                std::ifstream fin { lab_notes_file };
+                const std::filesystem::path lab_notes_file {"data/LAB_NOTES"};
+                std::ifstream fin {lab_notes_file};
 
                 while (fin.good()) {
                     ch = fin.get();
@@ -3746,7 +3746,7 @@ void Game::plthrow()
     }
 
     // target() sets x and y, or returns false if we canceled (by pressing Esc)
-    std::vector<point> trajectory = target(x, y, x0, y0, x1, y1, mon_targets, passtarget, &thrown);
+    std::vector<Point> trajectory = target(x, y, x0, y0, x1, y1, mon_targets, passtarget, &thrown);
     if (trajectory.size() == 0)
         return;
     if (passtarget != -1)
@@ -3759,7 +3759,7 @@ void Game::plthrow()
     throw_item(u, x, y, thrown, trajectory);
 }
 
-void Game::throw_item(player& p, int tarx, int tary, item& thrown, std::vector<point>& trajectory)
+void Game::throw_item(player& p, int tarx, int tary, item& thrown, std::vector<Point>& trajectory)
 {
     int deviation = 0;
     int trange = 1.5 * trig_dist(p.posx, p.posy, tarx, tary);
@@ -3932,7 +3932,7 @@ void Game::plfire(bool burst)
     }
 
     // target() sets x and y, or returns false if we canceled (by pressing Esc)
-    std::vector<point> trajectory
+    std::vector<Point> trajectory
         = target(x, y, x0, y0, x1, y1, mon_targets, passtarget, &u.weapon);
     if (trajectory.size() == 0)
         return;
@@ -3956,7 +3956,7 @@ void Game::plfire(bool burst)
         tutorial_message(LESSON_RECOIL);
 }
 
-void Game::fire(player& p, int tarx, int tary, std::vector<point>& trajectory, bool burst)
+void Game::fire(player& p, int tarx, int tary, std::vector<Point>& trajectory, bool burst)
 {
     // If we aren't wielding a loaded gun, we can't shoot!
     item ammotmp = item(p.weapon.curammo, 0);
@@ -5434,10 +5434,10 @@ void Game::teleport()
     update_map(u.posx, u.posy);
 }
 
-std::vector<point> Game::target(int& x, int& y, int lowx, int lowy, int hix, int hiy,
+std::vector<Point> Game::target(int& x, int& y, int lowx, int lowy, int hix, int hiy,
     std::vector<monster> t, int& target, item* relevent)
 {
-    std::vector<point> ret;
+    std::vector<Point> ret;
     int tarx, tary, tart, junk;
     int sight_dist = u.sight_range(light_level());
 

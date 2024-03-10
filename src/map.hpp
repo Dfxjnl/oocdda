@@ -6,13 +6,13 @@
 
 #include <ncurses/curses.h>
 
-#include "enums.hpp"
 #include "item.hpp"
 #include "itype.hpp"
 #include "mapdata.hpp"
 #include "mapitems.hpp"
 #include "mtype.hpp"
 #include "omdata.hpp"
+#include "point.hpp"
 #include "trap.hpp"
 
 namespace oocdda {
@@ -72,7 +72,7 @@ public:
     item water_from(int x, int y);
     void i_clear(int x, int y);
     void i_rem(int x, int y, int index);
-    point find_item(item* it);
+    Point find_item(item* it);
     void add_item(int x, int y, itype* type, int birthday);
     void add_item(int x, int y, item new_item);
     void process_active_items(Game* g);

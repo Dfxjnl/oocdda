@@ -10,6 +10,7 @@
 #include "bionics.hpp"
 #include "bodypart.hpp"
 #include "color.hpp"
+#include "enums.hpp"
 #include "game.hpp"
 #include "iuse.hpp"
 #include "line.hpp"
@@ -485,9 +486,9 @@ void map::i_rem(int x, int y, int index)
 
 void map::i_clear(int x, int y) { i_at(x, y).clear(); }
 
-point map::find_item(item* it)
+Point map::find_item(item* it)
 {
-    point ret;
+    Point ret;
     for (ret.x = 0; ret.x < SEEX * 3; ret.x++) {
         for (ret.y = 0; ret.y < SEEY * 3; ret.y++) {
             for (int i = 0; i < i_at(ret.x, ret.y).size(); i++) {
@@ -511,12 +512,12 @@ void map::add_item(int x, int y, itype* type, int birthday)
 void map::add_item(int x, int y, item new_item)
 {
     if (has_flag(noitem, x, y) || i_at(x, y).size() >= 24) { // Too many items there
-        std::vector<point> okay;
+        std::vector<Point> okay;
         for (int i = x - 1; i <= x + 1; i++) {
             for (int j = y - 1; j <= y + 1; j++) {
                 if (i >= 0 && i < SEEX * 3 && j >= 0 && j < SEEY * 3 && move_cost(i, j) > 0
                     && !has_flag(noitem, i, j) && i_at(i, j).size() < 24)
-                    okay.push_back(point(i, j));
+                    okay.push_back(Point(i, j));
             }
         }
         if (okay.size() == 0) {
@@ -524,13 +525,13 @@ void map::add_item(int x, int y, item new_item)
                 for (int j = y - 2; j <= y + 2; j++) {
                     if (i >= 0 && i < SEEX * 3 && j >= 0 && j < SEEY * 3 && move_cost(i, j) > 0
                         && !has_flag(noitem, i, j) && i_at(i, j).size() < 24)
-                        okay.push_back(point(i, j));
+                        okay.push_back(Point(i, j));
                 }
             }
         }
         if (okay.size() == 0) // STILL?
             return;
-        point choice = okay[rng(0, okay.size() - 1)];
+        Point choice = okay[rng(0, okay.size() - 1)];
         add_item(choice.x, choice.y, new_item);
         return;
     }

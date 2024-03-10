@@ -26,6 +26,7 @@
 #include "overmap.hpp"
 #include "player.hpp"
 #include "pldata.hpp"
+#include "point.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 #include "trap.hpp"
@@ -893,7 +894,7 @@ void iuse::radio_on(Game* g, item* it, bool t)
             }
             message = "radio: " + message;
         }
-        point p = g->find_item(it);
+        Point p = g->find_item(it);
         g->sound(p.x, p.y, 6, message.c_str());
     } else { // Turning it off
         g->add_msg("The radio dies.");
@@ -1193,7 +1194,7 @@ void iuse::grenade(Game* g, item* it, bool t)
 
 void iuse::grenade_act(Game* g, item* it, bool t)
 {
-    point pos = g->find_item(it);
+    Point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
     if (t)                                  // Simple timer effects
@@ -1212,7 +1213,7 @@ void iuse::gasbomb(Game* g, item* it, bool t)
 
 void iuse::gasbomb_act(Game* g, item* it, bool t)
 {
-    point pos = g->find_item(it);
+    Point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
     if (t) {
@@ -1242,7 +1243,7 @@ void iuse::smokebomb(Game* g, item* it, bool t)
 
 void iuse::smokebomb_act(Game* g, item* it, bool t)
 {
-    point pos = g->find_item(it);
+    Point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
     if (t) {
@@ -1279,7 +1280,7 @@ void iuse::molotov(Game* g, item* it, bool t)
 void iuse::molotov_lit(Game* g, item* it, bool t)
 {
     if (!g->u.has_item(it)) {
-        point pos = g->find_item(it);
+        Point pos = g->find_item(it);
         it->charges = 0;
         g->explosion(pos.x, pos.y, 8, 0, true);
     } else if (one_in(20)) {
@@ -1305,7 +1306,7 @@ void iuse::dynamite(Game* g, item* it, bool t)
 
 void iuse::dynamite_act(Game* g, item* it, bool t)
 {
-    point pos = g->find_item(it);
+    Point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
     if (t) // Simple timer effects
@@ -1324,7 +1325,7 @@ void iuse::mininuke(Game* g, item* it, bool t)
 
 void iuse::mininuke_act(Game* g, item* it, bool t)
 {
-    point pos = g->find_item(it);
+    Point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
     if (t) // Simple timer effects
@@ -1344,7 +1345,7 @@ void iuse::mininuke_act(Game* g, item* it, bool t)
 
 void iuse::pheromone(Game* g, item* it, bool t)
 {
-    point pos = g->find_item(it);
+    Point pos = g->find_item(it);
     if (pos.x == -999 || pos.y == -999)
         return;
 

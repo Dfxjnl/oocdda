@@ -6,7 +6,7 @@
 namespace oocdda {
 void ensure_save_directory_exists()
 {
-    const std::filesystem::path save_path { "save" };
+    const std::filesystem::path save_path {"save"};
 
     try {
         if (std::filesystem::exists(save_path)) {

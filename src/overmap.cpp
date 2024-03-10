@@ -224,8 +224,8 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
         }
     }
     std::vector<city> road_points;  // cities and roads_out together
-    std::vector<point> river_start; // West/North endpoints of rivers
-    std::vector<point> river_end;   // East/South endpoints of rivers
+    std::vector<Point> river_start; // West/North endpoints of rivers
+    std::vector<Point> river_end;   // East/South endpoints of rivers
 
     // Determine points where rivers & roads should connect w/ adjacent maps
     if (north != NULL) {
@@ -236,7 +236,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                 && north->ter(i - 1, OMAPY - 1) == ot_river_center
                 && north->ter(i + 1, OMAPY - 1) == ot_river_center) {
                 if (river_start.size() == 0 || river_start[river_start.size() - 1].x < i - 6)
-                    river_start.push_back(point(i, 0));
+                    river_start.push_back(Point(i, 0));
             }
         }
         for (int i = 0; i < north->roads_out.size(); i++) {
@@ -254,7 +254,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                 && west->ter(OMAPX - 1, i + 1) == ot_river_center) {
                 if (river_start.size() == rivers_from_north
                     || river_start[river_start.size() - 1].y < i - 6)
-                    river_start.push_back(point(0, i));
+                    river_start.push_back(Point(0, i));
             }
         }
         for (int i = 0; i < west->roads_out.size(); i++) {
@@ -269,7 +269,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             if (south->ter(i, 0) == ot_river_center && south->ter(i - 1, 0) == ot_river_center
                 && south->ter(i + 1, 0) == ot_river_center) {
                 if (river_end.size() == 0 || river_end[river_end.size() - 1].x < i - 6)
-                    river_end.push_back(point(i, OMAPY - 1));
+                    river_end.push_back(Point(i, OMAPY - 1));
             }
             if (south->ter(i, 0) == ot_road_nesw)
                 roads_out.push_back(city(i, OMAPY - 1, 0));
@@ -288,7 +288,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                 && east->ter(0, i + 1) == ot_river_center) {
                 if (river_end.size() == rivers_to_south
                     || river_end[river_end.size() - 1].y < i - 6)
-                    river_end.push_back(point(OMAPX - 1, i));
+                    river_end.push_back(Point(OMAPX - 1, i));
             }
             if (east->ter(0, i) == ot_road_nesw)
                 roads_out.push_back(city(OMAPX - 1, i, 0));
@@ -300,14 +300,14 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
     }
     // Even up the start and end points of rivers. (difference of 1 is acceptable)
     // Also ensure there's at least one of each.
-    std::vector<point> new_rivers;
+    std::vector<Point> new_rivers;
     if (north == NULL || west == NULL) {
         while (river_start.empty() || river_start.size() + 1 < river_end.size()) {
             new_rivers.clear();
             if (north == NULL)
-                new_rivers.push_back(point(rng(10, OMAPX - 11), 0));
+                new_rivers.push_back(Point(rng(10, OMAPX - 11), 0));
             if (west == NULL)
-                new_rivers.push_back(point(0, rng(10, OMAPY - 11)));
+                new_rivers.push_back(Point(0, rng(10, OMAPY - 11)));
             river_start.push_back(new_rivers[rng(0, new_rivers.size() - 1)]);
         }
     }
@@ -315,15 +315,15 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
         while (river_end.empty() || river_end.size() + 1 < river_start.size()) {
             new_rivers.clear();
             if (south == NULL)
-                new_rivers.push_back(point(rng(10, OMAPX - 11), OMAPY - 1));
+                new_rivers.push_back(Point(rng(10, OMAPX - 11), OMAPY - 1));
             if (east == NULL)
-                new_rivers.push_back(point(OMAPX - 1, rng(10, OMAPY - 11)));
+                new_rivers.push_back(Point(OMAPX - 1, rng(10, OMAPY - 11)));
             river_end.push_back(new_rivers[rng(0, new_rivers.size() - 1)]);
         }
     }
     // Now actually place those rivers.
     if (river_start.size() > river_end.size() && river_end.size() > 0) {
-        std::vector<point> river_end_copy = river_end;
+        std::vector<Point> river_end_copy = river_end;
         int index;
         while (!river_start.empty()) {
             index = rng(0, river_start.size() - 1);
@@ -338,7 +338,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             river_start.erase(river_start.begin() + index);
         }
     } else if (river_end.size() > river_start.size() && river_start.size() > 0) {
-        std::vector<point> river_start_copy = river_start;
+        std::vector<Point> river_start_copy = river_start;
         int index;
         while (!river_end.empty()) {
             index = rng(0, river_end.size() - 1);
@@ -506,8 +506,8 @@ void overmap::make_tutorial()
     zg.clear();
 }
 
-point overmap::find_closest(
-    point origin, oter_id type, int type_range, int& dist, bool must_be_seen)
+Point overmap::find_closest(
+    Point origin, oter_id type, int type_range, int& dist, bool must_be_seen)
 {
     int max = dist;
     for (dist = 0; dist <= max; dist++) {
@@ -515,11 +515,11 @@ point overmap::find_closest(
             for (int y = origin.y - dist; y <= origin.y + dist; y++) {
                 if (ter(x, y) >= type && ter(x, y) < type + type_range
                     && (!must_be_seen || seen(x, y)))
-                    return point(x, y);
+                    return Point(x, y);
             }
         }
     }
-    return point(-1, -1);
+    return Point(-1, -1);
 }
 
 void overmap::first_house(int& x, int& y)
@@ -893,7 +893,7 @@ void overmap::settlement_building(settlement& set, int x, int y)
     set.add_building(pick);
 }
 
-void overmap::place_river(point pa, point pb)
+void overmap::place_river(Point pa, Point pb)
 {
     int x = pa.x, y = pa.y;
     do {
@@ -1154,11 +1154,11 @@ void overmap::build_anthill(int x, int y, int s)
     build_tunnel(x, y, s - rng(0, 3), 1);
     build_tunnel(x, y, s - rng(0, 3), 2);
     build_tunnel(x, y, s - rng(0, 3), 3);
-    std::vector<point> queenpoints;
+    std::vector<Point> queenpoints;
     for (int i = x - s; i <= x + s; i++) {
         for (int j = y - s; j <= y + s; j++) {
             if (ter(i, j) >= ot_ants_ns && ter(i, j) <= ot_ants_nesw)
-                queenpoints.push_back(point(i, j));
+                queenpoints.push_back(Point(i, j));
         }
     }
     int index = rng(0, queenpoints.size() - 1);
@@ -1171,25 +1171,25 @@ void overmap::build_tunnel(int x, int y, int s, int dir)
         return;
     if (ter(x, y) < ot_ants_ns || ter(x, y) > ot_ants_queen)
         ter(x, y) = ot_ants_ns;
-    point next;
+    Point next;
     switch (dir) {
     case 0:
-        next = point(x, y - 1);
+        next = Point(x, y - 1);
     case 1:
-        next = point(x + 1, y);
+        next = Point(x + 1, y);
     case 2:
-        next = point(x, y + 1);
+        next = Point(x, y + 1);
     case 3:
-        next = point(x - 1, y);
+        next = Point(x - 1, y);
     }
     if (s == 1)
-        next = point(-1, -1);
-    std::vector<point> valid;
+        next = Point(-1, -1);
+    std::vector<Point> valid;
     for (int i = x - 1; i <= x + 1; i++) {
         for (int j = y - 1; j <= y + 1; j++) {
             if ((ter(i, j) < ot_ants_ns || ter(i, j) > ot_ants_queen)
                 && abs(i - x) + abs(j - y) == 1)
-                valid.push_back(point(i, j));
+                valid.push_back(Point(i, j));
         }
     }
     for (int i = 0; i < valid.size(); i++) {
@@ -1231,7 +1231,7 @@ void overmap::build_slimepit(int x, int y, int s)
 void overmap::place_rifts()
 {
     int num_rifts = rng(0, 2) * rng(0, 2);
-    std::vector<point> riftline;
+    std::vector<Point> riftline;
     if (!one_in(4))
         num_rifts++;
     for (int n = 0; n < num_rifts; n++) {
@@ -1257,7 +1257,7 @@ void overmap::place_rifts()
 
 void overmap::make_hiway(int x1, int y1, int x2, int y2, oter_id base)
 {
-    std::vector<point> next;
+    std::vector<Point> next;
     int dir = 0;
     int x = x1, y = y1;
     int xdir, ydir;
@@ -1267,16 +1267,16 @@ void overmap::make_hiway(int x1, int y1, int x2, int y2, oter_id base)
         next.clear(); // Clear list of valid points
         // Add valid points -- step in the right x-direction
         if (x2 > x)
-            next.push_back(point(x + 1, y));
+            next.push_back(Point(x + 1, y));
         else if (x2 < x)
-            next.push_back(point(x - 1, y));
+            next.push_back(Point(x - 1, y));
         else
-            next.push_back(point(-1, -1)); // X is right--don't change it!
+            next.push_back(Point(-1, -1)); // X is right--don't change it!
         // Add valid points -- step in the right y-direction
         if (y2 > y)
-            next.push_back(point(x, y + 1));
+            next.push_back(Point(x, y + 1));
         else if (y2 < y)
-            next.push_back(point(x, y - 1));
+            next.push_back(Point(x, y - 1));
         for (int i = 0; i < next.size(); i++) { // Take an existing road if we can
             if (next[i].x != -1 && is_road(base, next[i].x, next[i].y)) {
                 x = next[i].x;
