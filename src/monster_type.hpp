@@ -149,7 +149,7 @@ struct MonsterType {
                 const int php,
                 const int psp_freq,
                 void (mdeath::*pdies)(Game*, Monster*),
-                const std::function<void(Game*, Monster*)>& p_special_attack,
+                const std::function<void(Game&, Monster&)>& p_special_attack,
                 const std::string_view pdescription)
         : id {pid}
         , name {pname}
@@ -206,7 +206,7 @@ struct MonsterType {
     int sp_freq {0}; // How long sp_attack takes to charge.
 
     void (mdeath::*dies)(Game*, Monster*) {nullptr}; // What happens when this monster dies.
-    std::function<void(Game*, Monster*)> special_attack {nullptr}; // This monster's special attack.
+    std::function<void(Game&, Monster&)> special_attack {nullptr}; // This monster's special attack.
 };
 } // namespace oocdda
 

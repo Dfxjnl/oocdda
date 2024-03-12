@@ -157,7 +157,7 @@ void Monster::move(Game* g)
         sp_timeout--;
 
     if (sp_timeout == 0 && friendly == 0 && type->special_attack) {
-        type->special_attack(g, this);
+        type->special_attack(*g, *this);
     }
 
     if (moves < 0)
