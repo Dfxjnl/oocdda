@@ -95,6 +95,11 @@ Game::~Game()
         delete itypes[i];
     for (int i = 0; i < mtypes.size(); i++)
         delete mtypes[i];
+
+    for (const auto& trap : traps) {
+        delete trap;
+    }
+
     delwin(w_terrain);
     delwin(w_minimap);
     delwin(w_HP);

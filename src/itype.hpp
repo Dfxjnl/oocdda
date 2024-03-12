@@ -498,6 +498,12 @@ std::string ammo_name(ammotype t);
 itype_id default_ammo(ammotype guntype);
 
 struct itype {
+    itype(const itype&) = default;
+    itype(itype&&) = delete;
+    auto operator=(const itype&) -> itype& = default;
+    auto operator=(itype&&) -> itype& = delete;
+    virtual ~itype() = default;
+
     unsigned int id;      // ID # that matches its place in master itype list
                           // Used for save files; aligns to itype_id above.
     unsigned char rarity; // How often it's found
