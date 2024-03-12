@@ -37,7 +37,7 @@ bool Monster::wander()
     return false;
 }
 
-bool Monster::can_move_to(map& m, int x, int y)
+bool Monster::can_move_to(Map& m, int x, int y)
 {
     if (m.move_cost(x, y) == 0 && (!has_flag(MF_DESTROYS) || !m.is_destructable(x, y))
         && ((!has_flag(MF_AQUATIC) && !has_flag(MF_SWIMS)) || !m.has_flag(swimmable, x, y)))

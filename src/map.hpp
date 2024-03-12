@@ -21,14 +21,14 @@ class Monster;
 class overmap;
 class player;
 
-class map {
+class Map {
 public:
     // Constructors & Initialization
-    map();
-    map(std::vector<itype*>* itptr,
+    Map();
+    Map(std::vector<itype*>* itptr,
         std::vector<itype_id> (*miptr)[num_itloc],
         std::vector<trap*>* trptr);
-    ~map();
+
     void init(Game* g, int x, int y);
     void generate(Game* g, overmap* om, int x, int y, int turn);
 

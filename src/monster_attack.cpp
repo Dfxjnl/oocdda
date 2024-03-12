@@ -24,7 +24,7 @@
 
 namespace oocdda::monster_attack {
 namespace {
-[[nodiscard]] constexpr auto find_nearby_eggs(map& map, const Point center) -> std::vector<Point>
+[[nodiscard]] constexpr auto find_nearby_eggs(Map& map, const Point center) -> std::vector<Point>
 {
     std::vector<Point> nearby_eggs;
 

@@ -45,13 +45,13 @@ enum room_type {
 
 bool connects_to(oter_id there, int dir_from_here);
 
-void house_room(map* m, room_type type, int x1, int y1, int x2, int y2);
+void house_room(Map* m, room_type type, int x1, int y1, int x2, int y2);
 
-void science_room(map* m, int x1, int y1, int x2, int y2, int rotate);
+void science_room(Map* m, int x1, int y1, int x2, int y2, int rotate);
 
-void set_science_room(map* m, int x1, int y1, bool faces_right, int turn);
+void set_science_room(Map* m, int x1, int y1, bool faces_right, int turn);
 
-void map::generate(Game* g, overmap* om, int x, int y, int turn)
+void Map::generate(Game* g, overmap* om, int x, int y, int turn)
 {
     oter_id terrain_type, t_north, t_east, t_south, t_west, t_above;
     int overx = x / 2;
@@ -143,7 +143,7 @@ void map::generate(Game* g, overmap* om, int x, int y, int turn)
     }
 }
 
-void map::draw_map(oter_id terrain_type,
+void Map::draw_map(oter_id terrain_type,
                    oter_id t_north,
                    oter_id t_east,
                    oter_id t_south,
@@ -3604,7 +3604,7 @@ void map::draw_map(oter_id terrain_type,
     }
 }
 
-void map::place_items(
+void Map::place_items(
     items_location loc, int chance, int x1, int y1, int x2, int y2, bool ongrass, int turn)
 {
     std::vector<itype_id> eligible = (*mapitems)[loc];
@@ -3649,7 +3649,7 @@ void map::place_items(
     }
 }
 
-void map::add_spawn(mon_id type, int count, int x, int y)
+void Map::add_spawn(mon_id type, int count, int x, int y)
 {
     if (x < 0 || x >= SEEX * 2 || y < 0 || y >= SEEY * 2) {
         debugmsg("Bad add_spawn(%d, %d, %d, %d)", type, count, x, y);
@@ -3662,7 +3662,7 @@ void map::add_spawn(mon_id type, int count, int x, int y)
     grid[nonant].spawns.push_back(tmp);
 }
 
-void map::make_all_items_owned()
+void Map::make_all_items_owned()
 {
     for (int i = 0; i < SEEX * 2; i++) {
         for (int j = 0; j < SEEY * 2; j++) {
@@ -3672,7 +3672,7 @@ void map::make_all_items_owned()
     }
 }
 
-void map::rotate(int turns)
+void Map::rotate(int turns)
 {
     ter_id rotated[SEEX * 2][SEEY * 2];
     trap_id traprot[SEEX * 2][SEEY * 2];
@@ -3864,7 +3864,7 @@ bool connects_to(oter_id there, int dir)
     }
 }
 
-void house_room(map* m, room_type type, int x1, int y1, int x2, int y2)
+void house_room(Map* m, room_type type, int x1, int y1, int x2, int y2)
 {
     for (int i = x1; i <= x2; i++) {
         for (int j = y1; j <= y2; j++) {
@@ -3976,7 +3976,7 @@ void house_room(map* m, room_type type, int x1, int y1, int x2, int y2)
     m->place_items(placed, chance, x1 + 1, y1 + 1, x2 - 1, y2 - 1, false, 0);
 }
 
-void science_room(map* m, int x1, int y1, int x2, int y2, int rotate)
+void science_room(Map* m, int x1, int y1, int x2, int y2, int rotate)
 {
     int height = y2 - y1;
     int width = x2 - x1;
@@ -4170,7 +4170,7 @@ void science_room(map* m, int x1, int y1, int x2, int y2, int rotate)
     }
 }
 
-void set_science_room(map* m, int x1, int y1, bool faces_right, int turn)
+void set_science_room(Map* m, int x1, int y1, bool faces_right, int turn)
 {
     // TODO: More types!
     int type = rng(0, 4);

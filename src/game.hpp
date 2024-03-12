@@ -80,7 +80,7 @@ public:
     unsigned int turn;
     char nextinv; // Determines which letter the next inv item will have
     overmap cur_om;
-    map m;
+    Map m;
     int levx, levy, levz; // Placement inside the overmap
     player u;
     std::vector<Monster> z;

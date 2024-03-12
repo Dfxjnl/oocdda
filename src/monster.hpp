@@ -13,7 +13,7 @@
 
 namespace oocdda {
 class Game;
-class map;
+class Map;
 class player;
 
 class Monster {
@@ -41,7 +41,7 @@ public:
     void shift(int sx, int sy);             // Shifts the monster to the appropriate submap
                                             // Updates current pos AND our plans
     bool wander();                          // Returns true if we have no plans
-    bool can_move_to(map& m, int x, int y); // Can we move to (x, y)?
+    bool can_move_to(Map& m, int x, int y); // Can we move to (x, y)?
 
     void set_dest(int x, int y, int& t); // Go in a straight line to (x, y)
                                          // t determines WHICH Bresenham line

@@ -52,7 +52,7 @@ Game::Game()
     init_recipes();  // Set up crafting reciptes            (SEE crafting.cpp)
     init_moncats();  // Set up monster categories           (SEE mongroupdef.cpp)
 
-    m = map(&itypes, &mapitems, &traps); // Init the root map with our vectors
+    m = Map(&itypes, &mapitems, &traps); // Init the root map with our vectors
 
     // Set up the main UI windows.
     // Aw hell, we getting ncursey up in here!
@@ -5149,7 +5149,7 @@ void Game::update_map(int& x, int& y)
         if (z[i].posx < 0 - SEEX * 3 || z[i].posy < 0 - SEEX * 3 || z[i].posx > SEEX * 6
             || z[i].posy > SEEY * 6) {
             if (z[i].spawnmapx != -1) { // Static spawn, move them back there
-                map tmp;
+                Map tmp;
                 tmp.init(this, z[i].spawnmapx, z[i].spawnmapy);
                 tmp.add_spawn(mon_id(z[i].type->id), 1, z[i].spawnposx, z[i].spawnposy);
                 tmp.save(&cur_om, turn, z[i].spawnmapx, z[i].spawnmapy);

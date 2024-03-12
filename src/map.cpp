@@ -29,13 +29,13 @@ bool inbounds(int x, int y);
 void cast_to_nonant(int& x, int& y, int& n);
 #define SGN(a) (((a) < 0) ? -1 : 1)
 
-map::map()
+Map::Map()
 {
     nulter = t_null;
     nultrap = tr_null;
 }
 
-map::map(std::vector<itype*>* itptr,
+Map::Map(std::vector<itype*>* itptr,
          std::vector<itype_id> (*miptr)[num_itloc],
          std::vector<trap*>* trptr)
 {
@@ -52,9 +52,7 @@ map::map(std::vector<itype*>* itptr,
     }
 }
 
-map::~map() { }
-
-ter_id& map::ter(int x, int y)
+ter_id& Map::ter(int x, int y)
 {
     // 0 1 2
     // 3 4 5
@@ -68,9 +66,9 @@ ter_id& map::ter(int x, int y)
     return grid[nonant].ter[x][y];
 }
 
-std::string map::tername(int x, int y) { return terlist[ter(x, y)].name; }
+std::string Map::tername(int x, int y) { return terlist[ter(x, y)].name; }
 
-std::string map::features(int x, int y)
+std::string Map::features(int x, int y)
 {
     // This is used in an info window that is 46 characters wide, and is expected
     // to take up one line.  So, make sure it does that.
@@ -86,14 +84,14 @@ std::string map::features(int x, int y)
     return ret;
 }
 
-int map::move_cost(int x, int y)
+int Map::move_cost(int x, int y)
 {
     if (x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3)
         return 2;
     return terlist[ter(x, y)].movecost;
 }
 
-bool map::trans(int x, int y)
+bool Map::trans(int x, int y)
 {
     // Control statement is a problem. Normally returning false on an out-of-bounds
     // is how we stop rays from going on forever.  Instead we'll have to include
@@ -105,19 +103,19 @@ bool map::trans(int x, int y)
             || fieldlist[field_at(x, y).type].transparent[field_at(x, y).density - 1]);
 }
 
-bool map::has_flag(t_flag flag, int x, int y)
+bool Map::has_flag(t_flag flag, int x, int y)
 {
     if (x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3)
         return (flag == diggable ? true : false); // For the sake of worms, etc.
     return terlist[ter(x, y)].flags & flag_to_bit_position(flag);
 }
 
-bool map::is_destructable(int x, int y)
+bool Map::is_destructable(int x, int y)
 {
     return !(terlist[ter(x, y)].flags & flag_to_bit_position(swimmable));
 }
 
-bool map::bash(int x, int y, int str, std::string& sound)
+bool Map::bash(int x, int y, int str, std::string& sound)
 {
     sound = "";
     for (int i = 0; i < i_at(x, y).size(); i++) { // Destroy glass items (maybe)
@@ -253,7 +251,7 @@ bool map::bash(int x, int y, int str, std::string& sound)
 }
 
 // map::destroy is only called (?) if the terrain is NOT bashable.
-void map::destroy(Game* g, int x, int y, bool makesound)
+void Map::destroy(Game* g, int x, int y, bool makesound)
 {
     switch (ter(x, y)) {
     case t_gas_pump:
@@ -300,7 +298,7 @@ void map::destroy(Game* g, int x, int y, bool makesound)
         g->sound(x, y, 40, "SMASH!!");
 }
 
-void map::shoot(Game* g, int x, int y, int& dam, bool hit_items)
+void Map::shoot(Game* g, int x, int y, int& dam, bool hit_items)
 {
     switch (ter(x, y)) {
     case t_door_c:
@@ -400,7 +398,7 @@ void map::shoot(Game* g, int x, int y, int& dam, bool hit_items)
     }
 }
 
-bool map::open_door(int x, int y, bool inside)
+bool Map::open_door(int x, int y, bool inside)
 {
     if (ter(x, y) == t_door_c) {
         ter(x, y) = t_door_o;
@@ -416,7 +414,7 @@ bool map::open_door(int x, int y, bool inside)
     return false;
 }
 
-bool map::close_door(int x, int y)
+bool Map::close_door(int x, int y)
 {
     if (ter(x, y) == t_door_o) {
         ter(x, y) = t_door_c;
@@ -428,7 +426,7 @@ bool map::close_door(int x, int y)
     return false;
 }
 
-int& map::radiation(int x, int y)
+int& Map::radiation(int x, int y)
 {
     if (x < 0 || y < 0 || x >= SEEX * 3 || y >= SEEY * 3) {
         nulrad = 0;
@@ -439,7 +437,7 @@ int& map::radiation(int x, int y)
     return grid[nonant].rad[x][y];
 }
 
-std::vector<item>& map::i_at(int x, int y)
+std::vector<item>& Map::i_at(int x, int y)
 {
     if (x < 0 || y < 0 || x >= SEEX * 3 || y >= SEEY * 3) {
         nulitems.clear();
@@ -450,7 +448,7 @@ std::vector<item>& map::i_at(int x, int y)
     return grid[nonant].itm[x][y];
 }
 
-item map::water_from(int x, int y)
+item Map::water_from(int x, int y)
 {
     item ret((*itypes)[itm_null], 0);
     int rn = rng(1, 10);
@@ -478,16 +476,16 @@ item map::water_from(int x, int y)
     return ret;
 }
 
-void map::i_rem(int x, int y, int index)
+void Map::i_rem(int x, int y, int index)
 {
     if (index > i_at(x, y).size() - 1)
         return;
     i_at(x, y).erase(i_at(x, y).begin() + index);
 }
 
-void map::i_clear(int x, int y) { i_at(x, y).clear(); }
+void Map::i_clear(int x, int y) { i_at(x, y).clear(); }
 
-Point map::find_item(item* it)
+Point Map::find_item(item* it)
 {
     Point ret;
     for (ret.x = 0; ret.x < SEEX * 3; ret.x++) {
@@ -503,14 +501,14 @@ Point map::find_item(item* it)
     return ret;
 }
 
-void map::add_item(int x, int y, itype* type, int birthday)
+void Map::add_item(int x, int y, itype* type, int birthday)
 {
     item tmp(type, birthday);
     tmp = tmp.in_its_container(itypes);
     add_item(x, y, tmp);
 }
 
-void map::add_item(int x, int y, item new_item)
+void Map::add_item(int x, int y, item new_item)
 {
     if (has_flag(noitem, x, y) || i_at(x, y).size() >= 24) { // Too many items there
         std::vector<Point> okay;
@@ -543,7 +541,7 @@ void map::add_item(int x, int y, item new_item)
     grid[nonant].itm[x][y].push_back(new_item);
 }
 
-void map::process_active_items(Game* g)
+void Map::process_active_items(Game* g)
 {
     it_tool* tmp;
     iuse use;
@@ -568,7 +566,7 @@ void map::process_active_items(Game* g)
     }
 }
 
-trap_id& map::tr_at(int x, int y)
+trap_id& Map::tr_at(int x, int y)
 {
     if (x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3) {
         nultrap = tr_null;
@@ -585,7 +583,7 @@ trap_id& map::tr_at(int x, int y)
     return grid[nonant].trp[x][y];
 }
 
-void map::add_trap(int x, int y, trap_id t)
+void Map::add_trap(int x, int y, trap_id t)
 {
     int oldx = x, oldy = y;
     int nonant;
@@ -599,7 +597,7 @@ void map::add_trap(int x, int y, trap_id t)
     */
 }
 
-void map::disarm_trap(Game* g, int x, int y)
+void Map::disarm_trap(Game* g, int x, int y)
 {
     if (tr_at(x, y) == tr_null) {
         debugmsg("Tried to disarm a trap where there was none (%d %d)", x, y);
@@ -626,7 +624,7 @@ void map::disarm_trap(Game* g, int x, int y)
     }
 }
 
-field& map::field_at(int x, int y)
+field& Map::field_at(int x, int y)
 {
     if (x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3) {
         nulfield = field();
@@ -637,7 +635,7 @@ field& map::field_at(int x, int y)
     return grid[nonant].fld[x][y];
 }
 
-bool map::add_field(Game* g, int x, int y, field_id t, unsigned char density)
+bool Map::add_field(Game* g, int x, int y, field_id t, unsigned char density)
 {
     if (!field_at(x, y).is_null()) // Blood & bile are null too
         return false;
@@ -653,7 +651,7 @@ bool map::add_field(Game* g, int x, int y, field_id t, unsigned char density)
     return true;
 }
 
-void map::debug()
+void Map::debug()
 {
     mvprintw(0, 0, "MAP DEBUG");
     getch();
@@ -669,7 +667,7 @@ void map::debug()
     getch();
 }
 
-void map::draw(Game* g, WINDOW* w)
+void Map::draw(Game* g, WINDOW* w)
 {
     int t = 0;
     int light = g->u.sight_range(g->light_level());
@@ -687,7 +685,7 @@ void map::draw(Game* g, WINDOW* w)
     mvwputch(w, SEEY, SEEX, g->u.color(), '@');
 }
 
-void map::drawsq(WINDOW* w, player& u, int x, int y, bool invert, bool show_items)
+void Map::drawsq(WINDOW* w, player& u, int x, int y, bool invert, bool show_items)
 {
     if (x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3)
         return; // Out of bounds
@@ -758,7 +756,7 @@ void map::drawsq(WINDOW* w, player& u, int x, int y, bool invert, bool show_item
 map::sees based off code by Steve Register [arns@arns.freeservers.com]
 http://roguebasin.roguelikedevelopment.org/index.php?title=Simple_Line_of_Sight
 */
-bool map::sees(int Fx, int Fy, int Tx, int Ty, int range, int& tc)
+bool Map::sees(int Fx, int Fy, int Tx, int Ty, int range, int& tc)
 {
     int dx = Tx - Fx;
     int dy = Ty - Fy;
@@ -826,7 +824,7 @@ std::vector<point> map::route(int Fx, int Fy, int Tx, int Ty)
 }
 */
 
-void map::save(overmap* om, unsigned int turn, int x, int y)
+void Map::save(overmap* om, unsigned int turn, int x, int y)
 {
     for (int gridx = 0; gridx < 3; gridx++) {
         for (int gridy = 0; gridy < 3; gridy++)
@@ -834,7 +832,7 @@ void map::save(overmap* om, unsigned int turn, int x, int y)
     }
 }
 
-void map::init(Game* g, int x, int y)
+void Map::init(Game* g, int x, int y)
 {
     for (int gridx = 0; gridx < 3; gridx++) {
         for (int gridy = 0; gridy < 3; gridy++) {
@@ -844,7 +842,7 @@ void map::init(Game* g, int x, int y)
     }
 }
 
-void map::load(Game* g, int wx, int wy)
+void Map::load(Game* g, int wx, int wy)
 {
     for (int gridx = 0; gridx < 3; gridx++) {
         for (int gridy = 0; gridy < 3; gridy++) {
@@ -854,7 +852,7 @@ void map::load(Game* g, int wx, int wy)
     }
 }
 
-void map::shift(Game* g, int wx, int wy, int sx, int sy)
+void Map::shift(Game* g, int wx, int wy, int sx, int sy)
 {
     // Shift the map sx submaps to the right and sy submaps down.
     // sx and sy should never be bigger than +/-1.
@@ -880,7 +878,7 @@ void map::shift(Game* g, int wx, int wy, int sx, int sy)
 // 0,0 1,0 2,0
 // 0,1 1,1 2,1
 // 0,2 1,2 2,2
-void map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int gridx, int gridy)
+void Map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int gridx, int gridy)
 {
     int n = gridx + gridy * 3;
     // Open appropriate file.
@@ -955,7 +953,7 @@ void map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
 // 0,0  1,0  2,0
 // 0,1  1,1  2,1
 // 0,2  1,2  2,2
-bool map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
+bool Map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
 {
     char fname[32];
     char line[SEEX];
@@ -1035,7 +1033,7 @@ bool map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
         }
     } else {
         // No data on this area.
-        map tmp_map(itypes, mapitems, traps);
+        Map tmp_map(itypes, mapitems, traps);
         // overx, overy is where in the overmap we need to pull data from
         // Each overmap square is two nonants; to prevent overlap, generate only at
         //  squares divisible by 2.
@@ -1054,7 +1052,7 @@ bool map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
     return true;
 }
 
-void map::spawn_monsters(Game* g)
+void Map::spawn_monsters(Game* g)
 {
     for (int gx = 0; gx < 3; gx++) {
         for (int gy = 0; gy < 3; gy++) {

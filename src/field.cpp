@@ -17,7 +17,7 @@
 #include "rng.hpp"
 
 namespace oocdda {
-bool map::process_fields(Game* g)
+bool Map::process_fields(Game* g)
 {
     bool found_field = false;
     field* cur;
@@ -339,7 +339,7 @@ bool map::process_fields(Game* g)
     return found_field;
 }
 
-void map::step_in_field(int x, int y, Game* g)
+void Map::step_in_field(int x, int y, Game* g)
 {
     field* cur = &field_at(x, y);
     switch (cur->type) {
@@ -412,7 +412,7 @@ void map::step_in_field(int x, int y, Game* g)
     }
 }
 
-void map::mon_in_field(int x, int y, Game* g, Monster* z)
+void Map::mon_in_field(int x, int y, Game* g, Monster* z)
 {
     if (z->has_flag(MF_DIGS))
         return; // Digging monsters are immune to fields
