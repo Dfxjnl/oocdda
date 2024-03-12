@@ -468,7 +468,7 @@ void npc::make_shopkeep(Game* g, oter_id type)
     if (pool.size() > 0) {
         do {
             items_location place = pool[rng(0, pool.size() - 1)];
-            item_type = g->mapitems[place][rng(0, g->mapitems[place].size())];
+            item_type = g->mapitems[place][rng(0, g->mapitems[place].size() - 1)];
             tmp = Item(g->itypes[item_type], g->turn);
             if (volume_carried() + tmp.volume() > volume_capacity()
                 || weight_carried() + tmp.weight() > weight_capacity())

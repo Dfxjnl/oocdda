@@ -109,6 +109,19 @@
         "CMAKE_BUILD_TYPE": "Release"
       },
       "binaryDir": "${sourceDir}/build/ninja-release"
+    },
+    {
+      "name": "ninja-sanitize",
+      "displayName": "Ninja Sanitize",
+      "inherits": [
+        "ninja"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Sanitize",
+        "CMAKE_CXX_FLAGS_SANITIZE": "-O2 -g -fsanitize=address,undefined -fno-omit-frame-pointer -fno-common",
+        "CMAKE_MAP_IMPORTED_CONFIG_SANITIZE": "Sanitize;RelWithDebInfo;Release;Debug;"
+      },
+      "binaryDir": "${sourceDir}/build/ninja-sanitize"
     }
   ],
   "buildPresets": [
@@ -124,6 +137,13 @@
       "displayName": "Ninja Release",
       "configurePreset": "ninja-release",
       "configuration": "Release",
+      "jobs": 12
+    },
+    {
+      "name": "ninja-sanitize",
+      "displayName": "Ninja Sanitize",
+      "configurePreset": "ninja-sanitize",
+      "configuration": "Sanitize",
       "jobs": 12
     }
   ],
@@ -154,6 +174,13 @@
       "description": "Enable output and stop on failure",
       "inherits": "test-common",
       "configurePreset": "ninja-release"
+    },
+    {
+      "name": "ninja-sanitize",
+      "displayName": "Strict",
+      "description": "Enable output and stop on failure",
+      "inherits": "test-common",
+      "configurePreset": "ninja-sanitize"
     }
   ],
   "workflowPresets": [
@@ -187,6 +214,23 @@
         },
         {
           "name": "ninja-release",
+          "type": "test"
+        }
+      ]
+    },
+    {
+      "name": "ninja-sanitize",
+      "steps": [
+        {
+          "name": "ninja-sanitize",
+          "type": "configure"
+        },
+        {
+          "name": "ninja-sanitize",
+          "type": "build"
+        },
+        {
+          "name": "ninja-sanitize",
           "type": "test"
         }
       ]
