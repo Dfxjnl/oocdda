@@ -437,7 +437,7 @@ int& Map::radiation(int x, int y)
     return grid[nonant].rad[x][y];
 }
 
-std::vector<item>& Map::i_at(int x, int y)
+std::vector<Item>& Map::i_at(int x, int y)
 {
     if (x < 0 || y < 0 || x >= SEEX * 3 || y >= SEEY * 3) {
         nulitems.clear();
@@ -448,9 +448,9 @@ std::vector<item>& Map::i_at(int x, int y)
     return grid[nonant].itm[x][y];
 }
 
-item Map::water_from(int x, int y)
+Item Map::water_from(int x, int y)
 {
-    item ret((*itypes)[itm_null], 0);
+    Item ret((*itypes)[itm_null], 0);
     int rn = rng(1, 10);
     if (ter(x, y) == t_water_sh) {
         if (rn <= 3)
@@ -485,7 +485,7 @@ void Map::i_rem(int x, int y, int index)
 
 void Map::i_clear(int x, int y) { i_at(x, y).clear(); }
 
-Point Map::find_item(item* it)
+Point Map::find_item(Item* it)
 {
     Point ret;
     for (ret.x = 0; ret.x < SEEX * 3; ret.x++) {
@@ -503,12 +503,12 @@ Point Map::find_item(item* it)
 
 void Map::add_item(int x, int y, itype* type, int birthday)
 {
-    item tmp(type, birthday);
+    Item tmp(type, birthday);
     tmp = tmp.in_its_container(itypes);
     add_item(x, y, tmp);
 }
 
-void Map::add_item(int x, int y, item new_item)
+void Map::add_item(int x, int y, Item new_item)
 {
     if (has_flag(noitem, x, y) || i_at(x, y).size() >= 24) { // Too many items there
         std::vector<Point> okay;
@@ -907,7 +907,7 @@ void Map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
     //   in the grid and print the coords and the item's details.
     // Also, this wastes space since we print the coords for each item, when we
     //   could be printing a list of items for each coord (except the empty ones)
-    item tmp;
+    Item tmp;
     for (int j = 0; j < SEEY; j++) {
         for (int i = 0; i < SEEX; i++) {
             for (int k = 0; k < grid[n].itm[i][j].size(); k++) {
@@ -961,7 +961,7 @@ bool Map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
     int gridn = gridx + gridy * 3;
     int itx, ity, t, d, a, old_turn;
     bool fields_here = false;
-    item it_tmp;
+    Item it_tmp;
     std::ifstream mapin;
     std::string databuff;
 

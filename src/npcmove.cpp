@@ -245,7 +245,7 @@ void npc::find_items(Game* g)
         for (int y = miny; y <= maxy; y++) {
             if (g->m.sees(posx, posy, x, y, dist, linet)) {
                 for (int i = 0; i < g->m.i_at(x, y).size(); i++) {
-                    item* tmp = &(g->m.i_at(x, y)[i]);
+                    Item* tmp = &(g->m.i_at(x, y)[i]);
                     // We value it enough to pick it up
                     if (value(*tmp) + personality.collector >= NPC_HI_VALUE
                         && value(*tmp) > top_value
@@ -278,7 +278,7 @@ void npc::pickup_items(Game* g)
     if (dist <= 1) { // We can pick it up!
         if (debug)
             debugmsg("Distance to item < 1; picking up items.");
-        item* tmp;
+        Item* tmp;
         for (int i = 0; i < g->m.i_at(itx, ity).size(); i++) {
             tmp = &(g->m.i_at(itx, ity)[i]);
             if (value(*tmp) >= NPC_HI_VALUE && volume_carried() + tmp->volume() <= volume_capacity()
@@ -705,7 +705,7 @@ void npc::alt_attack(Game* g, Monster* m, player* p)
     // In order of importance
     itype_id options[8] = {itm_mininuke_act, itm_dynamite_act, itm_grenade_act, itm_gasbomb_act,
                            itm_mininuke,     itm_dynamite,     itm_grenade,     itm_gasbomb};
-    item used;
+    Item used;
     bool throwing = false;
     int i, tx, ty, linet;
     if (m == NULL && p == NULL) {
@@ -746,7 +746,7 @@ void npc::alt_attack(Game* g, Monster* m, player* p)
         g->throw_item(*this, tx, ty, used, trajectory);
     } else {
         bool seen = g->u_see(posx, posy, linet);
-        item* activated = &(i_of_type(itype_id(used.type->id)));
+        Item* activated = &(i_of_type(itype_id(used.type->id)));
         switch (used.type->id) {
         case itm_mininuke:
             activated->make(g->itypes[itm_mininuke_act]);

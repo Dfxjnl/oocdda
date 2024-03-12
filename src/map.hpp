@@ -69,13 +69,13 @@ public:
     int& radiation(int x, int y); // Amount of radiation at (x, y);
 
     // Items
-    std::vector<item>& i_at(int x, int y);
-    item water_from(int x, int y);
+    std::vector<Item>& i_at(int x, int y);
+    Item water_from(int x, int y);
     void i_clear(int x, int y);
     void i_rem(int x, int y, int index);
-    Point find_item(item* it);
+    Point find_item(Item* it);
     void add_item(int x, int y, itype* type, int birthday);
-    void add_item(int x, int y, item new_item);
+    void add_item(int x, int y, Item new_item);
     void process_active_items(Game* g);
 
     // Traps
@@ -109,7 +109,7 @@ private:
                             // Useful for houses, shops, etc
 
     submap grid[9];
-    std::vector<item> nulitems; // Returned when &i_at() is asked for an OOB value
+    std::vector<Item> nulitems; // Returned when &i_at() is asked for an OOB value
     ter_id nulter;              // Returned when &ter() is asked for an OOB value
     trap_id nultrap;            // Returned when &tr_at() is asked for an OOB value
     field nulfield;             // Returned when &field_at() is asked for an OOB value

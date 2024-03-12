@@ -389,7 +389,7 @@ struct spawn_point {
 
 struct submap {
     ter_id ter[SEEX][SEEY];            // Terrain on each square
-    std::vector<item> itm[SEEX][SEEY]; // Items on each square
+    std::vector<Item> itm[SEEX][SEEY]; // Items on each square
     trap_id trp[SEEX][SEEY];           // Trap on each square
     field fld[SEEX][SEEY];             // Field on each square
     int rad[SEEX][SEEY];               // Irradiation of each square

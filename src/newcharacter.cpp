@@ -256,18 +256,18 @@ bool player::create(Game* g, character_type type)
           power_level = 80;
         End of cheatery */
     }
-    ret_null = item(g->itypes[0], 0);
-    weapon = item(g->itypes[0], 0);
+    ret_null = Item(g->itypes[0], 0);
+    weapon = Item(g->itypes[0], 0);
     // Nice to start out less than naked.
-    worn.push_back(item(g->itypes[itm_jeans], 0, 'a'));
-    worn.push_back(item(g->itypes[itm_tshirt], 0, 'b'));
-    worn.push_back(item(g->itypes[itm_sneakers], 0, 'c'));
+    worn.push_back(Item(g->itypes[itm_jeans], 0, 'a'));
+    worn.push_back(Item(g->itypes[itm_tshirt], 0, 'b'));
+    worn.push_back(Item(g->itypes[itm_sneakers], 0, 'c'));
     // The near-sighted get to start with glasses.
     if (has_trait(PF_MYOPIC))
-        worn.push_back(item(g->itypes[itm_glasses_eye], 0, 'd'));
+        worn.push_back(Item(g->itypes[itm_glasses_eye], 0, 'd'));
     // Likewise, the asthmatic start with their medication.
     if (has_trait(PF_ASTHMA))
-        inv.push_back(item(g->itypes[itm_inhaler], 0, worn[worn.size() - 1].invlet + 1));
+        inv.push_back(Item(g->itypes[itm_inhaler], 0, worn[worn.size() - 1].invlet + 1));
     return true;
 }
 

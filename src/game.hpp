@@ -24,7 +24,7 @@
 #include "tutorial.hpp"
 
 namespace oocdda {
-class item;
+class Item;
 struct trap;
 
 enum tut_type { TUT_NULL, TUT_BASIC, TUT_COMBAT, TUT_MAX };
@@ -55,7 +55,7 @@ public:
     void plfire(bool burst);  // Player fires a gun (setup of target)...
     // ... a gun is fired, maybe by an NPC (actual damage, etc.).
     void fire(player& p, int tarx, int tary, std::vector<Point>& trajectory, bool burst);
-    void throw_item(player& p, int tarx, int tary, item& thrown, std::vector<Point>& trajectory);
+    void throw_item(player& p, int tarx, int tary, Item& thrown, std::vector<Point>& trajectory);
     void cancel_activity();
     void cancel_activity_query(std::string message);
     void teleport();
@@ -69,8 +69,8 @@ public:
 
     char inv(std::string title = "INVENTORY:");
     faction* list_factions(std::string title = "FACTIONS:");
-    Point find_item(item* it);
-    void remove_item(item* it);
+    Point find_item(Item* it);
+    void remove_item(Item* it);
 
     std::vector<itype*> itypes;
     std::vector<MonsterType*> mtypes;
@@ -158,7 +158,7 @@ private:
                               int hiy,
                               std::vector<Monster> t,
                               int& target,
-                              item* relevent);
+                              Item* relevent);
     void help();
 
     // Routine loop functions, approximately in order of execution

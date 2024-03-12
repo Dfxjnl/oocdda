@@ -408,7 +408,7 @@ void Game::craft()
     craft_cat tab = CC_WEAPON;
     std::vector<recipe*> current;
     std::vector<bool> available;
-    item tmp;
+    Item tmp;
     int line = 0, xpos, ypos;
     bool redraw = true;
     bool done = false;
@@ -573,7 +573,7 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
             }
             break;
         case '?':
-            tmp = item(itypes[current[line]->result], 0);
+            tmp = Item(itypes[current[line]->result], 0);
             full_screen_popup(tmp.info(true).c_str());
             redraw = true;
             break;
@@ -809,7 +809,7 @@ void Game::complete_craft()
     for (int i = 0; i < will_use.size(); i++)
         u.use_amount(will_use[i].type, will_use[i].count);
     int iter = 0;
-    item newit(itypes[making.result], turn, nextinv);
+    Item newit(itypes[making.result], turn, nextinv);
     do {
         newit.invlet = nextinv;
         advance_nextinv();

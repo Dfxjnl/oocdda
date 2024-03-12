@@ -13,7 +13,7 @@
 
 namespace oocdda {
 class Game;
-class item;
+class Item;
 class Monster;
 class overmap;
 struct Point;
@@ -138,7 +138,7 @@ public:
     void spawn_at(overmap* o, int posx, int posy);
     skill best_skill();
     void starting_weapon(Game* g);
-    bool wear_if_wanted(item it);
+    bool wear_if_wanted(Item it);
 
     void perform_mission(Game* g);
     int minutes_to_u(Game* g);
@@ -150,8 +150,8 @@ public:
     void talk_to_u(Game* g);
     void say(Game* g, std::string line);
     void init_selling(std::vector<int>& indices, std::vector<int>& prices);
-    void init_buying(std::vector<item> you, std::vector<int>& indices, std::vector<int>& prices);
-    int value(item& it);
+    void init_buying(std::vector<Item> you, std::vector<int>& indices, std::vector<int>& prices);
+    int value(Item& it);
 
     bool is_friend();
     bool is_following();

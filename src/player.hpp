@@ -124,16 +124,16 @@ public:
     void sort_inv(); // Sort inventory by type
     std::string weapname(bool charges = true);
 
-    void i_add(item it);
+    void i_add(Item it);
     bool has_active_item(itype_id id);
     void process_active_items(Game* g);
-    item i_rem(char let);      // Remove item from inventory; returns ret_null on fail
-    item i_rem(itype_id type); // Remove first item w/ this type; fail is ret_null
-    item remove_weapon();
-    item i_remn(int index);                 // Remove item from inventory; returns ret_null on fail
-    item& i_at(char let);                   // Returns the item with inventory letter let
-    item& i_of_type(itype_id type);         // Returns the first item with this type
-    std::vector<item> inv_dump();           // Dumps full item list (e.g. at death)
+    Item i_rem(char let);      // Remove item from inventory; returns ret_null on fail
+    Item i_rem(itype_id type); // Remove first item w/ this type; fail is ret_null
+    Item remove_weapon();
+    Item i_remn(int index);                 // Remove item from inventory; returns ret_null on fail
+    Item& i_at(char let);                   // Returns the item with inventory letter let
+    Item& i_of_type(itype_id type);         // Returns the first item with this type
+    std::vector<Item> inv_dump();           // Dumps full item list (e.g. at death)
     void use_up(itype_id it, int quantity); // Uses up items OR charges if a tool
     void use_amount(itype_id it, int quantity);  // Uses up items
     void use_charges(itype_id it, int quantity); // Uses up charges
@@ -147,7 +147,7 @@ public:
     // has_charges works ONLY for charges.
     bool has_charges(itype_id it, int quantity);
     bool has_item(char let);                // Has an item with invlet let
-    bool has_item(item* it);                // Has a specific item
+    bool has_item(Item* it);                // Has a specific item
     std::vector<int> has_ammo(ammotype at); // Returns a list of indices of the ammo
 
     // ---------------VALUES-----------------
@@ -178,10 +178,10 @@ public:
     int skexercise[num_skill_types];
 
     bool inv_sorted;
-    std::vector<item> inv;
-    std::vector<item> worn;
-    item weapon;
-    item ret_null; // Null item, sometimes returns by weapon() etc
+    std::vector<Item> inv;
+    std::vector<Item> worn;
+    Item weapon;
+    Item ret_null; // Null item, sometimes returns by weapon() etc
 
     std::vector<disease> illness;
     std::vector<addiction> addictions;

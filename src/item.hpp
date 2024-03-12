@@ -14,17 +14,17 @@ class Game;
 class player;
 struct MonsterType;
 
-class item {
+class Item {
 public:
-    item();
-    item(itype* it, unsigned int turn);
-    item(itype* it, unsigned int turn, char let);
+    Item();
+    Item(itype* it, unsigned int turn);
+    Item(itype* it, unsigned int turn, char let);
     void make_corpse(itype* it, MonsterType* mt, unsigned int turn); // Corpse
-    item(std::string itemdata, Game* g);
-    ~item();
+    Item(std::string itemdata, Game* g);
+
     void make(itype* it);
     // returns the default container of this item, with this item in it
-    item in_its_container(std::vector<itype*>* itypes);
+    Item in_its_container(std::vector<itype*>* itypes);
 
     std::string tname();
     void use(player& u);
@@ -48,7 +48,7 @@ public:
     nc_color color();
     int price();
 
-    void put_in(item payload);
+    void put_in(Item payload);
 
     unsigned int weight();
     unsigned int volume();
@@ -79,7 +79,7 @@ public:
     MonsterType* corpse;
     it_ammo* curammo;
 
-    std::vector<item> contents;
+    std::vector<Item> contents;
 
     std::string name;
     char invlet;

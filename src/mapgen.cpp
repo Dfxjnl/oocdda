@@ -3676,7 +3676,7 @@ void Map::rotate(int turns)
 {
     ter_id rotated[SEEX * 2][SEEY * 2];
     trap_id traprot[SEEX * 2][SEEY * 2];
-    std::vector<item> itrot[SEEX * 2][SEEY * 2];
+    std::vector<Item> itrot[SEEX * 2][SEEY * 2];
     std::vector<spawn_point> sprot[9];
     switch (turns) {
     case 1:
@@ -4256,7 +4256,7 @@ void set_science_room(Map* m, int x1, int y1, bool faces_right, int turn)
 
     if (!faces_right) { // Flip it.
         ter_id rotated[SEEX * 2][SEEY * 2];
-        std::vector<item> itrot[SEEX * 2][SEEY * 2];
+        std::vector<Item> itrot[SEEX * 2][SEEY * 2];
         for (int i = x1; i <= x2; i++) {
             for (int j = y1; j <= y2; j++) {
                 rotated[i][j] = m->ter(i, j);

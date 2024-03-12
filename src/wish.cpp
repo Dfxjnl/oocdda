@@ -23,7 +23,7 @@ void Game::wish()
     int search;
     std::string pattern;
     std::string info;
-    item tmp;
+    Item tmp;
     tmp.corpse = mtypes[0];
     do {
         erase();

@@ -810,9 +810,9 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
         for (int i = 0; i < removing.size(); i++)
             d.alpha->i_rem(removing[i]);
 
-        std::vector<item> newinv;
+        std::vector<Item> newinv;
         for (int i = 0; i < theirs.size(); i++) {
-            item tmp = d.beta->inv[theirs[i]];
+            Item tmp = d.beta->inv[theirs[i]];
             if (getting_theirs[i]) {
                 practice += 2;
                 tmp.invlet = 'a';

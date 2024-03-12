@@ -65,13 +65,13 @@ player::~player() { }
 
 void player::normalize(Game* g)
 {
-    ret_null = item(g->itypes[0], 0);
-    weapon = item(g->itypes[0], 0);
+    ret_null = Item(g->itypes[0], 0);
+    weapon = Item(g->itypes[0], 0);
     // Nice to start out less than naked.
-    worn.push_back(item(g->itypes[itm_jeans], 0, 'a'));
-    worn.push_back(item(g->itypes[itm_tshirt], 0, 'b'));
-    worn.push_back(item(g->itypes[itm_sneakers], 0, 'c'));
-    worn.push_back(item(g->itypes[itm_holster], 0, 'd'));
+    worn.push_back(Item(g->itypes[itm_jeans], 0, 'a'));
+    worn.push_back(Item(g->itypes[itm_tshirt], 0, 'b'));
+    worn.push_back(Item(g->itypes[itm_sneakers], 0, 'c'));
+    worn.push_back(Item(g->itypes[itm_holster], 0, 'd'));
     for (int i = 0; i < num_hp_parts; i++) {
         hp_max[i] = 60 + str_max * 3;
         if (has_trait(PF_TOUGH))
@@ -2094,7 +2094,7 @@ int player::dodge()
 
 int player::throw_range(char ch)
 {
-    item tmp;
+    Item tmp;
     if (weapon.invlet == ch)
         tmp = weapon;
     else {
@@ -2788,8 +2788,8 @@ int player::morale_level()
 
 void player::sort_inv()
 {
-    std::vector<item> types[8]; // guns ammo weaps armor food tools books other
-    item tmp;
+    std::vector<Item> types[8]; // guns ammo weaps armor food tools books other
+    Item tmp;
     for (int i = 0; i < inv.size(); i++) {
         tmp = inv[i];
         if (tmp.is_gun())
@@ -2817,7 +2817,7 @@ void player::sort_inv()
     inv_sorted = true;
 }
 
-void player::i_add(item it)
+void player::i_add(Item it)
 {
     if (it.is_food() || it.is_ammo() || it.is_gun() || it.is_armor() || it.is_book() || it.is_tool()
         || it.is_weap() || it.is_food_container())
@@ -2884,16 +2884,16 @@ void player::process_active_items(Game* g)
     }
 }
 
-item player::remove_weapon()
+Item player::remove_weapon()
 {
-    item tmp = weapon;
+    Item tmp = weapon;
     weapon = ret_null;
     return tmp;
 }
 
-item player::i_rem(char let)
+Item player::i_rem(char let)
 {
-    item tmp;
+    Item tmp;
     if (weapon.invlet == let) {
         if (weapon.type->id > num_items)
             return ret_null;
@@ -2918,9 +2918,9 @@ item player::i_rem(char let)
     return ret_null;
 }
 
-item player::i_rem(itype_id type)
+Item player::i_rem(itype_id type)
 {
-    item ret;
+    Item ret;
     if (weapon.type->id == type)
         return remove_weapon();
     for (int i = 0; i < inv.size(); i++) {
@@ -2933,7 +2933,7 @@ item player::i_rem(itype_id type)
     return ret_null;
 }
 
-item& player::i_at(char let)
+Item& player::i_at(char let)
 {
     if (weapon.invlet == let)
         return weapon;
@@ -2948,7 +2948,7 @@ item& player::i_at(char let)
     return ret_null;
 }
 
-item& player::i_of_type(itype_id type)
+Item& player::i_of_type(itype_id type)
 {
     if (weapon.type->id == type)
         return weapon;
@@ -2963,9 +2963,9 @@ item& player::i_of_type(itype_id type)
     return ret_null;
 }
 
-std::vector<item> player::inv_dump()
+std::vector<Item> player::inv_dump()
 {
-    std::vector<item> ret;
+    std::vector<Item> ret;
     if (weapon.type->id != 0 && weapon.type->id < num_items)
         ret.push_back(weapon);
     for (int i = 0; i < worn.size(); i++)
@@ -2975,11 +2975,11 @@ std::vector<item> player::inv_dump()
     return ret;
 }
 
-item player::i_remn(int index)
+Item player::i_remn(int index)
 {
     if (index > inv.size() || index < 0)
         return ret_null;
-    item ret = inv[index];
+    Item ret = inv[index];
     inv.erase(inv.begin() + index);
     return ret;
 }
@@ -3255,7 +3255,7 @@ bool player::has_item(char let)
     return false;
 }
 
-bool player::has_item(item* it)
+bool player::has_item(Item* it)
 {
     if (it == &weapon)
         return true;
@@ -3273,7 +3273,7 @@ bool player::has_item(item* it)
 bool player::eat(Game* g, char let)
 {
     it_comest* tmp = NULL;
-    item* eaten = NULL;
+    Item* eaten = NULL;
     int which = -3; // Helps us know how to delete the item which got eaten
     if (weapon.invlet == let && weapon.is_food(this)) {
         tmp = dynamic_cast<it_comest*>(weapon.type);
@@ -3483,7 +3483,7 @@ bool player::wield(Game* g, char let)
 
 bool player::wear(Game* g, char let)
 {
-    item* to_wear = NULL;
+    Item* to_wear = NULL;
     int index = -1;
     if (weapon.invlet == let) {
         to_wear = &weapon;
@@ -3569,7 +3569,7 @@ bool player::takeoff(Game* g, char let)
 
 void player::use(Game* g, char let)
 {
-    item* used = &(i_at(let));
+    Item* used = &(i_at(let));
     if (used->type->id == 0) {
         g->add_msg("You do not have that item.");
         return;
@@ -3590,7 +3590,7 @@ void player::use(Game* g, char let)
         }
         char gunlet = g->inv("Select gun to modify:");
         it_gunmod* mod = dynamic_cast<it_gunmod*>(used->type);
-        item* gun = &(i_at(gunlet));
+        Item* gun = &(i_at(gunlet));
         if (gun->type->id == 0) {
             g->add_msg("You do not have that item.");
             return;

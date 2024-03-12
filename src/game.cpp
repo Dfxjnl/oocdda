@@ -781,8 +781,8 @@ void Game::get_input()
         uquit = true;
     } else if (ch == 'Q' && query_yn("Commit suicide?")) {
         u.moves = 0;
-        std::vector<item> tmp = u.inv_dump();
-        item your_body;
+        std::vector<Item> tmp = u.inv_dump();
+        Item your_body;
         your_body.make_corpse(itypes[itm_corpse], mtypes[mon_null], turn);
         your_body.name = u.name;
         m.add_item(u.posx, u.posy, your_body);
@@ -877,8 +877,8 @@ void Game::load(std::string name)
     }
     u = player();
     u.name = name;
-    u.ret_null = item(itypes[0], 0);
-    u.weapon = item(itypes[0], 0);
+    u.ret_null = Item(itypes[0], 0);
+    u.weapon = Item(itypes[0], 0);
     int tmprun, tmptar, tmptemp, comx, comy;
     fin >> turn >> tmptar >> tmprun >> mostseen >> nextinv >> nextspawn >> tmptemp >> levx >> levy
         >> levz >> comx >> comy;
@@ -922,15 +922,15 @@ void Game::load(std::string name)
             return;
         getline(fin, itemdata);
         if (item_place == 'I')
-            u.inv.push_back(item(itemdata, this));
+            u.inv.push_back(Item(itemdata, this));
         else if (item_place == 'C')
-            u.inv[u.inv.size() - 1].contents.push_back(item(itemdata, this));
+            u.inv[u.inv.size() - 1].contents.push_back(Item(itemdata, this));
         else if (item_place == 'W')
-            u.worn.push_back(item(itemdata, this));
+            u.worn.push_back(Item(itemdata, this));
         else if (item_place == 'w')
-            u.weapon = item(itemdata, this);
+            u.weapon = Item(itemdata, this);
         else if (item_place == 'c')
-            u.weapon.contents.push_back(item(itemdata, this));
+            u.weapon.contents.push_back(Item(itemdata, this));
     }
     // And the kill counts;
     for (int i = 0; i < num_monsters; i++)
@@ -1826,7 +1826,7 @@ bool Game::pl_sees(player* p, Monster* mon, int& t)
     return m.sees(p->posx, p->posy, mon->posx, mon->posy, range, t);
 }
 
-Point Game::find_item(item* it)
+Point Game::find_item(Item* it)
 {
     if (u.has_item(it))
         return Point(u.posx, u.posy);
@@ -1842,7 +1842,7 @@ Point Game::find_item(item* it)
     return Point(-999, -999);
 }
 
-void Game::remove_item(item* it)
+void Game::remove_item(Item* it)
 {
     Point ret;
     if (it == &u.weapon) {
@@ -3011,7 +3011,7 @@ void Game::examine()
         }
     } else if (m.ter(examx, examy) == t_gas_pump && query_yn("Pump gas?")) {
         char ch = inv("Select container or tool to hold gas:");
-        item* cont = &(u.i_at(ch));
+        Item* cont = &(u.i_at(ch));
         bool ok = true;
         if (cont->is_tool() && (dynamic_cast<it_tool*>(cont->type))->ammo == AT_GAS) {
             add_msg("You fill your %s with gasoline.", cont->tname().c_str());
@@ -3025,7 +3025,7 @@ void Game::examine()
             add_msg("Your %s is not empty.", cont->tname().c_str());
         else {
             u.moves -= 400;
-            item gas(itypes[itm_gasoline], turn);
+            Item gas(itypes[itm_gasoline], turn);
             if (one_in(u.dex_cur)) {
                 add_msg("You accidentally spill the gasoline.");
                 m.add_item(u.posx, u.posy, gas);
@@ -3171,7 +3171,7 @@ void Game::pickup(int posx, int posy, int min)
     if (m.i_at(posx, posy).size() == 0) {
         if (m.has_flag(swimmable, posx, posy) || m.ter(posx, posy) == t_toilet) {
             char ch = inv("Select container to hold water:");
-            item* cont = &(u.i_at(ch));
+            Item* cont = &(u.i_at(ch));
             if (cont->type->id == itm_null)
                 return;
             else if (!cont->is_container())
@@ -3179,7 +3179,7 @@ void Game::pickup(int posx, int posy, int min)
             else if (!cont->contents.empty())
                 add_msg("Your %s is not empty.", cont->tname().c_str());
             else {
-                item water = m.water_from(posx, posy);
+                Item water = m.water_from(posx, posy);
                 it_container* cont_type = dynamic_cast<it_container*>(cont->type);
                 if (!cont_type->flags & flag_to_bit_position(con_wtight)) {
                     add_msg("That %s isn't watertight!", cont->tname().c_str());
@@ -3200,7 +3200,7 @@ void Game::pickup(int posx, int posy, int min)
         // Few item here, just get it
     } else if (m.i_at(posx, posy).size() <= min) {
         int iter = 0;
-        item newit = m.i_at(posx, posy)[0];
+        Item newit = m.i_at(posx, posy)[0];
         if (newit.made_of(LIQUID)) {
             add_msg("You can't pick up a liquid!");
             return;
@@ -3321,7 +3321,7 @@ void Game::pickup(int posx, int posy, int min)
     WINDOW* w_pickup = newwin(12, 48, 0, SEEX * 2 + 8);
     WINDOW* w_item_info = newwin(12, 48, 12, SEEX * 2 + 8);
     int maxitems = 9; // Number of items to show at one time.
-    std::vector<item> here = m.i_at(posx, posy);
+    std::vector<Item> here = m.i_at(posx, posy);
     bool getitem[here.size()];
     for (int i = 0; i < here.size(); i++)
         getitem[i] = false;
@@ -3571,7 +3571,7 @@ void Game::drop()
         add_msg("You cannot drop your %s.", u.weapon.tname().c_str());
         return;
     }
-    item tmp = u.i_rem(ch);
+    Item tmp = u.i_rem(ch);
     if (tmp.type->name == "none") {
         add_msg("You do not have that item.");
         return;
@@ -3713,7 +3713,7 @@ void Game::plthrow()
         add_msg("That is too heavy to throw.");
         return;
     }
-    item thrown = u.i_at(ch);
+    Item thrown = u.i_at(ch);
 
     int x = u.posx, y = u.posy;
     int x0 = x - range;
@@ -3761,7 +3761,7 @@ void Game::plthrow()
     throw_item(u, x, y, thrown, trajectory);
 }
 
-void Game::throw_item(player& p, int tarx, int tary, item& thrown, std::vector<Point>& trajectory)
+void Game::throw_item(player& p, int tarx, int tary, Item& thrown, std::vector<Point>& trajectory)
 {
     int deviation = 0;
     int trange = 1.5 * trig_dist(p.posx, p.posy, tarx, tary);
@@ -3961,7 +3961,7 @@ void Game::plfire(bool burst)
 void Game::fire(player& p, int tarx, int tary, std::vector<Point>& trajectory, bool burst)
 {
     // If we aren't wielding a loaded gun, we can't shoot!
-    item ammotmp = item(p.weapon.curammo, 0);
+    Item ammotmp = Item(p.weapon.curammo, 0);
     ammotmp.charges = 1;
     if (!p.weapon.is_gun()) {
         debugmsg("%s tried to fire a non-gun (%s).", p.name.c_str(), p.weapon.tname().c_str());
@@ -4548,7 +4548,7 @@ void Game::unload()
             return;
         }
         while (u.weapon.is_gun() && u.weapon.contents.size() > 0) {
-            item mod = u.weapon.contents[0];
+            Item mod = u.weapon.contents[0];
             int iter = 0;
             while ((mod.invlet == 0 || u.has_item(mod.invlet)) && iter < 52) {
                 mod.invlet = nextinv;
@@ -4585,13 +4585,13 @@ void Game::unload()
             }
         }
     }
-    item newam;
+    Item newam;
     int iter;
     while (u.weapon.charges > 0) {
         if (u.weapon.curammo != NULL)
-            newam = item(u.weapon.curammo, turn);
+            newam = Item(u.weapon.curammo, turn);
         else
-            newam = item(itypes[default_ammo(u.weapon.ammo())], turn);
+            newam = Item(itypes[default_ammo(u.weapon.ammo())], turn);
         iter = 0;
         while ((newam.invlet == 0 || u.has_item(newam.invlet)) && iter < 52) {
             newam.invlet = nextinv;
@@ -4615,7 +4615,7 @@ void Game::unload()
                     ammotype type = u.weapon.ammo();
                     text << "Container for " << newam.tname();
                     char ch = inv(text.str().c_str());
-                    item* cont = &(u.i_at(ch));
+                    Item* cont = &(u.i_at(ch));
                     bool ok = true;
                     if (cont->is_tool() && (dynamic_cast<it_tool*>(cont->type))->ammo == type
                         && (cont->charges == 0 || cont->curammo->id == newam.type->id)) {
@@ -5444,7 +5444,7 @@ std::vector<Point> Game::target(int& x,
                                 int hiy,
                                 std::vector<Monster> t,
                                 int& target,
-                                item* relevent)
+                                Item* relevent)
 {
     std::vector<Point> ret;
     int tarx, tary, tart, junk;
