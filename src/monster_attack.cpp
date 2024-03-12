@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <string>
 #include <vector>
@@ -22,19 +23,33 @@
 #include "skill.hpp"
 
 namespace oocdda::monster_attack {
-void antqueen(Game& g, Monster& z)
+namespace {
+[[nodiscard]] constexpr auto find_nearby_eggs(map& map, const Point center) -> std::vector<Point>
 {
-    std::vector<Point> egg_points;
-    z.moves = -200;                 // It takes a while
-    z.sp_timeout = z.type->sp_freq; // Reset timer
-    for (int x = z.posx - 1; x <= z.posx + 1; x++) {
-        for (int y = z.posy - 1; y <= z.posy + 1; y++) {
-            for (int i = 0; i < g.m.i_at(x, y).size(); i++) {
-                if (g.m.i_at(x, y)[i].type->id == itm_ant_egg)
-                    egg_points.push_back(Point(x, y));
-            }
+    std::vector<Point> nearby_eggs;
+
+    for (const auto position : find_adjacent_points(center)) {
+        const auto& items {map.i_at(position.x, position.y)};
+
+        const auto egg_iterator {std::ranges::find_if(
+            items, [](const auto& item) { return item.type->id == itype_id::itm_ant_egg; })};
+
+        if (egg_iterator != items.end()) {
+            nearby_eggs.push_back(position);
         }
     }
+
+    return nearby_eggs;
+}
+} // namespace
+
+void antqueen(Game& g, Monster& z)
+{
+    z.moves = -200;                 // It takes a while
+    z.sp_timeout = z.type->sp_freq; // Reset timer
+
+    const auto egg_points {find_nearby_eggs(g.m, {z.posx, z.posy})};
+
     if (egg_points.size() == 0) {
         int junk;
         if (g.u_see(z.posx, z.posy, junk))
