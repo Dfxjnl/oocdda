@@ -21,8 +21,10 @@
 #include "rng.hpp"
 #include "skill.hpp"
 
-namespace oocdda {
-void mattack::antqueen(Game* g, Monster* z)
+namespace oocdda::monster_attack {
+void none(Game* /*game*/, Monster* /*monster*/) { }
+
+void antqueen(Game* g, Monster* z)
 {
     std::vector<Point> egg_points;
     z->moves = -200;                  // It takes a while
@@ -58,7 +60,7 @@ void mattack::antqueen(Game* g, Monster* z)
     }
 }
 
-void mattack::shriek(Game* g, Monster* z)
+void shriek(Game* g, Monster* z)
 {
     int j;
     if (rl_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 4 || !g->sees_u(z->posx, z->posy, j))
@@ -68,7 +70,7 @@ void mattack::shriek(Game* g, Monster* z)
     g->sound(z->posx, z->posy, 100, "a terrible shriek!");
 }
 
-void mattack::acid(Game* g, Monster* z)
+void acid(Game* g, Monster* z)
 {
     int junk;
     if (rl_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 12 || !g->sees_u(z->posx, z->posy, junk))
@@ -92,7 +94,7 @@ void mattack::acid(Game* g, Monster* z)
     }
 }
 
-void mattack::shockstorm(Game* g, Monster* z)
+void shockstorm(Game* g, Monster* z)
 {
     int t;
     if (!g->sees_u(z->posx, z->posy, t))
@@ -116,7 +118,7 @@ void mattack::shockstorm(Game* g, Monster* z)
     }
 }
 
-void mattack::boomer(Game* g, Monster* z)
+void boomer(Game* g, Monster* z)
 {
     int j;
     if (abs(g->u.posx - z->posx) > 3 || abs(g->u.posy - z->posy) > 3
@@ -144,7 +146,7 @@ void mattack::boomer(Game* g, Monster* z)
         g->add_msg("You dodge it!");
 }
 
-void mattack::resurrect(Game* g, Monster* z)
+void resurrect(Game* g, Monster* z)
 {
     std::vector<Point> corpses;
     for (int x = z->posx - 6; x <= z->posx + 6; x++) {
@@ -191,7 +193,7 @@ void mattack::resurrect(Game* g, Monster* z)
         g->add_msg("...but nothing seems to happen.");
 }
 
-void mattack::growplants(Game* g, Monster* z)
+void growplants(Game* g, Monster* z)
 {
     int junk;
     for (int i = -3; i <= 3; i++) {
@@ -297,7 +299,7 @@ void mattack::growplants(Game* g, Monster* z)
     }
 }
 
-void mattack::fungus(Game* g, Monster* z)
+void fungus(Game* g, Monster* z)
 {
     z->moves = -200;                  // It takes a while
     z->sp_timeout = z->type->sp_freq; // Reset timer
@@ -335,7 +337,7 @@ void mattack::fungus(Game* g, Monster* z)
         z->poly(g->mtypes[mon_fungaloid_dormant]);
 }
 
-void mattack::plant(Game* g, Monster* z)
+void plant(Game* g, Monster* z)
 {
     int j;
     if (g->m.has_flag(diggable, z->posx, z->posy)) {
@@ -347,9 +349,9 @@ void mattack::plant(Game* g, Monster* z)
     }
 }
 
-void mattack::disappear(Game* g, Monster* z) { z->hp = 0; }
+void disappear(Game* g, Monster* z) { z->hp = 0; }
 
-void mattack::formblob(Game* g, Monster* z)
+void formblob(Game* g, Monster* z)
 {
     bool didit = false;
     ;
@@ -393,7 +395,7 @@ void mattack::formblob(Game* g, Monster* z)
     }
 }
 
-void mattack::gene_sting(Game* g, Monster* z)
+void gene_sting(Game* g, Monster* z)
 {
     int j;
     if (abs(g->u.posx - z->posx) > 7 || abs(g->u.posy - z->posy) > 7
@@ -406,7 +408,7 @@ void mattack::gene_sting(Game* g, Monster* z)
     g->u.mutate(g);
 }
 
-void mattack::stare(Game* g, Monster* z)
+void stare(Game* g, Monster* z)
 {
     z->moves -= 200;
     z->sp_timeout = z->type->sp_freq;
@@ -427,7 +429,11 @@ void mattack::stare(Game* g, Monster* z)
     }
 }
 
-void mattack::tazer(Game* g, Monster* z)
+void photograph(Game* g, Monster* z) {
+    // TODO: Needs faction.
+};
+
+void tazer(Game* g, Monster* z)
 {
     int j;
     if (abs(g->u.posx - z->posx) > 2 || abs(g->u.posy - z->posy) > 2
@@ -441,7 +447,7 @@ void mattack::tazer(Game* g, Monster* z)
     g->u.moves -= shock * 50;
 }
 
-void mattack::smg(Game* g, Monster* z)
+void smg(Game* g, Monster* z)
 {
     int t, j;
     if (trig_dist(z->posx, z->posy, g->u.posx, g->u.posy) > 12 || !g->sees_u(z->posx, z->posy, t))
@@ -468,7 +474,7 @@ void mattack::smg(Game* g, Monster* z)
     g->fire(tmp, g->u.posx, g->u.posy, traj, true);
 }
 
-void mattack::flamethrower(Game* g, Monster* z)
+void flamethrower(Game* g, Monster* z)
 {
     int t;
     if (abs(g->u.posx - z->posx) > 5 || abs(g->u.posy - z->posy) > 5
@@ -482,7 +488,7 @@ void mattack::flamethrower(Game* g, Monster* z)
     g->u.add_disease(DI_ONFIRE, 8, g);
 }
 
-void mattack::multi_robot(Game* g, Monster* z)
+void multi_robot(Game* g, Monster* z)
 {
     int t, mode = 0;
     if (!g->sees_u(z->posx, z->posy, t))
@@ -497,17 +503,16 @@ void mattack::multi_robot(Game* g, Monster* z)
     if (mode == 0)
         return; // No attacks were valid!
 
-    mattack tmp;
     switch (mode) {
     case 1:
-        tmp.tazer(g, z);
+        tazer(g, z);
         break;
     case 2:
-        tmp.flamethrower(g, z);
+        flamethrower(g, z);
         break;
     case 3:
-        tmp.smg(g, z);
+        smg(g, z);
         break;
     }
 }
-} // namespace oocdda
+} // namespace oocdda::monster_attack

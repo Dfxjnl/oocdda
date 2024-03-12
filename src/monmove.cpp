@@ -11,7 +11,6 @@
 #include "map.hpp"
 #include "mapdata.hpp"
 #include "monster.hpp"
-#include "monster_attack.hpp"
 #include "monster_type.hpp"
 #include "npc.hpp"
 #include "player.hpp"
@@ -155,10 +154,11 @@ void Monster::move(Game* g)
     // First, use the special attack, if we can!
     if (sp_timeout > 0)
         sp_timeout--;
+
     if (sp_timeout == 0 && friendly == 0) {
-        mattack ma;
-        (ma.*type->sp_attack)(g, this);
+        type->sp_attack(g, this);
     }
+
     if (moves < 0)
         return;
     if (has_flag(MF_IMMOBILE)) {

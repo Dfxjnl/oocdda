@@ -11,11 +11,11 @@
 using oocdda::m_flags;
 using oocdda::m_size;
 using oocdda::material;
-using oocdda::mattack;
 using oocdda::mdeath;
 using oocdda::mon_id;
 using oocdda::MonsterType;
 using oocdda::nc_color;
+using oocdda::monster_attack::none;
 
 TEST(MonsterTypeTest, DefaultConstructor)
 {
@@ -73,7 +73,7 @@ TEST(MonsterTypeTest, CustomConstructor)
     constexpr int hit_points {50};
     constexpr int special_frequency {0};
     const auto death_function {&mdeath::normal};
-    const auto special_attack_function {&mattack::none};
+    const auto special_attack_function {&none};
     const std::string description {"A human body, stumbling slowly forward on\n"
                                    "uncertain legs, possessed with an\n"
                                    "unstoppable rage."};
