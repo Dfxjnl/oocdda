@@ -6,7 +6,6 @@ class Game;
 class Monster;
 
 namespace monster_attack {
-void none(Game* /*game*/, Monster* /*monster*/);
 void antqueen(Game* game, Monster* monster);
 void shriek(Game* game, Monster* monster);
 void acid(Game* game, Monster* monster);

@@ -22,8 +22,6 @@
 #include "skill.hpp"
 
 namespace oocdda::monster_attack {
-void none(Game* /*game*/, Monster* /*monster*/) { }
-
 void antqueen(Game* g, Monster* z)
 {
     std::vector<Point> egg_points;

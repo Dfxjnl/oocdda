@@ -1,6 +1,7 @@
 // Monster movement code; essentially, the AI
 
 #include <cmath>
+#include <functional>
 #include <string>
 #include <vector>
 
@@ -155,8 +156,8 @@ void Monster::move(Game* g)
     if (sp_timeout > 0)
         sp_timeout--;
 
-    if (sp_timeout == 0 && friendly == 0) {
-        type->sp_attack(g, this);
+    if (sp_timeout == 0 && friendly == 0 && type->special_attack) {
+        type->special_attack(g, this);
     }
 
     if (moves < 0)

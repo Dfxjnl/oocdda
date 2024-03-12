@@ -5,7 +5,6 @@
 #include "color.hpp"
 #include "enums.hpp"
 #include "mondeath.hpp"
-#include "monster_attack.hpp"
 #include "monster_type.hpp"
 
 using oocdda::m_flags;
@@ -15,7 +14,6 @@ using oocdda::mdeath;
 using oocdda::mon_id;
 using oocdda::MonsterType;
 using oocdda::nc_color;
-using oocdda::monster_attack::none;
 
 TEST(MonsterTypeTest, DefaultConstructor)
 {
@@ -43,7 +41,7 @@ TEST(MonsterTypeTest, DefaultConstructor)
     EXPECT_EQ(default_type.hp, 0);
     EXPECT_EQ(default_type.sp_freq, 0);
     EXPECT_EQ(default_type.dies, nullptr);
-    EXPECT_EQ(default_type.sp_attack, nullptr);
+    EXPECT_EQ(default_type.special_attack, nullptr);
 }
 
 TEST(MonsterTypeTest, CustomConstructor)
@@ -73,7 +71,7 @@ TEST(MonsterTypeTest, CustomConstructor)
     constexpr int hit_points {50};
     constexpr int special_frequency {0};
     const auto death_function {&mdeath::normal};
-    const auto special_attack_function {&none};
+    const auto special_attack_function {nullptr};
     const std::string description {"A human body, stumbling slowly forward on\n"
                                    "uncertain legs, possessed with an\n"
                                    "unstoppable rage."};
@@ -124,5 +122,5 @@ TEST(MonsterTypeTest, CustomConstructor)
     EXPECT_EQ(zombie.hp, hit_points);
     EXPECT_EQ(zombie.sp_freq, special_frequency);
     EXPECT_EQ(zombie.dies, death_function);
-    EXPECT_EQ(zombie.sp_attack, special_attack_function);
+    EXPECT_EQ(zombie.special_attack, special_attack_function);
 }

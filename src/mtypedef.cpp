@@ -1,3 +1,4 @@
+#include <functional>
 #include <vector>
 
 #include "color.hpp"
@@ -37,7 +38,7 @@ void Game::init_mtypes()
          | flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_FUR)),
         //	frq dif  agr spd msk mdi m## cut dge arm itm  HP special freq
-        50, 0, -5, 140, 0, 1, 1, 0, 4, 0, 0, 1, 0, &mdeath::normal, &monster_attack::none, "\
+        50, 0, -5, 140, 0, 1, 1, 0, 4, 0, 0, 1, 0, &mdeath::normal, nullptr, "\
 A small woodland animal.");
 
     mon("rabbit", 'r', c_white, MS_TINY, FLESH,
@@ -45,7 +46,7 @@ A small woodland animal.");
          | flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_FUR)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        10, 0, -5, 180, 0, 0, 0, 0, 6, 0, 0, 4, 0, &mdeath::normal, &monster_attack::none, "\
+        10, 0, -5, 180, 0, 0, 0, 0, 6, 0, 0, 4, 0, &mdeath::normal, nullptr, "\
 A cute wiggling nose, cotton tail, and\n\
 delicious flesh.");
 
@@ -54,7 +55,7 @@ delicious flesh.");
          | flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_FUR)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        3, 1, -2, 300, 4, 3, 3, 0, 3, 0, 0, 80, 0, &mdeath::normal, &monster_attack::none, "\
+        3, 1, -2, 300, 4, 3, 3, 0, 3, 0, 0, 80, 0, &mdeath::normal, nullptr, "\
 A large buck, fast-moving and strong.");
 
     mon("wolf", 'w', c_dkgray, MS_MEDIUM, FLESH,
@@ -62,7 +63,7 @@ A large buck, fast-moving and strong.");
          | flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_FUR)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        4, 7, 3, 165, 14, 2, 3, 4, 4, 0, 0, 28, 0, &mdeath::normal, &monster_attack::none, "\
+        4, 7, 3, 165, 14, 2, 3, 4, 4, 0, 0, 28, 0, &mdeath::normal, nullptr, "\
 A vicious and fast pack hunter.");
 
     mon("bear", 'B', c_dkgray, MS_LARGE, FLESH,
@@ -70,7 +71,7 @@ A vicious and fast pack hunter.");
          | flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_FUR)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        2, 10, 4, 140, 10, 3, 4, 6, 3, 0, 0, 90, 0, &mdeath::normal, &monster_attack::none, "\
+        2, 10, 4, 140, 10, 3, 4, 6, 3, 0, 0, 90, 0, &mdeath::normal, nullptr, "\
 Remember, only YOU can prevent forest fires.");
 
     // DOMESICATED ANIMALS
@@ -79,7 +80,7 @@ Remember, only YOU can prevent forest fires.");
          | flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_FUR)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        3, 5, 1, 150, 12, 2, 3, 3, 3, 0, 0, 25, 0, &mdeath::normal, &monster_attack::none, "\
+        3, 5, 1, 150, 12, 2, 3, 3, 3, 0, 0, 25, 0, &mdeath::normal, nullptr, "\
 A medium-sized domesticated dog, gone feral.");
 
     // INSECTOIDS
@@ -87,21 +88,21 @@ A medium-sized domesticated dog, gone feral.");
         (flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_POISON)
          | flag_to_bit_position(MF_ANIMAL)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        1, 0, 1, 15, 4, 1, 3, 0, 0, 0, 0, 10, 0, &mdeath::normal, &monster_attack::none, "\
+        1, 0, 1, 15, 4, 1, 3, 0, 0, 0, 0, 10, 0, &mdeath::normal, nullptr, "\
 The size of a large cat, this pulsating\n\
 mass of glistening white flesh turns your\n\
 stomach.");
 
     mon("giant ant", 'a', c_brown, MS_MEDIUM, FLESH, (flag_to_bit_position(MF_SMELLS)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        20, 7, 3, 100, 9, 1, 6, 4, 2, 8, -40, 40, 0, &mdeath::normal, &monster_attack::none, "\
+        20, 7, 3, 100, 9, 1, 6, 4, 2, 8, -40, 40, 0, &mdeath::normal, nullptr, "\
 A red ant the size of a crocodile. It is\n\
 covered in chitinous armor, and has a\n\
 pair of vicious mandibles.");
 
     mon("soldier ant", 'a', c_blue, MS_MEDIUM, FLESH, (flag_to_bit_position(MF_SMELLS)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        2, 16, 5, 115, 12, 2, 4, 6, 2, 10, -50, 80, 0, &mdeath::normal, &monster_attack::none, "\
+        2, 16, 5, 115, 12, 2, 4, 6, 2, 10, -50, 80, 0, &mdeath::normal, nullptr, "\
 Darker in color than the other ants, this\n\
 more aggresive variety has even larger\n\
 mandibles.");
@@ -127,7 +128,7 @@ from every joint on its body.");
          | flag_to_bit_position(MF_FLIES) | flag_to_bit_position(MF_STUMBLES)
          | flag_to_bit_position(MF_ANIMAL)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        2, 15, 4, 140, 7, 1, 6, 5, 7, 5, -50, 20, 0, &mdeath::normal, &monster_attack::none, "\
+        2, 15, 4, 140, 7, 1, 6, 5, 7, 5, -50, 20, 0, &mdeath::normal, nullptr, "\
 A honey bee the size of a small dog. It\n\
 buzzes angrily through the air, dagger-\n\
 sized sting pointed forward.");
@@ -138,7 +139,7 @@ sized sting pointed forward.");
          | flag_to_bit_position(MF_DESTROYS) | flag_to_bit_position(MF_WARM)
          | flag_to_bit_position(MF_LEATHER)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        1, 17, 5, 180, 11, 3, 8, 4, 0, 5, 0, 180, 0, &mdeath::worm, &monster_attack::none, "\
+        1, 17, 5, 180, 11, 3, 8, 4, 0, 5, 0, 180, 0, &mdeath::worm, nullptr, "\
 A hideous slithering beast with a tri-\n\
 sectional mouth that opens to reveal\n\
 hundreds of writhing tongues. Most of its\n\
@@ -149,7 +150,7 @@ enormous body is hidden underground.");
          | flag_to_bit_position(MF_GOODHEARING) | flag_to_bit_position(MF_ATTACKMON)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_LEATHER)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        30, 10, 3, 85, 9, 4, 5, 2, 0, 0, 0, 50, 0, &mdeath::worm, &monster_attack::none, "\
+        30, 10, 3, 85, 9, 4, 5, 2, 0, 0, 0, 50, 0, &mdeath::worm, nullptr, "\
 Half of this monster is emerging from a\n\
 hole in the ground. It looks like a huge\n\
 earthworm, but the end has split into a\n\
@@ -160,7 +161,7 @@ large, fanged mouth.");
          | flag_to_bit_position(MF_GOODHEARING) | flag_to_bit_position(MF_WARM)
          | flag_to_bit_position(MF_LEATHER)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        0, 2, 2, 80, 5, 3, 5, 0, 0, 0, 0, 20, 0, &mdeath::normal, &monster_attack::none, "\
+        0, 2, 2, 80, 5, 3, 5, 0, 0, 0, 0, 20, 0, &mdeath::normal, nullptr, "\
 A portion of a giant worm that is still\n\
 alive.");
 
@@ -171,7 +172,7 @@ alive.");
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_BASHES)
          | flag_to_bit_position(MF_POISON)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        70, 3, 5, 70, 8, 1, 5, 0, 1, 0, 40, 50, 0, &mdeath::normal, &monster_attack::none, "\
+        70, 3, 5, 70, 8, 1, 5, 0, 1, 0, 40, 50, 0, &mdeath::normal, nullptr, "\
 A human body, stumbling slowly forward on\n\
 uncertain legs, possessed with an\n\
 unstoppable rage.");
@@ -215,7 +216,7 @@ lightning.");
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_BASHES)
          | flag_to_bit_position(MF_POISON)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        6, 9, 5, 150, 10, 1, 4, 3, 4, 0, 45, 40, 0, &mdeath::normal, &monster_attack::none, "\
+        6, 9, 5, 150, 10, 1, 4, 3, 4, 0, 45, 40, 0, &mdeath::normal, nullptr, "\
 This deformed, sinewy zombie stays close\n\
 to the ground, loping forward faster than\n\
 most humans ever could.");
@@ -226,7 +227,7 @@ most humans ever could.");
          | flag_to_bit_position(MF_BASHES) | flag_to_bit_position(MF_POISON)
          | flag_to_bit_position(MF_LEATHER)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        4, 15, 5, 115, 9, 4, 4, 2, 0, 8, 60, 80, 0, &mdeath::normal, &monster_attack::none, "\
+        4, 15, 5, 115, 9, 4, 4, 2, 0, 8, 60, 80, 0, &mdeath::normal, nullptr, "\
 A hideous beast of a zombie, bulging with\n\
 distended muscles on both arms and legs.");
 
@@ -237,7 +238,7 @@ distended muscles on both arms and legs.");
          | flag_to_bit_position(MF_POISON) | flag_to_bit_position(MF_ATTACKMON)
          | flag_to_bit_position(MF_LEATHER)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        1, 30, 5, 130, 9, 4, 8, 0, 0, 12, 80, 260, 0, &mdeath::normal, &monster_attack::none, "\
+        1, 30, 5, 130, 9, 4, 8, 0, 0, 12, 80, 260, 0, &mdeath::normal, nullptr, "\
 A zombie that has somehow grown to the size\n\
 of 6 men, with arms as wide as a trash can.");
 
@@ -276,7 +277,7 @@ and it dribbles a gray sludge from its mouth.");
         (flag_to_bit_position(MF_SEES) | flag_to_bit_position(MF_HEARS)
          | flag_to_bit_position(MF_HARDTOSHOOT)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        7, 8, 5, 90, 10, 1, 5, 3, 2, 30, 0, 40, 0, &mdeath::normal, &monster_attack::none, "\
+        7, 8, 5, 90, 10, 1, 5, 3, 2, 30, 0, 40, 0, &mdeath::normal, nullptr, "\
 A skeleton picked clean of all but a few\n\
 rotten scraps of flesh, somehow still in\n\
 motion.");
@@ -296,7 +297,7 @@ by a feeling of dread and terror.");
         (flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_SMELLS)
          | flag_to_bit_position(MF_BASHES) | flag_to_bit_position(MF_NOHEAD)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        24, 16, 4, 75, 9, 2, 4, 5, 0, 12, 0, 80, 0, &mdeath::normal, &monster_attack::none, "\
+        24, 16, 4, 75, 9, 2, 4, 5, 0, 12, 0, 80, 0, &mdeath::normal, nullptr, "\
 A plant that grows as high as your head,\n\
 with one thick, bark-coated stalk\n\
 supporting a flower-like head with a sharp\n\
@@ -306,7 +307,7 @@ sting within.");
         (flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_SMELLS)
          | flag_to_bit_position(MF_NOHEAD)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        15, 2, 1, 65, 7, 1, 4, 3, 0, 0, 0, 40, 0, &mdeath::normal, &monster_attack::none, "\
+        15, 2, 1, 65, 7, 1, 4, 3, 0, 0, 0, 40, 0, &mdeath::normal, nullptr, "\
 A small triffid, only a few feet tall. It\n\
 has not yet developed bark, but its sting\n\
 is still sharp and deadly.");
@@ -337,7 +338,7 @@ mobility and a weak attack.");
         (flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_SMELLS)
          | flag_to_bit_position(MF_POISON) | flag_to_bit_position(MF_NOHEAD)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        0, 0, 4, 0, 8, 3, 5, 0, 0, 0, 0, 1, 0, &mdeath::fungusawake, &monster_attack::none, "\
+        0, 0, 4, 0, 8, 3, 5, 0, 0, 0, 0, 1, 0, &mdeath::fungusawake, nullptr, "\
 A pale white fungus, one meaty gray stalk\n\
 supporting a bloom at the top. A few\n\
 tendrils extend from the base, allowing\n\
@@ -368,7 +369,7 @@ oil.");
          | flag_to_bit_position(MF_GOODHEARING) | flag_to_bit_position(MF_NOHEAD)
          | flag_to_bit_position(MF_POISON)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        1, 2, 5, 50, 6, 1, 4, 0, 0, 0, 0, 50, 0, &mdeath::blobsplit, &monster_attack::none, "\
+        1, 2, 5, 50, 6, 1, 4, 0, 0, 0, 0, 50, 0, &mdeath::blobsplit, nullptr, "\
 A small blob of viscous good that oozes\n\
 across the ground like a mass of living\n\
 oil.");
@@ -378,7 +379,7 @@ oil.");
         (flag_to_bit_position(MF_SEES) | flag_to_bit_position(MF_HEARS)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_BASHES)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        50, 8, 4, 110, 10, 1, 5, 0, 3, 0, 25, 60, 0, &mdeath::normal, &monster_attack::none, "\
+        50, 8, 4, 110, 10, 1, 5, 0, 3, 0, 25, 60, 0, &mdeath::normal, nullptr, "\
 Cannibalistic Humanoid Underground Dweller.\n\
 A human, turned pale and mad from years in\n\
 the subways.");
@@ -387,7 +388,7 @@ the subways.");
         (flag_to_bit_position(MF_SEES) | flag_to_bit_position(MF_HEARS)
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_BASHES)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        5, 18, 3, 130, 20, 2, 4, 0, 5, 0, 40, 80, 0, &mdeath::normal, &monster_attack::none, "\
+        5, 18, 3, 130, 20, 2, 4, 0, 5, 0, 40, 80, 0, &mdeath::normal, nullptr, "\
 A relatively humanoid mutant with purple\n\
 hair and a grapefruit-sized bloodshot eye.");
 
@@ -396,7 +397,7 @@ hair and a grapefruit-sized bloodshot eye.");
          | flag_to_bit_position(MF_SMELLS) | flag_to_bit_position(MF_WARM)
          | flag_to_bit_position(MF_BASHES) | flag_to_bit_position(MF_POISON)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        2, 16, 5, 80, 10, 2, 6, 0, 1, 8, 0, 180, 0, &mdeath::normal, &monster_attack::none, "\
+        2, 16, 5, 80, 10, 2, 6, 0, 1, 8, 0, 180, 0, &mdeath::normal, nullptr, "\
 Two or three humans fused together somehow,\n\
 slowly dragging their thick-hided, hideous\n\
 body across the ground.");
@@ -406,7 +407,7 @@ body across the ground.");
          | flag_to_bit_position(MF_WARM) | flag_to_bit_position(MF_AQUATIC)
          | flag_to_bit_position(MF_ANIMAL)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        30, 13, 5, 120, 17, 1, 3, 3, 6, 0, 0, 20, 0, &mdeath::normal, &monster_attack::none, "\
+        30, 13, 5, 120, 17, 1, 3, 3, 6, 0, 0, 20, 0, &mdeath::normal, nullptr, "\
 A large green fish, it's mouth lined with\n\
 three rows of razor-sharp teeth.");
 
@@ -416,7 +417,7 @@ three rows of razor-sharp teeth.");
          | flag_to_bit_position(MF_SWIMS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_LEATHER)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        15, 2, 5, 60, 12, 1, 2, 5, 1, 0, 0, 40, 0, &mdeath::normal, &monster_attack::none, "\
+        15, 2, 5, 60, 12, 1, 2, 5, 1, 0, 0, 40, 0, &mdeath::normal, nullptr, "\
 A large snake, turned pale yellow from its\n\
 underground life.");
 
@@ -426,7 +427,7 @@ underground life.");
          | flag_to_bit_position(MF_SWIMS) | flag_to_bit_position(MF_ANIMAL)
          | flag_to_bit_position(MF_FUR)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        18, 3, 4, 105, 10, 1, 2, 1, 2, 0, 0, 30, 0, &mdeath::normal, &monster_attack::none, "\
+        18, 3, 4, 105, 10, 1, 2, 1, 2, 0, 0, 30, 0, &mdeath::normal, nullptr, "\
 A large, mangey rat with red eyes.  It\n\
 scampers quickly across the ground, squeaking\n\
 hungrily.");
@@ -438,7 +439,7 @@ hungrily.");
          | flag_to_bit_position(MF_BASHES) | flag_to_bit_position(MF_FLIES)
          | flag_to_bit_position(MF_ATTACKMON) | flag_to_bit_position(MF_PLASTIC)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        1, 42, 5, 280, 16, 5, 8, 12, 7, 8, 0, 350, 0, &mdeath::melt, &monster_attack::none, "\
+        1, 42, 5, 280, 16, 5, 8, 12, 7, 8, 0, 350, 0, &mdeath::melt, nullptr, "\
 An amorphous mass of twisting black flesh\n\
 that flies through the air swiftly.");
     mon("hunting horror", 'h', c_dkgray, MS_SMALL, MNULL,
@@ -447,7 +448,7 @@ that flies through the air swiftly.");
          | flag_to_bit_position(MF_HARDTOSHOOT) | flag_to_bit_position(MF_FLIES)
          | flag_to_bit_position(MF_PLASTIC) | flag_to_bit_position(MF_SUNDEATH)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        10, 28, 4, 180, 15, 3, 4, 0, 6, 0, 0, 80, 0, &mdeath::melt, &monster_attack::none, "\
+        10, 28, 4, 180, 15, 3, 4, 0, 6, 0, 0, 80, 0, &mdeath::melt, nullptr, "\
 A ropy, worm-like creature that flies on\n\
 bat-like wings. Its form continually\n\
 shifts and changes, twitching and\n\
@@ -457,7 +458,7 @@ writhing.");
          | flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_WARM)
          | flag_to_bit_position(MF_BASHES) | flag_to_bit_position(MF_POISON)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        5, 26, 3, 120, 14, 5, 3, 10, 7, 12, 0, 110, 0, &mdeath::normal, &monster_attack::none, "\
+        5, 26, 3, 120, 14, 5, 3, 10, 7, 12, 0, 110, 0, &mdeath::normal, nullptr, "\
 A pinkish, fungoid crustacean-like\n\
 creature with numerous pairs of clawed\n\
 appendages and a head covered with waving\n\
@@ -495,7 +496,7 @@ through the air.");
          | flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_WARM)
          | flag_to_bit_position(MF_BASHES)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        9, 5, 5, 135, 6, 2, 3, 4, 5, 5, 0, 35, 0, &mdeath::melt, &monster_attack::none, "\
+        9, 5, 5, 135, 6, 2, 3, 4, 5, 5, 0, 35, 0, &mdeath::melt, nullptr, "\
 A small humanoid, the size of a dog, with\n\
 twisted red flesh and a distended neck. It\n\
 scampers across the ground, panting and\n\
@@ -527,7 +528,7 @@ Frequently used for reconaissance.");
         (flag_to_bit_position(MF_SEES) | flag_to_bit_position(MF_FLIES)
          | flag_to_bit_position(MF_NOHEAD) | flag_to_bit_position(MF_ELECTRONIC)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        18, 7, 5, 130, 12, 1, 1, 8, 2, 0, 10, 5, 0, &mdeath::normal, &monster_attack::none, "\
+        18, 7, 5, 130, 12, 1, 1, 8, 2, 0, 10, 5, 0, &mdeath::normal, nullptr, "\
 A fist-sized robot that flies swiftly through\n\
 the air.  It's covered with whirring blades\n\
 and has one small, glowing red eye.");
@@ -557,7 +558,7 @@ heavily armored.");
         (flag_to_bit_position(MF_HEARS) | flag_to_bit_position(MF_GOODHEARING)
          | flag_to_bit_position(MF_DIGS) | flag_to_bit_position(MF_ELECTRONIC)),
         //	frq dif agr spd msk mdi m## cut dge arm itm  HP special freq
-        2, 17, 5, 40, 13, 1, 4, 10, 0, 14, 82, 80, 0, &mdeath::normal, &monster_attack::none, "\
+        2, 17, 5, 40, 13, 1, 4, 10, 0, 14, 82, 80, 0, &mdeath::normal, nullptr, "\
 A snake-shaped robot that tunnels through the\n\
 ground slowly.  When it emerges from the\n\
 ground it can attack with its large, spike-\n\
