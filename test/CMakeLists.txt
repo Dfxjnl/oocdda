@@ -6,9 +6,11 @@ include(GoogleTest)
 
 # Tests
 add_executable(oocdda_test src/enums_test.cpp src/file_utils_test.cpp
-                           src/monster_type_test.cpp)
+                           src/monster_type_test.cpp src/point_test.cpp)
 
 target_compile_features(oocdda_test PRIVATE cxx_std_20)
-target_link_libraries(oocdda_test PRIVATE oocdda_lib GTest::gtest_main)
+
+target_link_libraries(oocdda_test PRIVATE oocdda_lib GTest::gtest_main
+                                          GTest::gmock_main)
 
 gtest_discover_tests(oocdda_test)
