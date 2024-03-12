@@ -162,6 +162,7 @@ might even see you getting freebies.";
 Your skill at swimming.  This affects speed, your ability to swim while\n\
 wearing clothes or carrying weights, and in-water combat.";
     case num_skill_types:
+    default:
         return "out of bounds";
     }
 }

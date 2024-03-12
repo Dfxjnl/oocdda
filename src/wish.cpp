@@ -89,7 +89,7 @@ void Game::wish()
             tmp.charges = 100;
         info = tmp.info();
         line = 2;
-        mvprintw(line, 1, info.c_str());
+        mvprintw(line, 1, "%s", info.c_str());
         ch = getch();
     } while (ch != ' ');
     clear();

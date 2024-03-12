@@ -314,7 +314,7 @@ void mvprintz(int y, int x, nc_color FG, const char* mes, ...)
     vsprintf(buff, mes, ap);
     va_end(ap);
     attron(FG);
-    mvprintw(y, x, buff);
+    mvprintw(y, x, "%s", buff);
     attroff(FG);
 }
 
@@ -328,7 +328,7 @@ void mvwprintz(WINDOW* w, int y, int x, nc_color FG, const char* mes, ...)
     vsprintf(buff, mes, ap);
     wattron(w, FG);
     // wmove(w, y, x);
-    mvwprintw(w, y, x, buff);
+    mvwprintw(w, y, x, "%s", buff);
     wattroff(w, FG);
     va_end(ap);
 }
@@ -341,7 +341,7 @@ void printz(nc_color FG, const char* mes, ...)
     vsprintf(buff, mes, ap);
     va_end(ap);
     attron(FG);
-    printw(buff);
+    printw("%s", buff);
     attroff(FG);
 }
 
@@ -353,7 +353,7 @@ void wprintz(WINDOW* w, nc_color FG, const char* mes, ...)
     vsprintf(buff, mes, ap);
     va_end(ap);
     wattron(w, FG);
-    wprintw(w, buff);
+    wprintw(w, "%s", buff);
     wattroff(w, FG);
 }
 
@@ -459,7 +459,8 @@ int menu_vec(const char* mes, std::vector<std::string> options)
     wattron(w, c_white);
     wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
             LINE_XOOX);
-    mvwprintw(w, 1, 1, title.c_str());
+    mvwprintw(w, 1, 1, "%s", title.c_str());
+
     for (int i = 0; i < options.size(); i++)
         mvwprintw(w, i + 2, 1, "%d: %s", i + 1, options[i].c_str());
     long ch;
@@ -684,31 +685,5 @@ nc_color rand_color()
         return c_brown;
     }
     return c_dkgray;
-}
-
-char rand_char()
-{
-    switch (rng(0, 9)) {
-    case 0:
-        return '|';
-    case 1:
-        return '-';
-    case 2:
-        return '#';
-    case 3:
-        return '?';
-    case 4:
-        return '&';
-    case 5:
-        return '.';
-    case 6:
-        return '%';
-    case 7:
-        return '{';
-    case 8:
-        return '*';
-    case 9:
-        return '^';
-    }
 }
 } // namespace oocdda

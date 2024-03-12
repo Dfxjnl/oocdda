@@ -724,7 +724,8 @@ void Game::get_input()
         }
     } else if (ch == 'M') {
         erase();
-        mvprintw(0, 0, "%d addictions", u.addictions.size());
+        mvprintw(0, 0, "%zu addictions", u.addictions.size());
+
         for (int i = 0; i < u.addictions.size(); i++) {
             mvprintw(1 + i, 0, "%d: int %d sate %d", int(u.addictions[i].type),
                      u.addictions[i].intensity, u.addictions[i].sated);
@@ -2029,10 +2030,10 @@ void Game::mon_info()
                     break;
                 }
                 mvwputch(w_moninfo, line, 0, tmpcol, '@');
-                mvwprintw(w_moninfo, line, 2, active_npc[(buff + 1) * -1].name.c_str());
+                mvwprintw(w_moninfo, line, 2, "%s", active_npc[(buff + 1) * -1].name.c_str());
             } else {
                 mvwputch(w_moninfo, line, 0, mtypes[buff]->color, mtypes[buff]->sym);
-                mvwprintw(w_moninfo, line, 2, mtypes[buff]->name.c_str());
+                mvwprintw(w_moninfo, line, 2, "%s", mtypes[buff]->name.c_str());
             }
             line++;
         }
@@ -3349,7 +3350,7 @@ void Game::pickup(int posx, int posy, int min)
             ch -= 'a';
             getitem[ch] = !getitem[ch];
             if (getitem[ch]) {
-                mvwprintw(w_item_info, 1, 0, here[ch].info().c_str());
+                mvwprintw(w_item_info, 1, 0, "%s", here[ch].info().c_str());
                 wborder(w_item_info, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO,
                         LINE_OOXX, LINE_XXOO, LINE_XOOX);
                 wrefresh(w_item_info);
@@ -3394,7 +3395,9 @@ void Game::pickup(int posx, int posy, int min)
                     wprintw(w_pickup, " + ");
                 else
                     wprintw(w_pickup, " - ");
-                wprintw(w_pickup, here[cur_it].tname().c_str());
+
+                wprintw(w_pickup, "%s", here[cur_it].tname().c_str());
+
                 if (here[cur_it].charges > 0)
                     wprintw(w_pickup, " (%d)", here[cur_it].charges);
             }
@@ -3611,7 +3614,8 @@ char Game::inv(std::string title)
                  && !u.inv[i].is_tool() && !u.inv[i].is_weap() && !u.inv[i].is_food_container())
             first_other = i;
     }
-    mvwprintw(w_inv, 0, 0, title.c_str());
+
+    mvwprintw(w_inv, 0, 0, "%s", title.c_str());
     mvwprintw(w_inv, 0, 40, "Weight: ");
     if (u.weight_carried() >= u.weight_capacity() * .25)
         wprintz(w_inv, c_red, "%d", u.weight_carried());
@@ -3625,7 +3629,8 @@ char Game::inv(std::string title)
         wprintz(w_inv, c_ltgray, "%d", u.volume_carried());
     wprintw(w_inv, "/%d", u.volume_capacity() - 2);
     mvwprintz(w_inv, 2, 40, c_magenta, "WEAPON:");
-    mvwprintw(w_inv, 3, 42, u.weapname().c_str());
+    mvwprintw(w_inv, 3, 42, "%s", u.weapname().c_str());
+
     if (u.is_armed())
         mvwputch(w_inv, 3, 40, c_white, u.weapon.invlet);
     if (u.worn.size() > 0)

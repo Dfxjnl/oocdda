@@ -658,7 +658,7 @@ void Map::debug()
     for (int i = 0; i <= SEEX * 2; i++) {
         for (int j = 0; j <= SEEY * 2; j++) {
             if (i_at(i, j).size() > 0) {
-                mvprintw(1, 0, "%d, %d: %d items", i, j, i_at(i, j).size());
+                mvprintw(1, 0, "%d, %d: %zu items", i, j, i_at(i, j).size());
                 mvprintw(2, 0, "%c, %d", i_at(i, j)[0].symbol(), i_at(i, j)[0].color());
                 getch();
             }

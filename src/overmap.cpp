@@ -331,7 +331,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                 place_river(river_start[index], river_end[0]);
                 river_end.erase(river_end.begin());
             } else {
-                mvprintw(0, 0, "%d   ", river_end_copy.size());
+                mvprintw(0, 0, "%zu   ", river_end_copy.size());
                 getch();
                 place_river(river_start[index], river_end_copy[rng(0, river_end_copy.size() - 1)]);
             }
@@ -346,7 +346,7 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                 place_river(river_start[0], river_end[index]);
                 river_start.erase(river_start.begin());
             } else {
-                mvprintw(0, 0, "%d   ", river_start_copy.size());
+                mvprintw(0, 0, "%zu   ", river_start_copy.size());
                 getch();
                 place_river(river_start_copy[rng(0, river_start_copy.size() - 1)],
                             river_end[index]);

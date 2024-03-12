@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -1117,6 +1118,8 @@ int player::random_good_trait(character_type type)
             return PF_ANDROID;
         }
     }
+
+    return static_cast<int>(rng(1, PF_SPLIT - 1));
 }
 
 int player::random_bad_trait(character_type type)
@@ -1368,6 +1371,8 @@ int player::random_bad_trait(character_type type)
             return PF_WEAKSTOMACH;
         }
     }
+
+    return static_cast<int>(rng(static_cast<std::int64_t>(PF_SPLIT) + 1, PF_MAX - 1));
 }
 
 int random_skill(character_type type)
@@ -1551,5 +1556,7 @@ int random_skill(character_type type)
             return sk_speech;
         }
     }
+
+    return static_cast<int>(rng(1, num_skill_types - 1));
 }
 } // namespace oocdda

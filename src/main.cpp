@@ -33,7 +33,6 @@ int main(int argc, char* argv[])
         ;
     erase();
     endwin();
-    system("clear");
     return 0;
 }
 
