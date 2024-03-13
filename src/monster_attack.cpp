@@ -377,7 +377,7 @@ void plant(Game& g, Monster& z)
     }
 }
 
-void disappear(Game& g, Monster& z) { z.hp = 0; }
+void disappear(Game& /*game*/, Monster& z) { z.hp = 0; }
 
 void formblob(Game& g, Monster& z)
 {
@@ -460,7 +460,7 @@ void stare(Game& g, Monster& z)
     }
 }
 
-void photograph(Game& g, Monster& z) {
+void photograph(Game& /*game*/, Monster& /*monster*/) {
     // TODO: Needs faction.
 };
 

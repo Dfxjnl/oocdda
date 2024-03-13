@@ -88,7 +88,7 @@ public:
     bool add_field(Game* g, int x, int y, field_id t, unsigned char density);
     bool process_fields(Game* g);
     void step_in_field(int x, int y, Game* g);
-    void mon_in_field(int x, int y, Game* g, Monster* z);
+    void mon_in_field(int x, int y, Monster* z);
     // mapgen.h functions
     void place_items(
         items_location loc, int chance, int x1, int y1, int x2, int y2, bool ongrass, int turn);

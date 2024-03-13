@@ -1422,12 +1422,15 @@ void player::mutate(Game* g)
                     return;
                 }
                 break;
-            case 17:
+
+            case 17: {
                 if (!has_trait(PF_MEMBRANE)) {
                     g->add_msg("You grow a set of clear eyelids.");
                     toggle_trait(PF_MEMBRANE);
                     return;
                 }
+            } break;
+
             case 18:
                 if (!has_trait(PF_GILLS)) {
                     g->add_msg("A set of gills forms in your neck!");
@@ -1449,25 +1452,32 @@ void player::mutate(Game* g)
                     return;
                 }
                 break;
-            case 21:
+
+            case 21: {
                 if (!has_trait(PF_CHITIN)) {
                     g->add_msg("You develop a chitinous exoskeleton!");
                     toggle_trait(PF_CHITIN);
                     return;
                 }
-            case 22:
+            } break;
+
+            case 22: {
                 if (!has_trait(PF_TALONS)) {
                     g->add_msg("Your index fingers grow into huge talons!");
                     toggle_trait(PF_TALONS);
                     return;
                 }
-            case 23:
+            } break;
+
+            case 23: {
                 if (!has_trait(PF_RADIOGENIC) && one_in(2)) {
                     g->add_msg("You crave irradiation!");
                     toggle_trait(PF_RADIOGENIC);
                     return;
                 }
-            case 24:
+            } break;
+
+            case 24: {
                 if (!has_trait(PF_SPINES) && !has_trait(PF_QUILLS)) {
                     g->add_msg("Fine spines grow over your body.");
                     toggle_trait(PF_SPINES);
@@ -1478,6 +1488,7 @@ void player::mutate(Game* g)
                     toggle_trait(PF_QUILLS);
                     return;
                 }
+            } break;
             }
         } else { // Bad mutations!
             switch (rng(1, 24)) {
@@ -1661,32 +1672,41 @@ void player::mutate(Game* g)
                     return;
                 }
                 break;
-            case 20:
+
+            case 20: {
                 if (!has_trait(PF_VOMITOUS)) {
                     g->add_msg("Your stomach churns.");
                     toggle_trait(PF_VOMITOUS);
                     return;
                 }
-            case 21:
+            } break;
+
+            case 21: {
                 if (!has_trait(PF_RADIOACTIVE)) {
                     g->add_msg("You feel radioactive.");
                     toggle_trait(PF_RADIOACTIVE);
                     return;
                 }
-            case 22:
+            } break;
+
+            case 22: {
                 if (!has_trait(PF_SLIMY)) {
                     g->add_msg("You start to ooze a thick green slime.");
                     toggle_trait(PF_SLIMY);
                     return;
                 }
-            case 23:
+            } break;
+
+            case 23: {
                 if (!has_trait(PF_HERBIVORE) && !has_trait(PF_CARNIVORE)) {
                     if (!has_trait(PF_VEGETARIAN))
                         g->add_msg("The thought of eating meat suddenly disgusts you.");
                     toggle_trait(PF_HERBIVORE);
                     return;
                 }
-            case 24:
+            } break;
+
+            case 24: {
                 if (!has_trait(PF_CARNIVORE) && !has_trait(PF_HERBIVORE)) {
                     if (has_trait(PF_VEGETARIAN))
                         g->add_msg("Despite your convictions, you crave meat.");
@@ -1695,6 +1715,7 @@ void player::mutate(Game* g)
                     toggle_trait(PF_CARNIVORE);
                     return;
                 }
+            } break;
             }
         }
     }
@@ -2254,8 +2275,12 @@ void player::hit(Game* g, body_part bphurt, int side, int dam, int cut)
             add_disease(DI_BLIND, rng(minblind, maxblind), g);
         }
         // Fall through to head damage
+        [[fallthrough]];
+
     case bp_mouth:
         // Fall through to head damage
+        [[fallthrough]];
+
     case bp_head:
         pain++;
         hp_cur[hp_head] -= dam;
@@ -2268,8 +2293,11 @@ void player::hit(Game* g, body_part bphurt, int side, int dam, int cut)
         if (hp_cur[hp_torso] < 0)
             hp_cur[hp_torso] = 0;
         break;
+
     case bp_hands:
         // Fall through to arms
+        [[fallthrough]];
+
     case bp_arms:
         if (side == 1 || side == 3 || weapon.is_two_handed(this))
             recoil += int(dam / 3);
@@ -2284,8 +2312,11 @@ void player::hit(Game* g, body_part bphurt, int side, int dam, int cut)
                 hp_cur[hp_arm_r] = 0;
         }
         break;
+
     case bp_feet:
         // Fall through to legs
+        [[fallthrough]];
+
     case bp_legs:
         if (side == 0 || side == 3) {
             hp_cur[hp_leg_l] -= dam;
@@ -2384,18 +2415,26 @@ void player::heal(body_part bpheal, int side, int dam)
     case bp_torso:
         healpart = hp_torso;
         break;
-    case bp_hands:
+
+    case bp_hands: {
         // Shouldn't happen, but fall through to arms
         debugmsg("Heal against hands!");
+        [[fallthrough]];
+    }
+
     case bp_arms:
         if (side == 0 || side == 3)
             healpart = hp_arm_l;
         if (side == 1 || side == 3)
             healpart = hp_arm_r;
         break;
-    case bp_feet:
+
+    case bp_feet: {
         // Shouldn't happen, but fall through to legs
         debugmsg("Heal against feet!");
+        [[fallthrough]];
+    }
+
     case bp_legs:
         if (side == 0 || side == 3)
             healpart = hp_leg_l;

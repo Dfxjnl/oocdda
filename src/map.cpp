@@ -17,6 +17,7 @@
 #include "itype.hpp"
 #include "iuse.hpp"
 #include "line.hpp"
+#include "mapdata.hpp"
 #include "monster.hpp"
 #include "output.hpp"
 #include "overmap.hpp"
@@ -281,10 +282,11 @@ void Map::destroy(Game* g, int x, int y, bool makesound)
             }
         ter(x, y) = t_rubble;
         break;
-    case t_door_c:
-    case t_door_b:
-    case t_door_locked:
-    case t_door_boarded:
+
+    case ter_id::t_door_c:
+    case ter_id::t_door_b:
+    case ter_id::t_door_locked:
+    case ter_id::t_door_boarded: {
         ter(x, y) = t_door_frame;
         for (int i = x - 2; i <= x + 2; i++) {
             for (int j = y - 2; j <= y + 2; j++) {
@@ -292,6 +294,8 @@ void Map::destroy(Game* g, int x, int y, bool makesound)
                     add_item(i, j, g->itypes[itm_2x4], 0);
             }
         }
+    } break;
+
     case t_wall_v:
     case t_wall_h:
         for (int i = x - 2; i <= x + 2; i++) {

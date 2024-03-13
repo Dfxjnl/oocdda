@@ -12,7 +12,7 @@ struct settlement {
     settlement(int mapx, int mapy);
     void pick_faction(Game* g, int omx, int omy);
     void set_population();
-    void populate(Game* g) {};
+    void populate();
 
     int num(oter_id ter);
     void add_building(oter_id ter);

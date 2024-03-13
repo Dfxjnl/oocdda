@@ -92,7 +92,7 @@ private:
     // Overall terrain
     void place_river(Point pa, Point pb);
     void place_forest();
-    void place_settlements(Game* g);
+    void place_settlements();
     void settlement_building(settlement& set, int x, int y);
     // City Building
     void place_cities(std::vector<city>& cities, int min);

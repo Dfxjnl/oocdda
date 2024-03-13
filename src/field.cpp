@@ -430,7 +430,7 @@ void Map::step_in_field(int x, int y, Game* g)
     }
 }
 
-void Map::mon_in_field(int x, int y, Game* g, Monster* z)
+void Map::mon_in_field(int x, int y, Monster* z)
 {
     if (z->has_flag(MF_DIGS))
         return; // Digging monsters are immune to fields

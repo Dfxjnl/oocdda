@@ -851,7 +851,7 @@ int player::random_good_trait(character_type type)
         return static_cast<int>(rng(1, pl_flag::PF_SPLIT - 1));
     } break;
 
-    case PLTYPE_STUDENT:
+    case character_type::PLTYPE_STUDENT: {
         switch (rng(1, 12)) {
         case 1:
             return PF_LIGHTEATER;
@@ -861,12 +861,16 @@ int player::random_good_trait(character_type type)
             return PF_FASTREADER;
         case 5:
             return PF_PACKMULE;
+
         case 6:
         case 7:
         case 8:
-        case 9:
-            if (!has_trait(PF_SAVANT))
-                return PF_FASTLEARNER;
+        case 9: {
+            if (!has_trait(pl_flag::PF_SAVANT)) {
+                return pl_flag::PF_FASTLEARNER;
+            }
+        } break;
+
         case 10:
             return PF_INCONSPICUOUS;
         case 11:
@@ -877,7 +881,9 @@ int player::random_good_trait(character_type type)
             else
                 return PF_FASTLEARNER;
         }
-    case PLTYPE_FARMER:
+    } break;
+
+    case PLTYPE_FARMER: {
         switch (rng(1, 18)) {
         case 1:
             return PF_OPTIMISTIC;
@@ -907,7 +913,9 @@ int player::random_good_trait(character_type type)
         case 18:
             return PF_DISRESISTANT;
         }
-    case PLTYPE_MECHANIC:
+    } break;
+
+    case character_type::PLTYPE_MECHANIC: {
         switch (rng(1, 13)) {
         case 1:
             return PF_QUICK;
@@ -924,9 +932,13 @@ int player::random_good_trait(character_type type)
             return PF_THICKSKIN;
         case 8:
             return PF_PACKMULE;
-        case 9:
-            if (!has_trait(PF_SAVANT))
-                return PF_FASTLEARNER;
+
+        case 9: {
+            if (!has_trait(pl_flag::PF_SAVANT)) {
+                return pl_flag::PF_FASTLEARNER;
+            }
+        } break;
+
         case 10:
             return PF_DEFT;
         case 11:
@@ -936,7 +948,9 @@ int player::random_good_trait(character_type type)
         case 13:
             return PF_ANDROID;
         }
-    case PLTYPE_CLERK:
+    } break;
+
+    case character_type::PLTYPE_CLERK: {
         switch (rng(1, 16)) {
         case 1:
         case 2:
@@ -954,9 +968,13 @@ int player::random_good_trait(character_type type)
         case 9:
         case 10:
             return PF_PACKMULE;
-        case 11:
-            if (!has_trait(PF_SAVANT))
-                return PF_FASTLEARNER;
+
+        case 11: {
+            if (!has_trait(pl_flag::PF_SAVANT)) {
+                return pl_flag::PF_FASTLEARNER;
+            }
+        } break;
+
         case 12:
             return PF_DEFT;
         case 13:
@@ -968,7 +986,9 @@ int player::random_good_trait(character_type type)
         case 16:
             return PF_LIGHTSTEP;
         }
-    case PLTYPE_COP:
+    } break;
+
+    case character_type::PLTYPE_COP: {
         switch (rng(1, 27)) {
         case 1:
         case 2:
@@ -986,9 +1006,13 @@ int player::random_good_trait(character_type type)
         case 10:
         case 11:
             return PF_NIGHTVISION;
-        case 12:
-            if (!has_trait(PF_SAVANT))
-                return PF_FASTLEARNER;
+
+        case 12: {
+            if (!has_trait(pl_flag::PF_SAVANT)) {
+                return pl_flag::PF_FASTLEARNER;
+            }
+        } break;
+
         case 13:
         case 14:
         case 15:
@@ -1012,7 +1036,9 @@ int player::random_good_trait(character_type type)
         case 27:
             return PF_ANDROID;
         }
-    case PLTYPE_SURVIVALIST:
+    } break;
+
+    case character_type::PLTYPE_SURVIVALIST: {
         switch (rng(1, 31)) {
         case 1:
         case 2:
@@ -1065,7 +1091,9 @@ int player::random_good_trait(character_type type)
         case 31:
             return PF_HEARTLESS;
         }
-    case PLTYPE_PROGRAMMER:
+    } break;
+
+    case character_type::PLTYPE_PROGRAMMER: {
         switch (rng(1, 19)) {
         case 1:
             return PF_OPTIMISTIC;
@@ -1078,12 +1106,16 @@ int player::random_good_trait(character_type type)
         case 7:
         case 8:
             return PF_FASTREADER;
+
         case 9:
         case 10:
         case 11:
-        case 12:
-            if (!has_trait(PF_SAVANT))
-                return PF_FASTLEARNER;
+        case 12: {
+            if (!has_trait(pl_flag::PF_SAVANT)) {
+                return pl_flag::PF_FASTLEARNER;
+            }
+        } break;
+
         case 13:
             return PF_GOURMAND;
         case 14:
@@ -1096,7 +1128,9 @@ int player::random_good_trait(character_type type)
         case 19:
             return PF_ANDROID;
         }
-    case PLTYPE_DOCTOR:
+    } break;
+
+    case character_type::PLTYPE_DOCTOR: {
         switch (rng(1, 14)) {
         case 1:
         case 2:
@@ -1110,9 +1144,13 @@ int player::random_good_trait(character_type type)
             return PF_POISRESIST;
         case 7:
             return PF_FASTREADER;
-        case 8:
-            if (!has_trait(PF_SAVANT))
-                return PF_FASTLEARNER;
+
+        case 8: {
+            if (!has_trait(pl_flag::PF_SAVANT)) {
+                return pl_flag::PF_FASTLEARNER;
+            }
+        } break;
+
         case 9:
             return PF_SUPERTASTER;
         case 10:
@@ -1124,6 +1162,7 @@ int player::random_good_trait(character_type type)
         case 14:
             return PF_ANDROID;
         }
+    } break;
     }
 
     return static_cast<int>(rng(1, PF_SPLIT - 1));
@@ -1138,7 +1177,7 @@ int player::random_bad_trait(character_type type)
             rng(static_cast<std::int64_t>(pl_flag::PF_SPLIT) + 1, pl_flag::PF_MAX - 1));
     } break;
 
-    case PLTYPE_STUDENT:
+    case PLTYPE_STUDENT: {
         switch (rng(1, 19)) {
         case 1:
         case 2:
@@ -1165,14 +1204,20 @@ int player::random_bad_trait(character_type type)
             return PF_SMELLY;
         case 16:
             return PF_CHEMIMBALANCE;
+
         case 17:
-        case 18:
-            if (!has_trait(PF_FASTLEARNER))
-                return PF_SAVANT;
+        case 18: {
+            if (!has_trait(pl_flag::PF_FASTLEARNER)) {
+                return pl_flag::PF_SAVANT;
+            }
+        } break;
+
         case 19:
             return PF_MOODSWINGS;
         }
-    case PLTYPE_FARMER:
+    } break;
+
+    case PLTYPE_FARMER: {
         switch (rng(1, 7)) {
         case 1:
             return PF_MYOPIC;
@@ -1184,11 +1229,14 @@ int player::random_bad_trait(character_type type)
             return PF_BADHEARING;
         case 5:
             return PF_FORGETFUL;
+
         case 6:
         case 7:
             return PF_SMELLY;
         }
-    case PLTYPE_MECHANIC:
+    } break;
+
+    case PLTYPE_MECHANIC: {
         switch (rng(1, 14)) {
         case 1:
             return PF_HEAVYSLEEPER;
@@ -1215,7 +1263,9 @@ int player::random_bad_trait(character_type type)
         case 14:
             return PF_HOARDER;
         }
-    case PLTYPE_CLERK:
+    } break;
+
+    case PLTYPE_CLERK: {
         switch (rng(1, 15)) {
         case 1:
             return PF_MYOPIC;
@@ -1243,7 +1293,9 @@ int player::random_bad_trait(character_type type)
         case 15:
             return PF_MOODSWINGS;
         }
-    case PLTYPE_COP:
+    } break;
+
+    case PLTYPE_COP: {
         switch (rng(1, 11)) {
         case 1:
         case 2:
@@ -1267,7 +1319,9 @@ int player::random_bad_trait(character_type type)
         case 11:
             return PF_HPIGNORANT;
         }
-    case PLTYPE_SURVIVALIST:
+    } break;
+
+    case PLTYPE_SURVIVALIST: {
         switch (rng(1, 18)) {
         case 1:
             return PF_BADBACK;
@@ -1300,7 +1354,9 @@ int player::random_bad_trait(character_type type)
         case 18:
             return PF_HPIGNORANT;
         }
-    case PLTYPE_PROGRAMMER:
+    } break;
+
+    case PLTYPE_PROGRAMMER: {
         switch (rng(1, 36)) {
         case 1:
         case 2:
@@ -1337,11 +1393,15 @@ int player::random_bad_trait(character_type type)
             return PF_SMELLY;
         case 25:
             return PF_CHEMIMBALANCE;
+
         case 26:
         case 27:
-        case 28:
-            if (!has_trait(PF_FASTLEARNER))
-                return PF_SAVANT;
+        case 28: {
+            if (!has_trait(pl_flag::PF_FASTLEARNER)) {
+                return pl_flag::PF_SAVANT;
+            }
+        } break;
+
         case 29:
         case 30:
         case 31:
@@ -1354,7 +1414,9 @@ int player::random_bad_trait(character_type type)
         case 36:
             return PF_HPIGNORANT;
         }
-    case PLTYPE_DOCTOR:
+    } break;
+
+    case PLTYPE_DOCTOR: {
         switch (rng(1, 14)) {
         case 1:
         case 2:
@@ -1375,12 +1437,17 @@ int player::random_bad_trait(character_type type)
         case 11:
         case 12:
             return PF_ADDICTIVE;
-        case 13:
-            if (!has_trait(PF_FASTLEARNER))
-                return PF_SAVANT;
+
+        case 13: {
+            if (!has_trait(pl_flag::PF_FASTLEARNER)) {
+                return pl_flag::PF_SAVANT;
+            }
+        } break;
+
         case 14:
             return PF_WEAKSTOMACH;
         }
+    } break;
     }
 
     return static_cast<int>(rng(static_cast<std::int64_t>(PF_SPLIT) + 1, PF_MAX - 1));
@@ -1394,7 +1461,7 @@ int random_skill(character_type type)
         return static_cast<int>(rng(1, skill::num_skill_types - 1));
     } break;
 
-    case PLTYPE_STUDENT:
+    case PLTYPE_STUDENT: {
         switch (rng(1, 8)) {
         case 1:
         case 2:
@@ -1410,7 +1477,9 @@ int random_skill(character_type type)
         case 8:
             return sk_speech;
         }
-    case PLTYPE_FARMER:
+    } break;
+
+    case PLTYPE_FARMER: {
         switch (rng(1, 15)) {
         case 1:
         case 2:
@@ -1437,7 +1506,9 @@ int random_skill(character_type type)
         case 15:
             return sk_barter;
         }
-    case PLTYPE_MECHANIC:
+    } break;
+
+    case PLTYPE_MECHANIC: {
         switch (rng(1, 12)) {
         case 1:
             return sk_melee;
@@ -1457,7 +1528,9 @@ int random_skill(character_type type)
         case 12:
             return sk_barter;
         }
-    case PLTYPE_CLERK:
+    } break;
+
+    case PLTYPE_CLERK: {
         switch (rng(1, 9)) {
         case 1:
             return sk_computer;
@@ -1473,7 +1546,9 @@ int random_skill(character_type type)
         case 9:
             return sk_barter;
         }
-    case PLTYPE_COP:
+    } break;
+
+    case PLTYPE_COP: {
         switch (rng(1, 18)) {
         case 1:
             return sk_dodge;
@@ -1505,7 +1580,9 @@ int random_skill(character_type type)
         case 18:
             return sk_speech;
         }
-    case PLTYPE_SURVIVALIST:
+    } break;
+
+    case PLTYPE_SURVIVALIST: {
         switch (rng(1, 16)) {
         case 1:
             return sk_melee;
@@ -1531,7 +1608,9 @@ int random_skill(character_type type)
         case 16:
             return sk_firstaid;
         }
-    case PLTYPE_PROGRAMMER:
+    } break;
+
+    case PLTYPE_PROGRAMMER: {
         switch (rng(1, 10)) {
         case 1:
         case 2:
@@ -1548,7 +1627,9 @@ int random_skill(character_type type)
         case 10:
             return sk_cooking;
         }
-    case PLTYPE_DOCTOR:
+    } break;
+
+    case PLTYPE_DOCTOR: {
         switch (rng(1, 14)) {
         case 1:
         case 2:
@@ -1569,6 +1650,7 @@ int random_skill(character_type type)
         case 14:
             return sk_speech;
         }
+    } break;
     }
 
     return static_cast<int>(rng(1, num_skill_types - 1));

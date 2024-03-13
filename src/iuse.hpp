@@ -7,8 +7,9 @@ class Item;
 
 class iuse {
 public:
-    void none(Game* g, Item* it, bool t) {};
-    // FOOD AND DRUGS (ADMINISTRATION)
+    void none(Game* g, Item* it, bool t);
+
+    // Food and drugs (administration).
     void royal_jelly(Game* g, Item* it, bool t);
     void bandage(Game* g, Item* it, bool t);
     void firstaid(Game* g, Item* it, bool t);

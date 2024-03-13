@@ -359,10 +359,6 @@ void Game::start_game()
     Monster doggy(mtypes[mon_dog], u.posx - 1, u.posy - 1);
     doggy.friendly = -1;
     z.push_back(doggy);
-
-    m.add_field(this, u.posx + 1, u.posy + 1, field_id::fd_blood, 1);
-    m.add_field(this, u.posx + 1, u.posy + 1, field_id::fd_blood, 1);
-    m.add_field(this, u.posx + 1, u.posy + 1, field_id::fd_blood, 1);
 }
 
 void Game::start_tutorial(tut_type type)
@@ -2182,8 +2178,9 @@ void Game::mon_info()
 void Game::monmove()
 {
     for (std::size_t i {0}; i < z.size(); ++i) {
-        if (i < 0 || i > z.size())
+        if (i > z.size()) {
             debugmsg("Moving out of bounds monster! i %d, z.size() %d", i, z.size());
+        }
 
         while (!z[i].can_move_to(m, z[i].posx, z[i].posy) && i < z.size()) {
             // If we can't move to our current position, assign us to a new one
@@ -2208,7 +2205,8 @@ void Game::monmove()
         while (z[i].moves > 0 && !dead) {
             z[i].plan(this); // Formulate a path to follow
             z[i].move(this); // Move one square, possibly hit u
-            m.mon_in_field(z[i].posx, z[i].posy, this, &(z[i]));
+            m.mon_in_field(z[i].posx, z[i].posy, &z[i]);
+
             if (z[i].hurt(0)) { // Maybe we died...
                 kill_mon(i);
                 dead = true;
@@ -2791,21 +2789,32 @@ void Game::resonance_cascade(int x, int y)
             case 5:
                 for (int k = i - 1; k <= i + 1; k++) {
                     for (int l = j - 1; l <= j + 1; l++) {
-                        field_id type;
+                        auto type {field_id::fd_null};
+
                         switch (rng(1, 7)) {
                         case 1:
                             type = fd_blood;
+                            break;
+
                         case 2:
                             type = fd_bile;
+                            break;
+
                         case 3:
                         case 4:
                             type = fd_slime;
+                            break;
+
                         case 5:
                             type = fd_fire;
+                            break;
+
                         case 6:
                         case 7:
                             type = fd_nuke_gas;
+                            break;
                         }
+
                         if (m.field_at(k, l).type == fd_null || !one_in(3))
                             m.field_at(k, l) = field(type, 3, 0);
                     }

@@ -35,10 +35,10 @@ enum trap_id {
 struct trap;
 
 struct trapfunc {
-    void none(Game* g, int x, int y) {};
+    void none(Game* g, int x, int y);
     void bubble(Game* g, int x, int y);
     void beartrap(Game* g, int x, int y);
-    void snare(Game* g, int x, int y) {};
+    void snare(Game* g, int x, int y);
     void board(Game* g, int x, int y);
     void tripwire(Game* g, int x, int y);
     void crossbow(Game* g, int x, int y);
@@ -51,27 +51,27 @@ struct trapfunc {
     void sinkhole(Game* g, int x, int y);
     void pit(Game* g, int x, int y);
     void pit_spikes(Game* g, int x, int y);
-    void portal(Game* g, int x, int y) {};
+    void portal(Game* g, int x, int y);
 };
 
 struct trapfuncm {
-    void none(Game* g, Monster* z, int x, int y) {};
+    void none(Game* g, Monster* z, int x, int y);
     void bubble(Game* g, Monster* z, int x, int y);
     void beartrap(Game* g, Monster* z, int x, int y);
+    void snare(Game* g, Monster* z, int x, int y);
     void board(Game* g, Monster* z, int x, int y);
     void tripwire(Game* g, Monster* z, int x, int y);
     void crossbow(Game* g, Monster* z, int x, int y);
     void shotgun(Game* g, Monster* z, int x, int y);
     void blade(Game* g, Monster* z, int x, int y);
-    void snare(Game* g, Monster* z, int x, int y) {};
     void landmine(Game* g, Monster* z, int x, int y);
     void telepad(Game* g, Monster* z, int x, int y);
     void goo(Game* g, Monster* z, int x, int y);
     void dissector(Game* g, Monster* z, int x, int y);
-    void sinkhole(Game* g, Monster* z, int x, int y) {};
+    void sinkhole(Game* g, Monster* z, int x, int y);
     void pit(Game* g, Monster* z, int x, int y);
     void pit_spikes(Game* g, Monster* z, int x, int y);
-    void portal(Game* g, Monster* z, int x, int y) {};
+    void portal(Game* g, Monster* z, int x, int y);
 };
 
 struct trap {

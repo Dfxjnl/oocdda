@@ -900,10 +900,11 @@ bool Item::reload(player& u, int index)
         return false;
 }
 
-void Item::use(player& u)
+void Item::use()
 {
-    if (charges > 0)
-        charges--;
+    if (charges > 0) {
+        --charges;
+    }
 }
 
 bool is_flammable(material m)

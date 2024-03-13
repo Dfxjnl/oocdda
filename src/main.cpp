@@ -15,7 +15,7 @@
 void do_colors();
 // void load_items();
 
-int main(int argc, char* argv[])
+auto main() -> int
 {
     srand(time(NULL));
 

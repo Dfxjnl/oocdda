@@ -171,7 +171,7 @@ public:
     // The following are defined in npcmove.cpp
     void move(Game* g);                      // Actual movement; depends on target and attitude
     int confident_range();                   // Range at which we have 50% chance of a shot hitting
-    bool wont_shoot_friend(Game* g);         // Confident that we won't shoot a friend
+    bool wont_shoot_friend();                // Confident that we won't shoot a friend.
     Monster* choose_monster_target(Game* g); // Most often, the closest to us
     bool want_to_attack_player(Game* g);
     int follow_distance(); // How closely do we follow the player?
@@ -190,11 +190,11 @@ public:
     void move_to(Game* g, int x, int y);
     void move_away_from(Game* g, int x, int y);
     void move_pause();
-    void melee_monster(Game* g, Monster* m);
+    void melee_monster(Game* g);
     void alt_attack(Game* g, Monster* m, player* p);
     void find_items(Game* g);
     void pickup_items(Game* g);
-    void melee_player(Game* g, player& foe);
+    void melee_player(Game* g);
     void alt_attack_player(Game* g, player& foe);
     void heal_player(Game* g, player& patient);
     void mug_player(Game* g, player& mark);

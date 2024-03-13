@@ -34,6 +34,8 @@ void settlement::set_population()
         pop = 4;
 }
 
+void settlement::populate() { }
+
 int settlement::num(oter_id ter)
 {
     if (ter < ot_set_house || ter > ot_wall) {

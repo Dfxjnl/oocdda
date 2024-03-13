@@ -90,8 +90,9 @@ void npc::move(Game* g)
     case npc_melee_monster:
         if (path.size() > 1)
             move_to(g, path[0].x, path[0].y);
-        else
-            melee_monster(g, target);
+        else {
+            melee_monster(g);
+        }
         break;
 
     case npc_shoot_monster:
@@ -120,9 +121,10 @@ void npc::move(Game* g)
         break;
 
     case npc_melee_player:
-        if (path.size() == 1) // We're adjacent to u, and thus can sock u one
-            melee_player(g, g->u);
-        else
+        if (path.size() == 1) {
+            // We're adjacent to you, and thus can melee you.
+            melee_player(g);
+        } else
             move_to(g, path[0].x, path[0].y);
         break;
 
@@ -419,24 +421,34 @@ npc_action npc::method_of_attacking_monster(Game* g, std::vector<Point>& path)
     if (weapon.is_gun()) {
         if (weapon.charges > 0) {
             if (dist <= confident_range()) {
-                if (wont_shoot_friend(g))
-                    return npc_shoot_monster;
-                else { // u or a friendly NPC is in the way
-                    std::string saytext
-                        = std::string("Move so I can shoot that") + target->name().c_str() + "!";
-                    say(g, saytext);
-                    if (can_reload())
-                        return npc_reload;
-                    return npc_flee_monster;
+                if (wont_shoot_friend()) {
+                    return npc_action::npc_shoot_monster;
                 }
-            } else { // The monster is outside of our confident range
-                if (can_reload() && rldist * 1.5 <= weapon.reload_time(*this))
-                    return npc_reload; // Plenty of time to reload
-                else if (target->speed >= 100)
-                    return npc_melee_monster; // They're fast, don't ignore them
-                else
-                    return long_term_goal_action(g, path); // Ignore the monster
+
+                // You or a friendly NPC is in the way.
+                const std::string saytext {"Move so I can shoot that" + target->name() + "!"};
+                say(g, saytext);
+
+                if (can_reload()) {
+                    return npc_action::npc_reload;
+                }
+
+                return npc_action::npc_flee_monster;
             }
+
+            // The monster is outside of our confident range.
+            if (can_reload() && rldist * 1.5 <= weapon.reload_time(*this)) {
+                // Plenty of time to reload.
+                return npc_action::npc_reload;
+            }
+
+            if (target->speed >= 100) {
+                // They're fast, don't ignore them.
+                return npc_action::npc_melee_monster;
+            }
+
+            // Ignore the monster.
+            return long_term_goal_action(g, path);
         } else { // Gun isn't loaded
             if (can_reload() && rldist * 1.5 <= weapon.reload_time(*this))
                 return npc_reload; // Plenty of time to reload
@@ -454,6 +466,8 @@ npc_action npc::method_of_attacking_monster(Game* g, std::vector<Point>& path)
         } else // Too far away or slow, ignore them for now
             return long_term_goal_action(g, path);
     }
+
+    return npc_action::npc_pause;
 }
 
 bool npc::can_reload()
@@ -643,9 +657,9 @@ void npc::move_to(Game* g, int x, int y)
     }
     if (x == posx && y == posy) // We're just pausing!
         moves -= 100;
-    else if (g->mon_at(x, y) != -1) { // Shouldn't happen, but it might.
-        Monster* m = &(g->z[g->mon_at(x, y)]);
-        melee_monster(g, m);
+    else if (g->mon_at(x, y) != -1) {
+        // Shouldn't happen, but it might.
+        melee_monster(g);
     } else if (g->u.posx == x && g->u.posy == y) {
         say(g, "Excuse me, let me pass.");
         moves -= 100;
@@ -706,7 +720,7 @@ void npc::move_pause()
     recoil = 0;
 }
 
-void npc::melee_monster(Game* g, Monster* m)
+void npc::melee_monster(Game* g)
 {
     int dam = hit_mon(g, target);
     if (target->hurt(dam)) {
@@ -796,7 +810,7 @@ void npc::alt_attack(Game* g, Monster* m, player* p)
     }
 }
 
-void npc::melee_player(Game* g, player& foe)
+void npc::melee_player(Game* g)
 {
     moves -= 80 + weapon.volume() * 2 + weapon.weight() + encumb(bp_torso);
     body_part bphit;

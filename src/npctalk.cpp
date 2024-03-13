@@ -34,8 +34,7 @@ void say_listen(Game* g, dialogue& d);
 void say_listen_need(Game* g, dialogue& d);
 void say_listen_about(Game* g, dialogue& d);
 void say_why_join(Game* g, dialogue& d);
-
-bool trade(Game* g, dialogue& d, int cost, std::string deal);
+bool trade(dialogue& d, int cost, std::string deal);
 
 void npc::talk_to_u(Game* g)
 {
@@ -105,7 +104,7 @@ void say_ask_for(Game* g, dialogue& d, npc_need need)
                     "Ignore them", NULL);
     switch (opt) {
     case 1:
-        trade(g, d, 0, "");
+        trade(d, 0, "");
         wrefresh(d.win);
         break;
     case 2:
@@ -175,8 +174,10 @@ void say_listen(Game* g, dialogue& d)
             say_listen_about(g, d);
             break;
         case 3:
-            if (trade(g, d, 0, ""))
+            if (trade(d, 0, "")) {
                 d.done = true;
+            }
+
             wrefresh(d.win);
             break;
         case 4:
@@ -216,8 +217,10 @@ void say_listen(Game* g, dialogue& d)
             say_why_join(g, d);
             break;
         case 3:
-            if (trade(g, d, 0, ""))
+            if (trade(d, 0, "")) {
                 d.done = true;
+            }
+
             wrefresh(d.win);
             break;
         case 0:
@@ -349,9 +352,12 @@ void say_listen_about(Game* g, dialogue& d)
         else
             describe = d.beta->my_fac->describe();
         break;
-    case 3:
+
+    case 3: {
         debugmsg("Not coded yet.");
         d.done = true;
+    } break;
+
     case 4:
         say_listen(g, d);
         break;
@@ -395,13 +401,14 @@ void say_why_join(Game* g, dialogue& d)
         break;
     case 2:
         // if (trade(g, d, d.beta->price_to_follow())) {
-        if (trade(g, d, -1000, "Hire: Travel together")) {
+        if (trade(d, -1000, "Hire: Travel together")) {
             d.beta->op_of_u.value--;
             d.beta->op_of_u.trust += 2;
             d.beta->op_of_u.fear--;
             will_travel = true;
             d.beta->say(g, "You've got yourself a deal!");
         }
+
         wrefresh(d.win);
         break;
     case 3:
@@ -619,7 +626,7 @@ int dialogue::opt(std::string challenge, ...)
     return ch;
 }
 
-bool trade(Game* g, dialogue& d, int cost, std::string deal)
+bool trade(dialogue& d, int cost, std::string deal)
 {
     WINDOW* w_head = newwin(4, 80, 0, 0);
     WINDOW* w_them = newwin(21, 40, 4, 0);

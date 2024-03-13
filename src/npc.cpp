@@ -1567,7 +1567,7 @@ int npc::confident_range()
     return int(180 / deviation);
 }
 
-bool npc::wont_shoot_friend(Game* g) { return true; }
+bool npc::wont_shoot_friend() { return true; }
 
 void npc::die(Game* g)
 {

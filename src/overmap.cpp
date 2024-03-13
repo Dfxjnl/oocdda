@@ -452,9 +452,8 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
     polish();
     // Place the monsters, now that the terrain is laid out
     place_mongroups();
-    // We need to place settlements last, because people settle where there are no
-    // monsters!
-    place_settlements(g);
+    // We need to place settlements last, because people settle where there are no monsters!
+    place_settlements();
     place_radios();
     place_NPCs(g);
 }
@@ -716,7 +715,7 @@ void overmap::place_forest()
     }
 }
 
-void overmap::place_settlements(Game* g)
+void overmap::place_settlements()
 {
     int num_settlements = dice(SETTLE_DICE, SETTLE_SIDES);
     for (int i = 0; i < num_settlements; i++) {
@@ -800,7 +799,8 @@ void overmap::place_settlements(Game* g)
                     ter(cx, cy) = ot_set_center;
             }
         } while (center_tries != 10);
-        town.populate(g);
+
+        town.populate();
     }
 }
 
@@ -1222,16 +1222,25 @@ void overmap::build_tunnel(int x, int y, int s, int dir)
     if (ter(x, y) < ot_ants_ns || ter(x, y) > ot_ants_queen)
         ter(x, y) = ot_ants_ns;
     Point next;
+
     switch (dir) {
-    case 0:
-        next = Point(x, y - 1);
-    case 1:
-        next = Point(x + 1, y);
-    case 2:
-        next = Point(x, y + 1);
-    case 3:
-        next = Point(x - 1, y);
+    case 0: {
+        next = {x, y - 1};
+    } break;
+
+    case 1: {
+        next = {x + 1, y};
+    } break;
+
+    case 2: {
+        next = {x, y + 1};
+    } break;
+
+    case 3: {
+        next = {x - 1, y};
+    } break;
     }
+
     if (s == 1)
         next = Point(-1, -1);
     std::vector<Point> valid;
@@ -1841,8 +1850,7 @@ void overmap::open(Game* g, int x, int y, int z)
     sprintf(buff, "save/o.%d.%d.%d", x, y, z);
     std::ifstream fin;
     fin.open(buff);
-    // DEBUG VARS
-    int nummg = 0;
+
     if (fin.is_open()) {
         for (int j = 0; j < OMAPY; j++) {
             // fin.getline(line, OMAPX + 1);
@@ -1862,7 +1870,6 @@ void overmap::open(Game* g, int x, int y, int z)
             if (datatype == 'Z') {
                 fin >> ct >> cx >> cy >> cs >> cp;
                 zg.push_back(mongroup(moncat_id(ct), cx, cy, cs, cp));
-                nummg++;
             } else if (datatype == 'C') {
                 fin >> cx >> cy >> cs;
                 tmp.x = cx;

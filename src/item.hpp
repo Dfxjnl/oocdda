@@ -27,7 +27,7 @@ public:
     Item in_its_container(std::vector<itype*>* itypes);
 
     std::string tname();
-    void use(player& u);
+    void use();
 
     // Firearm specifics
     int reload_time(player& u);

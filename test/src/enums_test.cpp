@@ -17,5 +17,5 @@ TEST(FlagToBitPositionTest, HandlesPositiveNumbers)
 
 TEST(FlagToBitPositionTest, HandlesNegativeNumbers)
 {
-    EXPECT_THROW(flag_to_bit_position(-1), std::out_of_range);
+    ASSERT_THROW([[maybe_unused]] const auto test {flag_to_bit_position(-1)}, std::out_of_range);
 }
