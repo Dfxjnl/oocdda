@@ -536,7 +536,8 @@ int dialogue::opt(std::string challenge, ...)
     }
 
     va_end(ap);
-    nc_color cols[options.size()];
+
+    std::vector<nc_color> cols(options.size());
 
     for (std::size_t i {0}; i < options.size(); ++i) {
         if (options[i][0] == '!') {
@@ -650,7 +651,8 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
     std::vector<int> theirs, their_price, yours, your_price;
     d.beta->init_selling(theirs, their_price);
     d.beta->init_buying(d.alpha->inv, yours, your_price);
-    bool getting_theirs[theirs.size()], getting_yours[yours.size()];
+    std::vector<bool> getting_theirs(theirs.size());
+    std::vector<bool> getting_yours(yours.size());
 
     // Adjust the prices based on your barter skill.
     for (std::size_t i {0}; i < their_price.size(); ++i) {

@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 #include "game.hpp"
 
@@ -3517,7 +3518,7 @@ void Game::pickup(int posx, int posy, int min)
     WINDOW* w_item_info = newwin(12, 48, 12, SEEX * 2 + 8);
     int maxitems = 9; // Number of items to show at one time.
     std::vector<Item> here = m.i_at(posx, posy);
-    bool getitem[here.size()];
+    std::vector<bool> getitem(here.size());
 
     for (std::size_t i {0}; i < here.size(); ++i) {
         getitem[i] = false;
