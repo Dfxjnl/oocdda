@@ -204,7 +204,11 @@ void Map::draw_map(oter_id terrain_type,
             e_fac = 0;
             s_fac = 0;
             w_fac = 0;
+
+        default:
+            break;
         }
+
         if (t_north == ot_forest || t_north == ot_forest_water)
             n_fac += 14;
         else if (t_north == ot_forest_thick)
@@ -243,14 +247,16 @@ void Map::draw_map(oter_id terrain_type,
                 if (num > 0)
                     forest_chance /= num;
                 rn = rng(0, forest_chance);
-                if (forest_chance > 0 && rn > 13 || one_in(100 - forest_chance))
-                    ter(i, j) = t_tree;
-                else if (forest_chance > 0 && rn > 10 || one_in(100 - forest_chance))
-                    ter(i, j) = t_tree_young;
-                else if (forest_chance > 0 && rn > 9 || one_in(100 - forest_chance))
-                    ter(i, j) = t_underbrush;
-                else
-                    ter(i, j) = t_dirt;
+
+                if ((forest_chance > 0 && rn > 13) || one_in(100 - forest_chance)) {
+                    ter(i, j) = ter_id::t_tree;
+                } else if ((forest_chance > 0 && rn > 10) || one_in(100 - forest_chance)) {
+                    ter(i, j) = ter_id::t_tree_young;
+                } else if ((forest_chance > 0 && rn > 9) || one_in(100 - forest_chance)) {
+                    ter(i, j) = ter_id::t_underbrush;
+                } else {
+                    ter(i, j) = ter_id::t_dirt;
+                }
             }
         }
         place_items(mi_forest, 60, 0, 0, SEEX * 2 - 1, SEEY * 2 - 1, true, turn);
@@ -2444,9 +2450,9 @@ void Map::draw_map(oter_id terrain_type,
         tw = rng(5, 6);
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
-                if (j == SEEY - 3 && (i > 3 && i < 8) || (i > 15 && i < 20))
-                    ter(i, j) = t_window;
-                else if (j == SEEY - 3 && i > 9 && i < 14)
+                if ((j == SEEY - 3 && (i > 3 && i < 8)) || (i > 15 && i < 20)) {
+                    ter(i, j) = ter_id::t_window;
+                } else if (j == SEEY - 3 && i > 9 && i < 14)
                     ter(i, j) = t_door_c;
                 else if (((j == 2 || j == SEEY * 2 - 3) && i > 1 && i < SEEX * 2 - 2)
                          || (j == tw && i > 2 && i < SEEX * 2 - 3))
@@ -2454,12 +2460,12 @@ void Map::draw_map(oter_id terrain_type,
                 else if (((i == 2 || i == SEEY * 2 - 3) && j > 2 && j < SEEY * 2 - 3)
                          || (i == 13 && j > 2 && j < 6) || ((i == 7 || i == 12) && j > 8 && j < 17))
                     ter(i, j) = t_wall_v;
-                else if (((i == 3 | i == 6 || i == 8 || i == 11 || i == 13) && j > 8 && j < 17)
-                         || (j == 7 && i > 4 && i < 14))
-                    ter(i, j) = t_slot_machine;
-                else if (((j == 9 || j == 11 || j == 13 || j == 15) && i < SEEX * 2 - 3
-                          && i > SEEX * 2 - 6)
-                         || (i == SEEX * 2 - 5 && (j == 8 || j == 14)))
+                else if (((i == 3 || i == 6 || i == 8 || i == 11 || i == 13) && j > 8 && j < 17)
+                         || (j == 7 && i > 4 && i < 14)) {
+                    ter(i, j) = ter_id::t_slot_machine;
+                } else if (((j == 9 || j == 11 || j == 13 || j == 15) && i < SEEX * 2 - 3
+                            && i > SEEX * 2 - 6)
+                           || (i == SEEX * 2 - 5 && (j == 8 || j == 14)))
                     ter(i, j) = t_counter;
                 else if (i > 2 && i < SEEX * 2 - 3 && j > 2 && j < SEEY * 2 - 3)
                     ter(i, j) = t_floor;
@@ -2752,10 +2758,10 @@ void Map::draw_map(oter_id terrain_type,
         //  way.
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
-                if (n_fac < 0 && j < n_fac * -1 || s_fac < 0 && j >= SEEY * 2 - s_fac
-                    || w_fac < 0 && i < w_fac * -1 || e_fac < 0 && i >= SEEX * 2 - e_fac)
-                    ter(i, j) = t_rock_floor;
-                else if (j < n_fac || j >= SEEY * 2 - s_fac || i < w_fac || i >= SEEX * 2 - e_fac)
+                if ((n_fac < 0 && j < n_fac * -1) || (s_fac < 0 && j >= SEEY * 2 - s_fac)
+                    || (w_fac < 0 && i < w_fac * -1) || (e_fac < 0 && i >= SEEX * 2 - e_fac)) {
+                    ter(i, j) = ter_id::t_rock_floor;
+                } else if (j < n_fac || j >= SEEY * 2 - s_fac || i < w_fac || i >= SEEX * 2 - e_fac)
                     ter(i, j) = t_rock;
                 else
                     ter(i, j) = t_lava;
@@ -2874,10 +2880,10 @@ void Map::draw_map(oter_id terrain_type,
 
         for (int i = 0; i < SEEX * 2; i++) {
             for (int j = 0; j < SEEY * 2; j++) {
-                if ((j < n_fac * SEEX || i < w_fac * SEEX && !one_in(10)
-                     || j > SEEY * 2 - s_fac * SEEY || i > SEEX * 2 - e_fac * SEEX))
-                    ter(i, j) = (!one_in(10) ? t_slime : t_rock_floor);
-                else if (rng(0, SEEX) > abs(i - SEEX) && rng(0, SEEY) > abs(j - SEEY))
+                if ((j < n_fac * SEEX || (i < w_fac * SEEX && !one_in(10))
+                     || j > SEEY * 2 - s_fac * SEEY || i > SEEX * 2 - e_fac * SEEX)) {
+                    ter(i, j) = (!one_in(10) ? ter_id::t_slime : ter_id::t_rock_floor);
+                } else if (rng(0, SEEX) > abs(i - SEEX) && rng(0, SEEY) > abs(j - SEEY))
                     ter(i, j) = t_slime;
                 else if (t_above == ot_null)
                     ter(i, j) = t_dirt;
@@ -3616,19 +3622,25 @@ void Map::place_items(
     if (chance == 0 || eligible.size() == 0) // No items here! (Why was it called?)
         return;
     int item_chance = 0; // # of items
-    for (int i = 0; i < eligible.size(); i++)
-        item_chance += (*itypes)[eligible[i]]->rarity;
-    int selection, randnum, debugrn;
+
+    for (const auto& item_type : eligible) {
+        item_chance += (*itypes)[item_type]->rarity;
+    }
+
+    int selection {0};
+    int randnum {0};
     int px, py;
     while (rng(0, 99) < chance) {
         randnum = rng(1, item_chance);
-        debugrn = randnum;
         selection = -1;
         while (randnum > 0) {
             selection++;
-            if (selection >= eligible.size())
+
+            if (selection >= static_cast<int>(eligible.size())) {
                 debugmsg("OOB selection (%d of %d); randnum is %d, item_chance %d", selection,
                          eligible.size(), randnum, item_chance);
+            }
+
             randnum -= (*itypes)[eligible[selection]]->rarity;
         }
         do {
@@ -3666,8 +3678,9 @@ void Map::make_all_items_owned()
 {
     for (int i = 0; i < SEEX * 2; i++) {
         for (int j = 0; j < SEEY * 2; j++) {
-            for (int n = 0; n < i_at(i, j).size(); n++)
-                i_at(i, j)[n].owned = true;
+            for (auto& item : i_at(i, j)) {
+                item.owned = true;
+            }
         }
     }
 }
@@ -3690,8 +3703,9 @@ void Map::rotate(int turns)
         }
         // Now, spawn points
         for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < grid[i].spawns.size(); j++) {
-                int n;
+            for (const auto& spawn : grid[i].spawns) {
+                int n {-1};
+
                 if (i == 0)
                     n = 1;
                 else if (i == 1)
@@ -3702,11 +3716,12 @@ void Map::rotate(int turns)
                     n = 3;
                 else
                     debugmsg("Found weird spawn; grid %d", i);
-                spawn_point tmp = grid[i].spawns[j];
-                int tmpy = tmp.posy;
-                tmp.posy = tmp.posx;
-                tmp.posx = SEEY - 1 - tmpy;
-                sprot[n].push_back(tmp);
+
+                spawn_point new_spawn {spawn};
+                const int tmpy {new_spawn.posy};
+                new_spawn.posy = new_spawn.posx;
+                new_spawn.posx = SEEY - 1 - tmpy;
+                sprot[n].push_back(new_spawn);
             }
         }
 
@@ -3722,8 +3737,9 @@ void Map::rotate(int turns)
         }
         // Now, spawn points
         for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < grid[i].spawns.size(); j++) {
-                int n;
+            for (const auto& spawn : grid[i].spawns) {
+                int n {-1};
+
                 if (i == 0)
                     n = 4;
                 else if (i == 1)
@@ -3734,11 +3750,12 @@ void Map::rotate(int turns)
                     n = 0;
                 else
                     debugmsg("Found weird spawn; grid %d", i);
-                spawn_point tmp = grid[i].spawns[j];
-                int tmpy = tmp.posy;
-                tmp.posy = SEEX - 1 - tmp.posx;
-                tmp.posx = SEEY - 1 - tmpy;
-                sprot[n].push_back(tmp);
+
+                spawn_point new_spawn {spawn};
+                const int tmpy {new_spawn.posy};
+                new_spawn.posy = SEEX - 1 - new_spawn.posx;
+                new_spawn.posx = SEEY - 1 - tmpy;
+                sprot[n].push_back(new_spawn);
             }
         }
 
@@ -3754,8 +3771,9 @@ void Map::rotate(int turns)
         }
         // Now, spawn points
         for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < grid[i].spawns.size(); j++) {
-                int n;
+            for (const auto& spawn : grid[i].spawns) {
+                int n {-1};
+
                 if (i == 0)
                     n = 3;
                 else if (i == 1)
@@ -3766,11 +3784,12 @@ void Map::rotate(int turns)
                     n = 1;
                 else
                     debugmsg("Found weird spawn; grid %d", i);
-                spawn_point tmp = grid[i].spawns[j];
-                int tmpy = tmp.posy;
-                tmp.posy = SEEX - 1 - tmp.posx;
-                tmp.posx = tmpy;
-                sprot[n].push_back(tmp);
+
+                spawn_point new_spawn {spawn};
+                const int tmpy {new_spawn.posy};
+                new_spawn.posy = SEEX - 1 - new_spawn.posx;
+                new_spawn.posx = tmpy;
+                sprot[n].push_back(new_spawn);
             }
         }
 
@@ -3887,6 +3906,7 @@ void house_room(Map* m, room_type type, int x1, int y1, int x2, int y2)
 
     items_location placed = mi_none;
     int chance = 0, rn;
+
     switch (type) {
     case room_living:
         placed = mi_livingroom;
@@ -3972,7 +3992,11 @@ void house_room(Map* m, room_type type, int x1, int y1, int x2, int y2)
         placed = mi_softdrugs;
         chance = 72;
         break;
+
+    default:
+        break;
     }
+
     m->place_items(placed, chance, x1 + 1, y1 + 1, x2 - 1, y2 - 1, false, 0);
 }
 
@@ -4015,6 +4039,7 @@ void science_room(Map* m, int x1, int y1, int x2, int y2, int rotate)
     room_type chosen = valid_rooms[rng(0, valid_rooms.size() - 1)];
     int trapx = rng(x1 + 1, x2 - 1);
     int trapy = rng(y1 + 1, y2 - 1);
+
     switch (chosen) {
     case room_closet:
         m->place_items(mi_cleaning, 80, x1, y1, x2, y2, false, 0);
@@ -4167,6 +4192,9 @@ void science_room(Map* m, int x1, int y1, int x2, int y2, int rotate)
             science_room(m, x1, w2 + 1, x2, y2, 0);
         }
         break;
+
+    default:
+        break;
     }
 }
 
@@ -4206,8 +4234,9 @@ void set_science_room(Map* m, int x1, int y1, bool faces_right, int turn)
             for (int j = y1; j <= y2; j++) {
                 if (i == x1)
                     m->ter(i, j) = t_counter;
-                else if (i > x1 + 1 && i < x2 && j == y1 + 1 || j == y2 - 1)
-                    m->ter(i, j) = t_water_sh;
+                else if ((i > x1 + 1 && i < x2 && j == y1 + 1) || j == y2 - 1) {
+                    m->ter(i, j) = ter_id::t_water_sh;
+                }
             }
         }
         m->place_items(mi_chemistry, 80, x1, y1, x1, y2, false, turn - 50);

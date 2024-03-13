@@ -1,6 +1,7 @@
 #ifndef OOCDDA_DISEASE_HPP
 #define OOCDDA_DISEASE_HPP
 
+#include <cstddef>
 #include <sstream>
 
 #include "bodypart.hpp"
@@ -58,6 +59,9 @@ void dis_msg(Game* g, dis_type type)
     case DI_BLIND:
         g->add_msg("You're blinded!");
         break;
+
+    default:
+        break;
     }
 }
 
@@ -65,6 +69,7 @@ void dis_effect(Game* g, player& p, disease& dis)
 {
     int bonus;
     int junk;
+
     switch (dis.type) {
     case DI_HEATSTROKE:
         p.moves -= 15;
@@ -112,18 +117,20 @@ void dis_effect(Game* g, player& p, disease& dis)
         break;
     case DI_ONFIRE:
         p.hurtall(3);
-        for (int i = 0; i < p.worn.size(); i++) {
+
+        for (std::size_t i {0}; i < p.worn.size(); ++i) {
             if (p.worn[i].made_of(VEGGY) || p.worn[i].made_of(PAPER) || p.worn[i].made_of(PAPER)) {
-                p.worn.erase(p.worn.begin() + i);
-                i--;
+                p.worn.erase(p.worn.begin() + static_cast<std::ptrdiff_t>(i));
+                --i;
             } else if ((p.worn[i].made_of(COTTON) || p.worn[i].made_of(WOOL)) && one_in(10)) {
-                p.worn.erase(p.worn.begin() + i);
-                i--;
+                p.worn.erase(p.worn.begin() + static_cast<std::ptrdiff_t>(i));
+                --i;
             } else if (p.worn[i].made_of(PLASTIC) && one_in(50)) {
-                p.worn.erase(p.worn.begin() + i);
-                i--;
+                p.worn.erase(p.worn.begin() + static_cast<std::ptrdiff_t>(i));
+                --i;
             }
         }
+
         break;
     case DI_BOOMERED:
         p.per_cur -= 5;
@@ -301,8 +308,11 @@ void dis_effect(Game* g, player& p, disease& dis)
         if (dis.duration >= 200) { // Smoked too much
             p.str_cur -= 1;
             p.dex_cur -= 1;
-            if (dis.duration >= 500 && (one_in(50) || one_in(20) && p.has_trait(PF_WEAKSTOMACH)))
+
+            if (dis.duration >= 500
+                && (one_in(50) || (one_in(20) && p.has_trait(PF_WEAKSTOMACH)))) {
                 p.vomit(g);
+            }
         } else {
             p.dex_cur++;
             p.int_cur++;
@@ -454,7 +464,9 @@ void dis_effect(Game* g, player& p, disease& dis)
                 int range = g->moncats[mcat_nether].size();
                 mon_id type = (g->moncats[mcat_nether])[rng(0, range - 1)];
                 Monster beast(g->mtypes[type]);
-                int x, y, tries = 0;
+                int x {0};
+                int y {0};
+
                 do {
                     x = p.posx + rng(-4, 4);
                     y = p.posy + rng(-4, 4);
@@ -503,6 +515,9 @@ void dis_effect(Game* g, player& p, disease& dis)
             p.add_disease(DI_FUNGUS, -1, g);
             p.rem_disease(DI_TELEGLOW);
         }
+        break;
+
+    default:
         break;
     }
 }

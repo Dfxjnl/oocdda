@@ -1,3 +1,5 @@
+#include <array>
+#include <cstddef>
 #include <vector>
 
 #include "bionics.hpp"
@@ -35,9 +37,9 @@ bool Map::process_fields(Game* g)
                 curtype = fd_null;
 
             switch (curtype) {
-
             case fd_null:
-                break; // Do nothing, obviously.  OBVIOUSLY.
+            default:
+                break;
 
             case fd_blood:
             case fd_bile:
@@ -48,26 +50,37 @@ bool Map::process_fields(Game* g)
             case fd_acid:
                 if (has_flag(swimmable, x, y)) // Dissipate faster in water
                     cur->age += 20;
-                for (int i = 0; i < i_at(x, y).size(); i++) {
-                    if (i_at(x, y)[i].made_of(LIQUID) || i_at(x, y)[i].made_of(VEGGY)
-                        || i_at(x, y)[i].made_of(FLESH) || i_at(x, y)[i].made_of(POWDER)
-                        || i_at(x, y)[i].made_of(COTTON) || i_at(x, y)[i].made_of(WOOL)
-                        || i_at(x, y)[i].made_of(PAPER) || i_at(x, y)[i].made_of(PLASTIC)
-                        || i_at(x, y)[i].made_of(GLASS)) { // Whew!  Acid-destructable.
-                        cur->age += i_at(x, y)[i].volume();
-                        for (int m = 0; m < i_at(x, y)[i].contents.size(); m++)
-                            i_at(x, y).push_back(i_at(x, y)[i].contents[m]);
-                        i_at(x, y).erase(i_at(x, y).begin() + i);
-                        i--;
+
+                for (std::size_t i {0}; i < i_at(x, y).size(); ++i) {
+                    if (i_at(x, y)[i].made_of(material::LIQUID)
+                        || i_at(x, y)[i].made_of(material::VEGGY)
+                        || i_at(x, y)[i].made_of(material::FLESH)
+                        || i_at(x, y)[i].made_of(material::POWDER)
+                        || i_at(x, y)[i].made_of(material::COTTON)
+                        || i_at(x, y)[i].made_of(material::WOOL)
+                        || i_at(x, y)[i].made_of(material::PAPER)
+                        || i_at(x, y)[i].made_of(material::PLASTIC)
+                        || i_at(x, y)[i].made_of(material::GLASS)) {
+                        // Acid-destructable.
+                        cur->age += static_cast<int>(i_at(x, y)[i].volume());
+
+                        for (const auto& content : i_at(x, y)[i].contents) {
+                            i_at(x, y).push_back(content);
+                        }
+
+                        i_at(x, y).erase(i_at(x, y).begin() + static_cast<std::ptrdiff_t>(i));
+                        --i;
                     }
                 }
+
                 break;
 
             case fd_fire:
                 // Consume items as fuel to help us grow/last longer.
                 bool destroyed;
                 int vol;
-                for (int i = 0; i < i_at(x, y).size(); i++) {
+
+                for (std::size_t i {0}; i < i_at(x, y).size(); ++i) {
                     destroyed = false;
                     vol = i_at(x, y)[i].volume();
                     if (i_at(x, y)[i].is_ammo()) {
@@ -103,12 +116,15 @@ bool Map::process_fields(Game* g)
                         destroyed = true;
                     }
                     if (destroyed) {
-                        for (int m = 0; m < i_at(x, y)[i].contents.size(); m++)
-                            i_at(x, y).push_back(i_at(x, y)[i].contents[m]);
+                        for (const auto& content : i_at(x, y)[i].contents) {
+                            i_at(x, y).push_back(content);
+                        }
+
                         i_at(x, y).erase(i_at(x, y).begin() + i);
                         i--;
                     }
                 }
+
                 // Consume the terrain we're on
                 if (terlist[ter(x, y)].flags & flag_to_bit_position(flammable)
                     && one_in(8 - cur->density)) {
@@ -342,10 +358,12 @@ bool Map::process_fields(Game* g)
 void Map::step_in_field(int x, int y, Game* g)
 {
     field* cur = &field_at(x, y);
+
     switch (cur->type) {
     case fd_null:
     case fd_blood: // It doesn't actually do anything
     case fd_bile:  // Ditto
+    default:
         return;
 
     case fd_acid:
@@ -417,11 +435,13 @@ void Map::mon_in_field(int x, int y, Game* g, Monster* z)
     if (z->has_flag(MF_DIGS))
         return; // Digging monsters are immune to fields
     field* cur = &field_at(x, y);
-    int dam = 0, j;
+    int dam {0};
+
     switch (cur->type) {
     case fd_null:
     case fd_blood: // It doesn't actually do anything
     case fd_bile:  // Ditto
+    default:
         break;
 
     case fd_acid:
@@ -500,6 +520,7 @@ void Map::mon_in_field(int x, int y, Game* g, Monster* z)
             z->moves -= cur->density * 150;
         break;
     }
+
     z->hurt(dam);
 }
 } // namespace oocdda

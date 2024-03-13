@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <vector>
 
 #include "bionics.hpp"
@@ -45,9 +46,9 @@ void player::activate_bionic(int b, Game* g)
         my_bionics[b].charge--;
     } else {
         // Not-on units, or those with zero charge, have to pay the power cost
-        if (bionics[bio.id].charge_time > 0) {
+        if (bionics.at(bio.id).charge_time > 0) {
             my_bionics[b].powered = true;
-            my_bionics[b].charge = bionics[bio.id].charge_time;
+            my_bionics[b].charge = bionics.at(bio.id).charge_time;
         }
         power_level -= bionics[bio.id].power_cost;
     }
@@ -56,9 +57,10 @@ void player::activate_bionic(int b, Game* g)
     std::vector<Point> traj;
     std::vector<std::string> good;
     std::vector<std::string> bad;
-    WINDOW* w;
+    WINDOW* window {nullptr};
     int dirx, diry, t, l, index;
     Item tmp_item;
+
     switch (bio.id) {
     case bio_painkiller:
         pkill += 6;
@@ -102,8 +104,8 @@ void player::activate_bionic(int b, Game* g)
         break;
         // TODO: More stuff here (and bio_blood_filter)
     case bio_blood_anal:
-        w = newwin(20, 40, 3, 10);
-        wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
+        window = newwin(20, 40, 3, 10);
+        wborder(window, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
                 LINE_XOOX);
         if (has_disease(DI_FUNGUS))
             bad.push_back("Fungal Parasite");
@@ -132,16 +134,18 @@ void player::activate_bionic(int b, Game* g)
         if (has_disease(DI_ADRENALINE))
             good.push_back("Adrenaline Spike");
         if (good.size() == 0 && bad.size() == 0)
-            mvwprintz(w, 1, 1, c_white, "No effects.");
+            mvwprintz(window, 1, 1, c_white, "No effects.");
         else {
-            for (int line = 1; line < 39 && line <= good.size() + bad.size(); line++) {
-                if (line < bad.size())
-                    mvwprintz(w, line, 1, c_red, bad[line - 1].c_str());
-                else
-                    mvwprintz(w, line, 1, c_green, good[line - 1 - bad.size()].c_str());
+            for (int line {1};
+                 line < 39 && line <= static_cast<int>(good.size()) + static_cast<int>(bad.size());
+                 ++line) {
+                if (line < static_cast<int>(bad.size())) {
+                    mvwprintz(window, line, 1, c_red, bad[line - 1].c_str());
+                } else
+                    mvwprintz(window, line, 1, c_green, good[line - 1 - bad.size()].c_str());
             }
         }
-        wrefresh(w);
+        wrefresh(window);
         refresh();
         getch();
         break;
@@ -257,7 +261,7 @@ void player::activate_bionic(int b, Game* g)
         g->add_msg("Your muscles hiss as hydraulic strength fills them!");
         break;
     case bio_water_extractor:
-        for (int i = 0; i < g->m.i_at(posx, posy).size(); i++) {
+        for (std::size_t i {0}; i < g->m.i_at(posx, posy).size(); ++i) {
             Item tmp = g->m.i_at(posx, posy)[i];
             if (tmp.type->id == itm_corpse
                 && query_yn("Extract water from the %s", tmp.tname().c_str())) {
@@ -280,8 +284,11 @@ void player::activate_bionic(int b, Game* g)
                     }
                 }
             }
-            if (i == g->m.i_at(posx, posy).size() - 1) // We never chose a corpse
+
+            if (i == g->m.i_at(posx, posy).size() - 1) {
+                // We never chose a corpse.
                 power_level += bionics[bio_water_extractor].power_cost;
+            }
         }
         break;
     case bio_magnet:
@@ -293,11 +300,13 @@ void player::activate_bionic(int b, Game* g)
                     else
                         traj = line_to(i, j, posx, posy, 0);
                 }
-                for (int k = 0; k < g->m.i_at(i, j).size(); k++) {
+
+                for (std::size_t k {0}; k < g->m.i_at(i, j).size(); ++k) {
                     if (g->m.i_at(i, j)[k].made_of(IRON) || g->m.i_at(i, j)[k].made_of(STEEL)) {
                         tmp_item = g->m.i_at(i, j)[k];
                         g->m.i_rem(i, j, k);
-                        for (l = 0; l < traj.size(); l++) {
+
+                        for (l = 0; l < static_cast<int>(traj.size()); ++l) {
                             index = g->mon_at(traj[l].x, traj[l].y);
                             if (index != -1) {
                                 if (g->z[index].hurt(tmp_item.weight() * tmp_item.volume()))
@@ -314,8 +323,11 @@ void player::activate_bionic(int b, Game* g)
                                 }
                             }
                         }
-                        if (l == traj.size())
+
+                        if (l == static_cast<int>(traj.size())) {
                             g->m.add_item(posx, posy, tmp_item);
+                        }
+
                         k--;
                     }
                 }
@@ -340,7 +352,11 @@ void player::activate_bionic(int b, Game* g)
         } else
             g->add_msg("You can't unlock that %s", g->m.tername(dirx, diry).c_str());
         break;
+
+    default:
+        break;
     }
-    delwin(w);
+
+    delwin(window);
 }
 } // namespace oocdda

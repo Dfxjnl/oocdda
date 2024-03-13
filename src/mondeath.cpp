@@ -184,7 +184,8 @@ void mdeath::melt(Game* g, Monster* z)
 
 void mdeath::explode(Game* g, Monster* z)
 {
-    int size;
+    int size {0};
+
     switch (z->type->size) {
     case MS_TINY:
         size = 4;

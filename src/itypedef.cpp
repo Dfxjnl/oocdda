@@ -2413,6 +2413,10 @@ itype_id default_ammo(ammotype guntype)
         return itm_plut_cell;
     case AT_GAS:
         return itm_gasoline;
+
+    default: {
+        return itype_id::itm_null;
+    } break;
     }
     return itm_null;
 }

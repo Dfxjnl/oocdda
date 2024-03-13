@@ -1,5 +1,9 @@
+#include <algorithm>
+#include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstdlib>
+#include <iterator>
 #include <sstream>
 
 #include "player.hpp"
@@ -19,6 +23,7 @@
 #include "monster_type.hpp"
 #include "npc.hpp"
 #include "output.hpp"
+#include "pldata.hpp"
 #include "rng.hpp"
 #include "trap.hpp"
 
@@ -57,11 +62,11 @@ player::player()
         sklevel[i] = 0;
         skexercise[i] = 0;
     }
-    for (int i = 0; i < PF_MAX2; i++)
-        my_traits[i] = false;
-}
 
-player::~player() { }
+    for (bool& trait : my_traits) {
+        trait = false;
+    }
+}
 
 void player::normalize(Game* g)
 {
@@ -188,8 +193,11 @@ int player::swim_speed()
         ret -= 100;
     ret += (50 - sklevel[sk_swimming] * 2) * abs(encumb(bp_legs));
     ret += (80 - sklevel[sk_swimming] * 3) * abs(encumb(bp_torso));
-    for (int i = 0; i < worn.size(); i++)
-        ret += worn[i].volume() * (20 - sklevel[sk_swimming]);
+
+    for (auto& item : worn) {
+        ret += static_cast<int>(item.volume()) * (20 - sklevel[sk_swimming]);
+    }
+
     ret -= str_cur * 6 + dex_cur * 4;
     // If (ret > 500), we can not swim; so do not apply the underwater bonus.
     if (underwater && ret < 500)
@@ -215,14 +223,14 @@ nc_color player::color()
 void player::load_info(std::string data)
 {
     std::stringstream dump;
-    char flagtmp;
     dump << data;
     dump >> posx >> posy >> str_cur >> str_max >> dex_cur >> dex_max >> int_cur >> int_max
         >> per_cur >> per_max >> hunger >> thirst >> fatigue >> morale >> stim >> pain >> pkill
         >> radiation >> cash >> recoil >> scent >> moves >> underwater >> can_dodge >> oxygen;
 
-    for (int i = 0; i < PF_MAX2; i++)
-        dump >> my_traits[i];
+    for (bool& trait : my_traits) {
+        dump >> trait;
+    }
 
     for (int i = 0; i < num_hp_parts; i++)
         dump >> hp_cur[i] >> hp_max[i];
@@ -265,38 +273,54 @@ std::string player::save_info()
          << " " << pkill << " " << radiation << " " << cash << " " << recoil << " " << scent << " "
          << moves << " " << underwater << " " << can_dodge << " " << oxygen << " ";
 
-    for (int i = 0; i < PF_MAX2; i++)
-        dump << my_traits[i] << " ";
+    for (const bool trait : my_traits) {
+        dump << trait << ' ';
+    }
+
     for (int i = 0; i < num_hp_parts; i++)
         dump << hp_cur[i] << " " << hp_max[i] << " ";
     for (int i = 0; i < num_skill_types; i++)
         dump << int(sklevel[i]) << " " << skexercise[i] << " ";
 
     dump << illness.size() << " ";
-    for (int i = 0; i < illness.size(); i++)
-        dump << int(illness[i].type) << " " << illness[i].duration << " ";
+
+    for (const auto& disease : illness) {
+        dump << static_cast<int>(disease.type) << ' ' << disease.duration << ' ';
+    }
 
     dump << addictions.size() << " ";
-    for (int i = 0; i < addictions.size(); i++)
-        dump << int(addictions[i].type) << " " << addictions[i].intensity << " "
-             << addictions[i].sated << " ";
+
+    for (const auto& addiction : addictions) {
+        dump << static_cast<int>(addiction.type) << ' ' << addiction.intensity << ' '
+             << addiction.sated << ' ';
+    }
 
     dump << my_bionics.size() << " ";
-    for (int i = 0; i < my_bionics.size(); i++)
-        dump << int(my_bionics[i].id) << " " << my_bionics[i].invlet << " "
-             << int(my_bionics[i].powered) << " " << my_bionics[i].charge << " ";
+
+    for (const auto& bionic : my_bionics) {
+        dump << static_cast<int>(bionic.id) << ' ' << bionic.invlet << ' '
+             << static_cast<int>(bionic.powered) << ' ' << bionic.charge << ' ';
+    }
 
     dump << std::endl;
-    for (int i = 0; i < inv.size(); i++) {
-        dump << "I " << inv[i].save_info() << std::endl;
-        for (int j = 0; j < inv[i].contents.size(); j++)
-            dump << "C " << inv[i].contents[j].save_info() << std::endl;
+
+    for (auto& item : inv) {
+        dump << "I " << item.save_info() << '\n';
+
+        for (auto& content : item.contents) {
+            dump << "C " << content.save_info() << '\n';
+        }
     }
-    for (int i = 0; i < worn.size(); i++)
-        dump << "W " << worn[i].save_info() << std::endl;
+
+    for (auto& item : worn) {
+        dump << "W " << item.save_info() << '\n';
+    }
+
     dump << "w " << weapon.save_info() << std::endl;
-    for (int j = 0; j < weapon.contents.size(); j++)
-        dump << "c " << weapon.contents[j].save_info() << std::endl;
+
+    for (auto& content : weapon.contents) {
+        dump << "c " << content.save_info() << '\n';
+    }
 
     return dump.str();
 }
@@ -306,12 +330,14 @@ void player::disp_info(Game* g)
     int line;
     std::vector<std::string> effect_name;
     std::vector<std::string> effect_text;
-    for (int i = 0; i < illness.size(); i++) {
-        if (dis_name(illness[i]).size() > 0) {
-            effect_name.push_back(dis_name(illness[i]));
-            effect_text.push_back(dis_description(illness[i]));
+
+    for (const auto disease : illness) {
+        if (!dis_name(disease).empty()) {
+            effect_name.push_back(dis_name(disease));
+            effect_text.push_back(dis_description(disease));
         }
     }
+
     if (abs(morale_level()) >= 10) {
         bool pos = (morale_level() > 0);
         effect_name.push_back(pos ? "Elated" : "Depressed");
@@ -372,10 +398,10 @@ void player::disp_info(Game* g)
 Strength - 4;    Dexterity - 4;    Intelligence - 4;    Dexterity - 4");
     }
 
-    for (int i = 0; i < addictions.size(); i++) {
-        if (addictions[i].sated < 0) {
-            effect_name.push_back(addiction_name(addictions[i]));
-            effect_text.push_back(addiction_text(addictions[i]));
+    for (const auto& addiction : addictions) {
+        if (addiction.sated < 0) {
+            effect_name.push_back(addiction_name(addiction));
+            effect_text.push_back(addiction_text(addiction));
         }
     }
 
@@ -528,10 +554,12 @@ Strength - 4;    Dexterity - 4;    Intelligence - 4;    Dexterity - 4");
     // Next, draw effects.
     line = 2;
     mvwprintz(w_effects, 0, 8, c_ltgray, "EFFECTS");
-    for (int i = 0; i < effect_name.size() && line < 9; i++) {
+
+    for (std::size_t i {0}; i < effect_name.size() && line < 9; ++i) {
         mvwprintz(w_effects, line, 1, c_ltgray, effect_name[i].c_str());
         line++;
     }
+
     wrefresh(w_effects);
 
     // Next, draw skills.
@@ -762,16 +790,20 @@ slower.");
             if (line <= 2) {
                 min = 0;
                 max = 7;
-                if (traitslist.size() < max)
-                    max = traitslist.size();
-            } else if (line >= traitslist.size() - 3) {
-                min = (traitslist.size() < 8 ? 0 : traitslist.size() - 7);
-                max = traitslist.size();
+
+                if (static_cast<int>(traitslist.size()) < max) {
+                    max = static_cast<int>(traitslist.size());
+                }
+            } else if (line >= static_cast<int>(traitslist.size()) - 3) {
+                min = (traitslist.size() < 8 ? 0 : static_cast<int>(traitslist.size()) - 7);
+                max = static_cast<int>(traitslist.size());
             } else {
                 min = line - 3;
                 max = line + 4;
-                if (traitslist.size() < max)
-                    max = traitslist.size();
+
+                if (static_cast<int>(traitslist.size()) < max) {
+                    max = static_cast<int>(traitslist.size());
+                }
             }
             for (int i = min; i < max; i++) {
                 mvwprintz(w_traits, 2 + i - min, 1, c_ltgray, "                         ");
@@ -787,31 +819,41 @@ slower.");
                 else
                     mvwprintz(w_traits, 2 + i - min, 1, status, traits[traitslist[i]].name.c_str());
             }
-            if (line >= 0 && line < traitslist.size())
+
+            if (line >= 0 && line < static_cast<int>(traitslist.size())) {
                 mvwprintz(w_info, 0, 0, c_magenta, "%s",
                           traits[traitslist[line]].description.c_str());
+            }
+
             wrefresh(w_traits);
             wrefresh(w_info);
             switch (input()) {
-            case 'j':
-                if (line < traitslist.size() - 1)
-                    line++;
-                break;
+            case 'j': {
+                if (line < static_cast<int>(traitslist.size()) - 1) {
+                    ++line;
+                }
+            } break;
+
             case 'k':
                 if (line > 0)
                     line--;
                 break;
             case '\t':
                 mvwprintz(w_traits, 0, 0, c_ltgray, "         TRAITS           ");
-                for (int i = 0; i < traitslist.size() && i < 7; i++) {
-                    if (traitslist[i] > PF_MAX2)
+
+                for (std::size_t i {0}; i < traitslist.size() && i < 7; ++i) {
+                    if (traitslist[i] > PF_MAX2) {
                         status = c_ltblue;
-                    else if (traits[traitslist[i]].points > 0)
+                    } else if (traits[traitslist[i]].points > 0) {
                         status = c_ltgreen;
-                    else
+                    } else {
                         status = c_ltred;
-                    mvwprintz(w_traits, i + 2, 1, status, traits[traitslist[i]].name.c_str());
+                    }
+
+                    mvwprintz(w_traits, static_cast<int>(i) + 2, 1, status,
+                              traits[traitslist[i]].name.c_str());
                 }
+
                 wrefresh(w_traits);
                 line = 0;
                 curtab++;
@@ -827,16 +869,20 @@ slower.");
             if (line <= 2) {
                 min = 0;
                 max = 7;
-                if (effect_name.size() < max)
-                    max = effect_name.size();
-            } else if (line >= effect_name.size() - 3) {
-                min = (effect_name.size() < 8 ? 0 : effect_name.size() - 7);
-                max = effect_name.size();
+
+                if (static_cast<int>(effect_name.size()) < max) {
+                    max = static_cast<int>(effect_name.size());
+                }
+            } else if (line >= static_cast<int>(effect_name.size()) - 3) {
+                min = (effect_name.size() < 8 ? 0 : static_cast<int>(effect_name.size()) - 7);
+                max = static_cast<int>(effect_name.size());
             } else {
                 min = line - 2;
                 max = line + 4;
-                if (effect_name.size() < max)
-                    max = effect_name.size();
+
+                if (static_cast<int>(effect_name.size()) < max) {
+                    max = static_cast<int>(effect_name.size());
+                }
             }
             for (int i = min; i < max; i++) {
                 if (i == line)
@@ -844,23 +890,32 @@ slower.");
                 else
                     mvwprintz(w_effects, 2 + i - min, 1, c_ltgray, effect_name[i].c_str());
             }
-            if (line >= 0 && line < effect_text.size())
+
+            if (line >= 0 && line < static_cast<int>(effect_text.size())) {
                 mvwprintz(w_info, 0, 0, c_magenta, effect_text[line].c_str());
+            }
+
             wrefresh(w_effects);
             wrefresh(w_info);
             switch (input()) {
-            case 'j':
-                if (line < effect_name.size() - 1)
-                    line++;
-                break;
+            case 'j': {
+                if (line < static_cast<int>(effect_name.size()) - 1) {
+                    ++line;
+                }
+            } break;
+
             case 'k':
                 if (line > 0)
                     line--;
                 break;
             case '\t':
                 mvwprintz(w_effects, 0, 0, c_ltgray, "        EFFECTS           ");
-                for (int i = 0; i < effect_name.size() && i < 7; i++)
-                    mvwprintz(w_effects, i + 2, 1, c_ltgray, effect_name[i].c_str());
+
+                for (std::size_t i {0}; i < effect_name.size() && i < 7; ++i) {
+                    mvwprintz(w_effects, static_cast<int>(i) + 2, 1, c_ltgray,
+                              effect_name[i].c_str());
+                }
+
                 wrefresh(w_effects);
                 line = 0;
                 curtab++;
@@ -869,8 +924,11 @@ slower.");
             case KEY_ESCAPE:
                 done = true;
             }
-            if (line >= 0 && line < illness.size())
+
+            if (line >= 0 && line < std::ssize(illness)) {
                 mvwprintz(w_effects, 2 + line, 1, c_ltgray, effect_name[line].c_str());
+            }
+
             break;
 
         case 5: // Skills tab
@@ -878,16 +936,21 @@ slower.");
             if (line <= 2) {
                 min = 0;
                 max = 7;
-                if (skillslist.size() < max)
-                    max = skillslist.size();
-            } else if (line >= skillslist.size() - 3) {
-                min = (skillslist.size() < 8 ? 0 : skillslist.size() - 7);
-                max = skillslist.size();
+
+                if (std::ssize(skillslist) < max) {
+                    max = static_cast<int>(skillslist.size());
+                }
+            } else if (line >= std::ssize(skillslist) - 3) {
+                min = skillslist.size() < 8 ? 0 : static_cast<int>(skillslist.size()) - 7;
+                max = static_cast<int>(skillslist.size());
             } else {
                 min = line - 3;
                 max = line + 4;
-                if (skillslist.size() < max)
-                    max = skillslist.size();
+
+                if (std::ssize(skillslist) < max) {
+                    max = static_cast<int>(skillslist.size());
+                }
+
                 if (min < 0)
                     min = 0;
             }
@@ -915,28 +978,38 @@ slower.");
                 }
             }
             werase(w_info);
-            if (line >= 0 && line < skillslist.size())
+
+            if (line >= 0 && line < std::ssize(skillslist)) {
                 mvwprintz(w_info, 0, 0, c_magenta, skill_description(skillslist[line]).c_str());
+            }
+
             wrefresh(w_skills);
             wrefresh(w_info);
             switch (input()) {
-            case 'j':
-                if (line < skillslist.size() - 1)
-                    line++;
-                break;
+            case 'j': {
+                if (line < std::ssize(skillslist) - 1) {
+                    ++line;
+                }
+            } break;
+
             case 'k':
                 if (line > 0)
                     line--;
                 break;
             case '\t':
                 mvwprintz(w_skills, 0, 0, c_ltgray, "         SKILLS           ");
-                for (int i = 0; i < skillslist.size() && i < 7; i++) {
-                    if (skexercise[skillslist[i]] >= 100)
+
+                for (std::size_t i {0}; i < skillslist.size() && i < 7; ++i) {
+                    if (skexercise[skillslist[i]] >= 100) {
                         status = c_pink;
-                    else
+                    } else {
                         status = c_ltblue;
-                    mvwprintz(w_skills, i + 2, 1, status, skill_name(skillslist[i]).c_str());
+                    }
+
+                    mvwprintz(w_skills, static_cast<int>(i) + 2, 1, status,
+                              skill_name(skillslist[i]).c_str());
                 }
+
                 wrefresh(w_skills);
                 line = 0;
                 curtab = 1;
@@ -1063,32 +1136,28 @@ void player::toggle_trait(int flag) { my_traits[flag] = !my_traits[flag]; }
 
 bool player::has_bionic(bionic_id b)
 {
-    for (int i = 0; i < my_bionics.size(); i++) {
-        if (my_bionics[i].id == b)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(my_bionics, [b](const auto& bionic) { return bionic.id == b; });
 }
 
 bool player::has_active_bionic(bionic_id b)
 {
-    for (int i = 0; i < my_bionics.size(); i++) {
-        if (my_bionics[i].id == b) {
-            if (my_bionics[i].powered)
-                return true;
-            else
-                return false;
+    for (const auto& bionic : my_bionics) {
+        if (bionic.id == b) {
+            return bionic.powered;
         }
     }
+
     return false;
 }
 
 void player::add_bionic(bionic_id b)
 {
-    for (int i = 0; i < my_bionics.size(); i++) {
-        if (my_bionics[i].id == b)
+    for (const auto& bionic : my_bionics) {
+        if (bionic.id == b) {
             return; // No dupes!
+        }
     }
+
     char newinv;
     if (my_bionics.size() == 0)
         newinv = 'a';
@@ -1119,33 +1188,42 @@ void player::power_bionics(Game* g)
         mvwputch(wBio, 1, i, c_ltgray, LINE_OXOX);
         mvwputch(wBio, 21, i, c_ltgray, LINE_OXOX);
     }
-    for (int i = 0; i < my_bionics.size(); i++) {
-        if (bionics[my_bionics[i].id].power_source || !bionics[my_bionics[i].id].activated)
-            passive.push_back(my_bionics[i]);
-        else
-            active.push_back(my_bionics[i]);
+
+    for (const auto& bionic : my_bionics) {
+        if (bionics[bionic.id].power_source || !bionics[bionic.id].activated) {
+            passive.push_back(bionic);
+        } else {
+            active.push_back(bionic);
+        }
     }
+
     nc_color type;
     if (passive.size() > 0) {
         mvwprintz(wBio, 2, 0, c_ltblue, "Passive:");
-        for (int i = 0; i < passive.size(); i++) {
-            if (bionics[passive[i].id].power_source)
+
+        for (std::size_t i {0}; i < passive.size(); ++i) {
+            if (bionics[passive[i].id].power_source) {
                 type = c_ltcyan;
-            else
+            } else {
                 type = c_cyan;
-            mvwputch(wBio, 3 + i, 0, type, passive[i].invlet);
-            mvwprintz(wBio, 3 + i, 2, type, bionics[passive[i].id].name.c_str());
+            }
+
+            mvwputch(wBio, 3 + static_cast<int>(i), 0, type, passive[i].invlet);
+            mvwprintz(wBio, 3 + static_cast<int>(i), 2, type, bionics[passive[i].id].name.c_str());
         }
     }
     if (active.size() > 0) {
         mvwprintz(wBio, 2, 32, c_ltblue, "Active:");
-        for (int i = 0; i < active.size(); i++) {
-            if (active[i].powered)
+
+        for (std::size_t i {0}; i < active.size(); ++i) {
+            if (active[i].powered) {
                 type = c_red;
-            else
+            } else {
                 type = c_ltred;
-            mvwputch(wBio, 3 + i, 32, type, active[i].invlet);
-            mvwprintz(wBio, 3 + i, 34, type,
+            }
+
+            mvwputch(wBio, 3 + static_cast<int>(i), 32, type, active[i].invlet);
+            mvwprintz(wBio, 3 + static_cast<int>(i), 34, type,
                       (active[i].powered ? "%s - ON" : "%s - %d PU / %d trns"),
                       bionics[active[i].id].name.c_str(), bionics[active[i].id].power_cost,
                       bionics[active[i].id].charge_time);
@@ -1155,8 +1233,9 @@ void player::power_bionics(Game* g)
     wrefresh(wBio);
     char ch;
     bool activating = true;
-    bionic* tmp;
-    int b;
+    bionic* tmp {nullptr};
+    int b {0};
+
     do {
         ch = getch();
         if (ch == '!') {
@@ -1168,13 +1247,14 @@ void player::power_bionics(Game* g)
         } else if (ch == ' ') {
             ch = KEY_ESCAPE;
         } else if (ch != KEY_ESCAPE) {
-            for (int i = 0; i < my_bionics.size(); i++) {
+            for (std::size_t i {0}; i < my_bionics.size(); ++i) {
                 if (ch == my_bionics[i].invlet) {
                     tmp = &my_bionics[i];
-                    b = i;
+                    b = static_cast<int>(i);
                     ch = KEY_ESCAPE;
                 }
             }
+
             if (ch == KEY_ESCAPE) {
                 if (activating) {
                     if (bionics[tmp->id].activated) {
@@ -1324,7 +1404,7 @@ void player::mutate(Game* g)
                     g->add_msg("Your body stops disintegrating.");
                     toggle_trait(PF_ROT);
                     return;
-                } else if (!has_trait(PF_REGEN) & one_in(5)) {
+                } else if (!has_trait(pl_flag::PF_REGEN) && one_in(5)) {
                     g->add_msg("You feel your flesh rebuilding itself!");
                     toggle_trait(PF_REGEN);
                     return;
@@ -1525,16 +1605,19 @@ void player::mutate(Game* g)
             case 17:
                 if (!has_trait(PF_WEBBED)) {
                     g->add_msg("Your hands and feet develop a thick webbing!");
-                    // Force off any gloves
-                    for (int i = 0; i < worn.size(); i++) {
-                        if ((dynamic_cast<it_armor*>(worn[i].type))->covers
-                            & flag_to_bit_position(bp_hands)) {
+
+                    // Force off any gloves.
+                    for (std::size_t i {0}; i < worn.size(); ++i) {
+                        if ((dynamic_cast<it_armor*>(worn[i].type)->covers
+                             & flag_to_bit_position(bp_hands))
+                            != 0U) {
                             g->add_msg("Your %s are pushed off!", worn[i].tname().c_str());
                             g->m.add_item(posx, posy, worn[i]);
-                            worn.erase(worn.begin() + i);
-                            i--;
+                            worn.erase(worn.begin() + static_cast<std::ptrdiff_t>(i));
+                            --i;
                         }
                     }
+
                     toggle_trait(PF_WEBBED);
                     return;
                 }
@@ -1547,22 +1630,27 @@ void player::mutate(Game* g)
                         g->add_msg("Your fangs fade away.");
                         toggle_trait(PF_FANGS);
                     }
-                    // Force off and damage any mouthwear
-                    for (int i = 0; i < worn.size(); i++) {
-                        if ((dynamic_cast<it_armor*>(worn[i].type))->covers
-                            & flag_to_bit_position(bp_mouth)) {
+
+                    // Force off and damage any mouthwear.
+                    for (std::size_t i {0}; i < worn.size(); ++i) {
+                        if ((dynamic_cast<it_armor*>(worn[i].type)->covers
+                             & flag_to_bit_position(bp_mouth))
+                            != 0U) {
                             worn[i].damage += 2;
-                            if (worn[i].damage >= 5)
+
+                            if (worn[i].damage >= 5) {
                                 g->add_msg("Your %s is destroyed!", worn[i].tname().c_str());
-                            else {
+                            } else {
                                 g->add_msg("Your %s is damaged and pushed off!",
                                            worn[i].tname().c_str());
                                 g->m.add_item(posx, posy, worn[i]);
                             }
-                            worn.erase(worn.begin() + i);
-                            i--;
+
+                            worn.erase(worn.begin() + static_cast<std::ptrdiff_t>(i));
+                            --i;
                         }
                     }
+
                     return;
                 }
                 break;
@@ -1670,9 +1758,9 @@ void player::pause()
 {
     moves = 0;
     if (recoil > 0) {
-        if (str_cur + 2 * sklevel[sk_gun] >= recoil)
+        if (str_cur + 2 * sklevel[sk_gun] >= static_cast<int>(recoil)) {
             recoil = 0;
-        else {
+        } else {
             recoil -= str_cur + 2 * sklevel[sk_gun];
             recoil = int(recoil / 2);
         }
@@ -1718,7 +1806,8 @@ int player::hit_mon(Game* g, Monster* z)
         recoil += 6;
     // Movement cost
     moves -= (80 + 4 * weapon.volume() + 2 * weapon.weight() + encumb(bp_torso));
-    // Different sizes affect your chance to hit
+
+    // Different sizes affect your chance to hit.
     switch (z->type->size) {
     case MS_TINY:
         numdice -= 4;
@@ -1732,7 +1821,11 @@ int player::hit_mon(Game* g, Monster* z)
     case MS_HUGE:
         numdice += 4;
         break;
+
+    default:
+        break;
     }
+
     if (numdice < 1)
         numdice = 1;
     int mondice = z->type->sk_dodge;
@@ -1937,9 +2030,12 @@ int player::hit_mon(Game* g, Monster* z)
         if (can_see)
             g->add_msg("%s %s shatters!", Your.c_str(), weapon.tname().c_str());
         g->sound(posx, posy, 16, "");
-        // Dump its contents on the ground
-        for (int i = 0; i < weapon.contents.size(); i++)
-            g->m.add_item(posx, posy, weapon.contents[i]);
+
+        // Dump its contents on the ground.
+        for (const auto& content : weapon.contents) {
+            g->m.add_item(posx, posy, content);
+        }
+
         hit(g, bp_arms, 1, 0, rng(0, weapon.volume() * 2)); // Take damage
         if (weapon.is_two_handed(this))                     // Hurt left arm too, if it was big
             hit(g, bp_arms, 0, 0, rng(0, weapon.volume()));
@@ -2098,19 +2194,24 @@ int player::throw_range(char ch)
     if (weapon.invlet == ch)
         tmp = weapon;
     else {
-        int i;
-        for (i = 0; i < inv.size(); i++) {
-            if (inv[i].invlet == ch) {
-                tmp = inv[i];
-                i = inv.size() + 1;
+        std::size_t index {0};
+
+        for (index = 0; index < inv.size(); ++index) {
+            if (inv[index].invlet == ch) {
+                tmp = inv[index];
+                index = inv.size() + 1;
             }
         }
-        if (i == inv.size())
+
+        if (index == inv.size()) {
             return -1;
+        }
     }
 
-    if (tmp.weight() > int(str_cur * 15))
+    if (static_cast<int>(tmp.weight()) > str_cur * 15) {
         return 0;
+    }
+
     int ret = int((str_cur * 8) / (tmp.weight() > 0 ? tmp.weight() : 10));
     ret -= int(tmp.volume() / 10);
     if (ret < 1)
@@ -2321,15 +2422,20 @@ void player::healall(int dam)
 
 void player::hurtall(int dam)
 {
-    for (int i = 0; i < num_hp_parts; i++) {
+    for (int& hit_point : hp_cur) {
         int painadd = 0;
-        hp_cur[i] -= dam;
-        if (hp_cur[i] < 0)
-            hp_cur[i] = 0;
-        if (has_trait(PF_PAINRESIST))
+        hit_point -= dam;
+
+        if (hit_point < 0) {
+            hit_point = 0;
+        }
+
+        if (has_trait(PF_PAINRESIST)) {
             painadd = dam / 3;
-        else
+        } else {
             painadd = dam / 2;
+        }
+
         pain += painadd;
     }
 }
@@ -2364,14 +2470,17 @@ void player::infect(dis_type type, body_part vector, int strength, int duration,
 void player::add_disease(dis_type type, int duration, Game* g)
 {
     bool found = false;
-    int i = 0;
-    while ((i < illness.size()) && !found) {
-        if (illness[i].type == type) {
-            illness[i].duration += duration;
+    std::size_t index {0};
+
+    while ((index < illness.size()) && !found) {
+        if (illness[index].type == type) {
+            illness[index].duration += duration;
             found = true;
         }
-        i++;
+
+        ++index;
     }
+
     if (!found) {
         if (!is_npc())
             dis_msg(g, type);
@@ -2382,27 +2491,27 @@ void player::add_disease(dis_type type, int duration, Game* g)
 
 void player::rem_disease(dis_type type)
 {
-    for (int i = 0; i < illness.size(); i++) {
-        if (illness[i].type == type)
-            illness.erase(illness.begin() + i);
+    for (std::size_t i {0}; i < illness.size(); ++i) {
+        if (illness[i].type == type) {
+            illness.erase(illness.begin() + static_cast<std::ptrdiff_t>(i));
+        }
     }
 }
 
 bool player::has_disease(dis_type type)
 {
-    for (int i = 0; i < illness.size(); i++) {
-        if (illness[i].type == type)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(illness,
+                               [type](const auto& disease) { return disease.type == type; });
 }
 
 int player::disease_level(dis_type type)
 {
-    for (int i = 0; i < illness.size(); i++) {
-        if (illness[i].type == type)
-            return illness[i].duration;
+    for (const auto& disease : illness) {
+        if (disease.type == type) {
+            return disease.duration;
+        }
     }
+
     return 0;
 }
 
@@ -2416,20 +2525,26 @@ void player::add_addiction(add_type type, int strength)
         strength2 = int(strength * 1.5);
         timer = 800;
     }
-    for (int i = 0; i < addictions.size(); i++) {
-        if (addictions[i].type == type) {
-            if (addictions[i].sated < 0)
-                addictions[i].sated = timer;
-            else if (addictions[i].sated < 600)
-                addictions[i].sated += timer; // TODO: Make this variable?
-            else
-                addictions[i].sated += int((3000 - addictions[i].sated) / 2);
-            if ((rng(0, strength2) > rng(0, addictions[i].intensity * 5) || rng(0, 500) < strength2)
-                && addictions[i].intensity < 20)
-                addictions[i].intensity++;
+
+    for (auto& addiction : addictions) {
+        if (addiction.type == type) {
+            if (addiction.sated < 0) {
+                addiction.sated = timer;
+            } else if (addiction.sated < 600) {
+                addiction.sated += timer; // TODO: Make this variable?
+            } else {
+                addiction.sated += int((3000 - addiction.sated) / 2);
+            }
+
+            if ((rng(0, strength2) > rng(0, addiction.intensity * 5) || rng(0, 500) < strength2)
+                && addiction.intensity < 20) {
+                ++addiction.intensity;
+            }
+
             return;
         }
     }
+
     if (rng(0, 100) < strength2) {
         addiction tmp(type, 1);
         addictions.push_back(tmp);
@@ -2438,18 +2553,15 @@ void player::add_addiction(add_type type, int strength)
 
 bool player::has_addiction(add_type type)
 {
-    for (int i = 0; i < addictions.size(); i++) {
-        if (addictions[i].type == type)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(addictions,
+                               [type](const auto& addiction) { return addiction.type == type; });
 }
 
 void player::rem_addiction(add_type type)
 {
-    for (int i = 0; i < addictions.size(); i++) {
+    for (std::size_t i {0}; i < addictions.size(); ++i) {
         if (addictions[i].type == type) {
-            addictions.erase(addictions.begin() + i);
+            addictions.erase(addictions.begin() + static_cast<std::ptrdiff_t>(i));
             return;
         }
     }
@@ -2457,19 +2569,23 @@ void player::rem_addiction(add_type type)
 
 int player::addiction_level(add_type type)
 {
-    for (int i = 0; i < addictions.size(); i++) {
-        if (addictions[i].type == type)
-            return addictions[i].intensity;
+    for (const auto& addiction : addictions) {
+        if (addiction.type == type) {
+            return addiction.intensity;
+        }
     }
+
     return 0;
 }
 
 void player::suffer(Game* g)
 {
-    for (int i = 0; i < my_bionics.size(); i++) {
-        if (my_bionics[i].powered)
-            activate_bionic(i, g);
+    for (std::size_t i {0}; i < my_bionics.size(); ++i) {
+        if (my_bionics[i].powered) {
+            activate_bionic(static_cast<int>(i), g);
+        }
     }
+
     if (underwater) {
         if (!has_trait(PF_GILLS))
             oxygen--;
@@ -2485,37 +2601,50 @@ void player::suffer(Game* g)
             }
         }
     }
-    for (int i = 0; i < illness.size(); i++) {
+
+    for (std::size_t i {0}; i < illness.size(); ++i) {
         dis_effect(g, *this, illness[i]);
-        illness[i].duration--;
-        if (illness[i].duration < -43200) // Cap permanent disease age @ 3 days
-            illness[i].duration = -43200;
+        --illness[i].duration;
+
+        if (constexpr int cap {-43200}; illness[i].duration < cap) {
+            // Cap permanent disease age @ 3 days.
+            illness[i].duration = cap;
+        }
+
         if (illness[i].duration == 0) {
-            illness.erase(illness.begin() + i);
-            i--;
+            illness.erase(illness.begin() + static_cast<std::ptrdiff_t>(i));
+            --i;
         }
     }
+
     if (!has_disease(DI_SLEEP)) {
         int timer = -3600;
         if (has_trait(PF_ADDICTIVE))
             timer = -4000;
-        for (int i = 0; i < addictions.size(); i++) {
-            if (addictions[i].sated <= 0)
+
+        for (std::size_t i {0}; i < addictions.size(); ++i) {
+            if (addictions[i].sated <= 0) {
                 addict_effect(g, addictions[i]);
-            addictions[i].sated--;
-            if (!one_in(addictions[i].intensity - 2) && addictions[i].sated > 0)
-                addictions[i].sated -= 1;
+            }
+
+            --addictions[i].sated;
+
+            if (!one_in(addictions[i].intensity - 2) && addictions[i].sated > 0) {
+                --addictions[i].sated;
+            }
+
             if (addictions[i].sated < timer - (100 * addictions[i].intensity)) {
                 if (addictions[i].intensity <= 2) {
-                    addictions.erase(addictions.begin() + i);
-                    i--;
+                    addictions.erase(addictions.begin() + static_cast<std::ptrdiff_t>(i));
+                    --i;
                 } else {
-                    addictions[i].intensity = int(addictions[i].intensity / 2);
-                    addictions[i].intensity--;
+                    addictions[i].intensity /= 2;
+                    --addictions[i].intensity;
                     addictions[i].sated = 0;
                 }
             }
         }
+
         if (has_trait(PF_CHEMIMBALANCE)) {
             if (one_in(3600)) {
                 g->add_msg("You suddenly feel sharp pain for no reason.");
@@ -2697,13 +2826,17 @@ void player::vomit(Game* g)
     g->add_msg("You throw up heavily!");
     hunger += 50;
     thirst += 60;
-    for (int i = 0; i < illness.size(); i++) {
-        if (illness[i].type == DI_FOODPOISON) {
-            illness[i].duration -= 600;
-            if (illness[i].duration < 0)
+
+    for (auto& disease : illness) {
+        if (disease.type == DI_FOODPOISON) {
+            disease.duration -= 600;
+
+            if (disease.duration < 0) {
                 rem_disease(DI_FOODPOISON);
+            }
         }
     }
+
     if (has_disease(DI_SLEEP) && one_in(4)) { // Pulled a Hendrix!
         g->add_msg("You choke on your vomit and die...");
         hurtall(500);
@@ -2714,20 +2847,26 @@ int player::weight_carried()
 {
     int ret = 0;
     ret += weapon.weight();
-    for (int i = 0; i < worn.size(); i++) {
-        ret += worn[i].weight();
+
+    for (auto& item : worn) {
+        ret += static_cast<int>(item.weight());
     }
-    for (int i = 0; i < inv.size(); i++) {
-        ret += inv[i].weight();
+
+    for (auto& item : inv) {
+        ret += static_cast<int>(item.weight());
     }
+
     return ret;
 }
 
 int player::volume_carried()
 {
     int ret = 0;
-    for (int i = 0; i < inv.size(); i++)
-        ret += inv[i].volume();
+
+    for (auto& item : inv) {
+        ret += static_cast<int>(item.volume());
+    }
+
     return ret;
 }
 
@@ -2743,10 +2882,12 @@ int player::volume_capacity()
 {
     int ret = 2; // A small bonus (the overflow)
     it_armor* armor;
-    for (int i = 0; i < worn.size(); i++) {
-        armor = dynamic_cast<it_armor*>(worn[i].type);
+
+    for (const auto& item : worn) {
+        armor = dynamic_cast<it_armor*>(item.type);
         ret += armor->storage;
     }
+
     if (has_bionic(bio_storage))
         ret += 6;
     if (has_trait(PF_PACKMULE))
@@ -2790,30 +2931,37 @@ void player::sort_inv()
 {
     std::vector<Item> types[8]; // guns ammo weaps armor food tools books other
     Item tmp;
-    for (int i = 0; i < inv.size(); i++) {
-        tmp = inv[i];
-        if (tmp.is_gun())
+
+    for (const auto& item : inv) {
+        tmp = item;
+
+        if (tmp.is_gun()) {
             types[0].push_back(tmp);
-        else if (tmp.is_ammo())
+        } else if (tmp.is_ammo()) {
             types[1].push_back(tmp);
-        else if (tmp.is_armor())
+        } else if (tmp.is_armor()) {
             types[3].push_back(tmp);
-        else if (tmp.is_food() || tmp.is_food_container())
+        } else if (tmp.is_food() || tmp.is_food_container()) {
             types[4].push_back(tmp);
-        else if (tmp.is_tool() || tmp.is_gunmod())
+        } else if (tmp.is_tool() || tmp.is_gunmod()) {
             types[5].push_back(tmp);
-        else if (tmp.is_book())
+        } else if (tmp.is_book()) {
             types[6].push_back(tmp);
-        else if (tmp.is_weap())
+        } else if (tmp.is_weap()) {
             types[2].push_back(tmp);
-        else
+        } else {
             types[7].push_back(tmp);
+        }
     }
+
     inv.clear();
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < types[i].size(); j++)
-            inv.push_back(types[i][j]);
+
+    for (const auto& type : types) {
+        for (const auto& item : type) {
+            inv.push_back(item);
+        }
     }
+
     inv_sorted = true;
 }
 
@@ -2823,16 +2971,19 @@ void player::i_add(Item it)
         || it.is_weap() || it.is_food_container())
         inv_sorted = false;
     if (it.is_ammo()) { // Possibly combine with other ammo
-        for (int i = 0; i < inv.size(); i++) {
-            if (inv[i].type->id == it.type->id) {
-                it_ammo* ammo = dynamic_cast<it_ammo*>(inv[i].type);
-                if (inv[i].charges < ammo->count) {
-                    inv[i].charges += it.charges;
-                    if (inv[i].charges > ammo->count) {
-                        it.charges = inv[i].charges - ammo->count;
-                        inv[i].charges = ammo->count;
-                    } else
+        for (auto& item : inv) {
+            if (item.type->id == it.type->id) {
+                const auto* ammo {dynamic_cast<const it_ammo*>(item.type)};
+
+                if (item.charges < ammo->count) {
+                    item.charges += it.charges;
+
+                    if (item.charges > ammo->count) {
+                        it.charges = item.charges - ammo->count;
+                        item.charges = ammo->count;
+                    } else {
                         it.charges = 0;
+                    }
                 }
             }
         }
@@ -2844,11 +2995,8 @@ void player::i_add(Item it)
 
 bool player::has_active_item(itype_id id)
 {
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->id == id && inv[i].active)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(
+        inv, [id](const auto& item) { return item.type->id == id && item.active; });
 }
 
 void player::process_active_items(Game* g)
@@ -2867,18 +3015,22 @@ void player::process_active_items(Game* g)
                 weapon.type = g->itypes[tmp->revert_to];
         }
     }
-    for (int i = 0; i < inv.size(); i++) {
+
+    for (std::size_t i {0}; i < inv.size(); ++i) {
         if (inv[i].active) {
             tmp = dynamic_cast<it_tool*>(inv[i].type);
             (use.*tmp->use)(g, &inv[i], true);
             inv[i].charges -= tmp->charges_per_sec;
+
             if (inv[i].charges <= 0) {
                 (use.*tmp->use)(g, &inv[i], false);
+
                 if (tmp->revert_to == itm_null) {
-                    inv.erase(inv.begin() + i);
-                    i--;
-                } else
+                    inv.erase(inv.begin() + static_cast<std::ptrdiff_t>(i));
+                    --i;
+                } else {
                     inv[i].type = g->itypes[tmp->revert_to];
+                }
             }
         }
     }
@@ -2901,20 +3053,23 @@ Item player::i_rem(char let)
         weapon = ret_null;
         return tmp;
     }
-    for (int i = 0; i < worn.size(); i++) {
+
+    for (std::size_t i {0}; i < worn.size(); ++i) {
         if (worn[i].invlet == let) {
             tmp = worn[i];
-            worn.erase(worn.begin() + i);
+            worn.erase(worn.begin() + static_cast<std::ptrdiff_t>(i));
             return tmp;
         }
     }
-    for (int i = 0; i < inv.size(); i++) {
+
+    for (std::size_t i {0}; i < inv.size(); ++i) {
         if (inv[i].invlet == let) {
             tmp = inv[i];
-            inv.erase(inv.begin() + i);
+            inv.erase(inv.begin() + static_cast<std::ptrdiff_t>(i));
             return tmp;
         }
     }
+
     return ret_null;
 }
 
@@ -2923,13 +3078,15 @@ Item player::i_rem(itype_id type)
     Item ret;
     if (weapon.type->id == type)
         return remove_weapon();
-    for (int i = 0; i < inv.size(); i++) {
+
+    for (std::size_t i {0}; i < inv.size(); ++i) {
         if (inv[i].type->id == type) {
             ret = inv[i];
-            i_remn(i);
+            i_remn(static_cast<int>(i));
             return ret;
         }
     }
+
     return ret_null;
 }
 
@@ -2937,14 +3094,19 @@ Item& player::i_at(char let)
 {
     if (weapon.invlet == let)
         return weapon;
-    for (int i = 0; i < worn.size(); i++) {
-        if (worn[i].invlet == let)
-            return worn[i];
+
+    for (auto& item : worn) {
+        if (item.invlet == let) {
+            return item;
+        }
     }
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].invlet == let)
-            return inv[i];
+
+    for (auto& item : inv) {
+        if (item.invlet == let) {
+            return item;
+        }
     }
+
     return ret_null;
 }
 
@@ -2952,14 +3114,19 @@ Item& player::i_of_type(itype_id type)
 {
     if (weapon.type->id == type)
         return weapon;
-    for (int i = 0; i < worn.size(); i++) {
-        if (worn[i].type->id == type)
-            return worn[i];
+
+    for (auto& item : worn) {
+        if (item.type->id == type) {
+            return item;
+        }
     }
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->id == type)
-            return inv[i];
+
+    for (auto& item : inv) {
+        if (item.type->id == type) {
+            return item;
+        }
     }
+
     return ret_null;
 }
 
@@ -2968,17 +3135,24 @@ std::vector<Item> player::inv_dump()
     std::vector<Item> ret;
     if (weapon.type->id != 0 && weapon.type->id < num_items)
         ret.push_back(weapon);
-    for (int i = 0; i < worn.size(); i++)
-        ret.push_back(worn[i]);
-    for (int i = 0; i < inv.size(); i++)
-        ret.push_back(inv[i]);
+
+    for (const auto& item : worn) {
+        ret.push_back(item);
+    }
+
+    for (const auto& item : inv) {
+        ret.push_back(item);
+    }
+
     return ret;
 }
 
 Item player::i_remn(int index)
 {
-    if (index > inv.size() || index < 0)
+    if (index > std::ssize(inv) || index < 0) {
         return ret_null;
+    }
+
     Item ret = inv[index];
     inv.erase(inv.begin() + index);
     return ret;
@@ -3026,7 +3200,7 @@ void player::use_up(itype_id it, int quantity)
         }
     }
 
-    while (used < quantity && cur_item < inv.size()) {
+    while (used < quantity && cur_item < std::ssize(inv)) {
         if (inv[cur_item].type->id == it) {
             if (inv[cur_item].is_ammo() || inv[cur_item].is_tool()) {
                 if (quantity < inv[cur_item].charges) {
@@ -3086,23 +3260,20 @@ void player::use_amount(itype_id it, int quantity)
         weapon.contents.erase(weapon.contents.begin());
     }
 
-    while (used < quantity && cur_item < inv.size()) {
-        if (inv[cur_item].type->id == it) {
-            used++;
+    while (used < quantity && cur_item < std::ssize(inv)) {
+        if (inv[cur_item].type->id == it
+            || (!inv[cur_item].contents.empty() && inv[cur_item].contents.front().type->id == it)) {
+            ++used;
             i_remn(cur_item);
-            cur_item--;
-        } else if (inv[cur_item].contents.size() > 0 && inv[cur_item].contents[0].type->id == it) {
-            used++;
-            i_remn(cur_item);
-            cur_item--;
+            --cur_item;
         }
-        cur_item++;
+
+        ++cur_item;
     }
 }
 
 void player::use_charges(itype_id it, int quantity)
 {
-    int cur_item = 0;
     int used = 0;
     if (weapon.type->id == it) {
         used += weapon.charges;
@@ -3118,19 +3289,23 @@ void player::use_charges(itype_id it, int quantity)
             weapon.contents[0].charges = 0;
     }
 
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->id == it) {
-            used += inv[i].charges;
-            if (used > quantity)
-                inv[i].charges = used - quantity;
-            else
-                inv[i].charges = 0;
-        } else if (inv[i].contents.size() > 0 && inv[i].contents[0].type->id == it) {
-            used += inv[i].contents[0].charges;
-            if (used > quantity)
-                inv[i].contents[0].charges = used - quantity;
-            else
-                inv[i].contents[0].charges = 0;
+    for (auto& item : inv) {
+        if (item.type->id == it) {
+            used += item.charges;
+
+            if (used > quantity) {
+                item.charges = used - quantity;
+            } else {
+                item.charges = 0;
+            }
+        } else if (!item.contents.empty() && item.contents.front().type->id == it) {
+            used += item.contents.front().charges;
+
+            if (used > quantity) {
+                item.contents.front().charges = used - quantity;
+            } else {
+                item.contents.front().charges = 0;
+            }
         }
     }
 }
@@ -3138,15 +3313,22 @@ void player::use_charges(itype_id it, int quantity)
 int player::butcher_factor()
 {
     int lowest_factor = 999;
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->melee_cut >= 10) {
-            int factor = inv[i].volume() * 5 - inv[i].weight() * 1.5 - inv[i].type->melee_cut;
-            if (inv[i].type->melee_cut < 20)
+
+    for (auto& item : inv) {
+        if (item.type->melee_cut >= 10) {
+            int factor {
+                static_cast<int>(item.volume() * 5 - item.weight() * 1.5 - item.type->melee_cut)};
+
+            if (item.type->melee_cut < 20) {
                 factor *= 2;
-            if (factor < lowest_factor)
+            }
+
+            if (factor < lowest_factor) {
                 lowest_factor = factor;
+            }
         }
     }
+
     if (weapon.type->melee_cut >= 10) {
         int factor = weapon.volume() * 5 - weapon.weight() * 1.5 - weapon.type->melee_cut;
         if (weapon.type->melee_cut < 20)
@@ -3159,11 +3341,7 @@ int player::butcher_factor()
 
 bool player::is_wearing(itype_id it)
 {
-    for (int i = 0; i < worn.size(); i++) {
-        if (worn[i].type->id == it)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(worn, [it](const auto& item) { return item.type->id == it; });
 }
 
 bool player::has_amount(itype_id it, int quantity)
@@ -3182,21 +3360,27 @@ bool player::has_amount(itype_id it, int quantity)
     }
     if (i_have >= quantity)
         return true;
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->id == it) {
-            if (inv[i].is_ammo())
-                i_have += inv[i].charges;
-            else
-                i_have++;
-        } else if (inv[i].contents.size() > 0 && inv[i].contents[0].type->id == it) {
-            if (inv[i].contents[0].is_ammo() || inv[i].contents[0].is_tool())
-                i_have += inv[i].contents[0].charges;
-            else
-                i_have++;
+
+    for (auto& item : inv) {
+        if (item.type->id == it) {
+            if (item.is_ammo()) {
+                i_have += item.charges;
+            } else {
+                ++i_have;
+            }
+        } else if (!item.contents.empty() && item.contents.front().type->id == it) {
+            if (item.contents.front().is_ammo() || item.contents.front().is_tool()) {
+                i_have += item.contents.front().charges;
+            } else {
+                ++i_have;
+            }
         }
-        if (i_have >= quantity)
+
+        if (i_have >= quantity) {
             return true;
+        }
     }
+
     return false;
 }
 
@@ -3209,14 +3393,18 @@ bool player::has_number(itype_id it, int quantity)
         i_have++;
     if (i_have >= quantity)
         return true;
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->id == it)
-            i_have++;
-        else if (inv[i].contents.size() > 0 && inv[i].contents[0].type->id == it)
-            i_have++;
-        if (i_have >= quantity)
+
+    for (const auto& item : inv) {
+        if (item.type->id == it
+            || (!item.contents.empty() && item.contents.front().type->id == it)) {
+            ++i_have;
+        }
+
+        if (i_have >= quantity) {
             return true;
+        }
     }
+
     return false;
 }
 
@@ -3229,14 +3417,19 @@ bool player::has_charges(itype_id it, int quantity)
         i_have += weapon.contents[0].charges;
     if (i_have >= quantity)
         return true;
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].type->id == it)
-            i_have += inv[i].charges;
-        else if (inv[i].contents.size() > 0 && inv[i].contents[0].type->id == it)
-            i_have += inv[i].contents[0].charges;
-        if (i_have >= quantity)
+
+    for (const auto& item : inv) {
+        if (item.type->id == it) {
+            i_have += item.charges;
+        } else if (!item.contents.empty() && item.contents[0].type->id == it) {
+            i_have += item.contents[0].charges;
+        }
+
+        if (i_have >= quantity) {
             return true;
+        }
     }
+
     return false;
 }
 
@@ -3244,29 +3437,31 @@ bool player::has_item(char let)
 {
     if (weapon.invlet == let)
         return true;
-    for (int i = 0; i < worn.size(); i++) {
-        if (worn[i].invlet == let)
-            return true;
+
+    if (std::ranges::any_of(worn, [&](const auto& item) { return item.invlet == let; })) {
+        return true;
     }
-    for (int i = 0; i < inv.size(); i++) {
-        if (inv[i].invlet == let)
-            return true;
-    }
-    return false;
+
+    return std::ranges::any_of(inv, [&](const auto& item) { return item.invlet == let; });
 }
 
 bool player::has_item(Item* it)
 {
     if (it == &weapon)
         return true;
-    for (int i = 0; i < inv.size(); i++) {
-        if (it == &(inv[i]))
+
+    for (const auto& item : inv) {
+        if (it == &item) {
             return true;
+        }
     }
-    for (int i = 0; i < worn.size(); i++) {
-        if (it == &(worn[i]))
+
+    for (const auto& item : worn) {
+        if (it == &item) {
             return true;
+        }
     }
+
     return false;
 }
 
@@ -3284,15 +3479,15 @@ bool player::eat(Game* g, char let)
         eaten = &weapon.contents[0];
         which = -2;
     } else {
-        for (int i = 0; i < inv.size(); i++) {
+        for (std::size_t i {0}; i < inv.size(); ++i) {
             if (inv[i].invlet == let && inv[i].is_food(this)) {
                 tmp = dynamic_cast<it_comest*>(inv[i].type);
                 eaten = &inv[i];
-                which = i;
+                which = static_cast<int>(i);
             } else if (inv[i].invlet == let && inv[i].is_food_container(this)) {
                 tmp = dynamic_cast<it_comest*>(inv[i].contents[0].type);
-                eaten = &(inv[i].contents[0]);
-                which = i + inv.size();
+                eaten = inv[i].contents.data();
+                which = static_cast<int>(i + inv.size());
             }
         }
     }
@@ -3328,7 +3523,9 @@ bool player::eat(Game* g, char let)
         if (has_trait(PF_VEGETARIAN) && eaten->made_of(FLESH)
             && !query_yn("Really eat that meat? (The poor animals!)"))
             return false;
-        if (tmp->spoils != 0 && (g->turn - eaten->bday) / 600 > tmp->spoils) {
+
+        if (tmp->spoils != 0
+            && (g->turn - eaten->bday) / 600U > static_cast<unsigned int>(tmp->spoils)) {
             // We're only warned if we're a supertaster, OR the food is very old
             if ((!has_trait(PF_SUPERTASTER) && (g->turn - eaten->bday) / 600 < tmp->spoils * 1.5)
                 || query_yn("This %s smells awful!  Eat it?", eaten->tname().c_str())) {
@@ -3346,9 +3543,10 @@ bool player::eat(Game* g, char let)
             if (has_bionic(bio_digestion))
                 hunger -= rng(0, tmp->nutr);
             else if (!has_trait(PF_GOURMAND)) {
-                if (hunger_danger && rng(-200, 0) > hunger
-                    || thirst_danger && rng(-300, 0) > thirst)
+                if ((hunger_danger && rng(-200, 0) > hunger)
+                    || (thirst_danger && rng(-300, 0) > thirst)) {
                     vomit(g);
+                }
             }
             health += tmp->healthy;
         }
@@ -3412,10 +3610,10 @@ bool player::eat(Game* g, char let)
         else if (which == -2) {
             weapon.contents.erase(weapon.contents.begin());
             g->add_msg("You are now wielding an empty %s.", weapon.tname().c_str());
-        } else if (which >= 0 && which < inv.size())
+        } else if (which >= 0 && which < std::ssize(inv)) {
             i_remn(which);
-        else if (which >= inv.size()) {
-            which -= inv.size();
+        } else if (which >= std::ssize(inv)) {
+            which -= static_cast<int>(inv.size());
             inv[which].contents.erase(inv[which].contents.begin());
             g->add_msg("%c - an empty %s", inv[which].invlet, inv[which].tname().c_str());
             inv_sorted = false;
@@ -3434,46 +3632,57 @@ bool player::wield(Game* g, char let)
         if (!is_armed()) {
             g->add_msg("You are already wielding nothing.");
             return false;
-        } else if (volume_carried() + weapon.volume() < volume_capacity()) {
+        }
+
+        if (volume_carried() + static_cast<int>(weapon.volume()) < volume_capacity()) {
             inv.push_back(remove_weapon());
             inv_sorted = false;
             return true;
-        } else if (query_yn("No space in inventory for your %s.  Drop it?",
-                            weapon.tname().c_str())) {
+        }
+
+        if (query_yn("No space in inventory for your %s.  Drop it?", weapon.tname().c_str())) {
             g->m.add_item(posx, posy, remove_weapon());
             return true;
         } else {
             return false;
         }
     }
-    for (int i = 0; i < inv.size(); i++) {
+
+    for (std::size_t i {0}; i < inv.size(); ++i) {
         if (inv[i].invlet == let) {
             if (inv[i].is_two_handed(this) && !has_two_arms()) {
                 g->add_msg("You cannot wield a %s with only one arm.", inv[i].tname().c_str());
                 return false;
             }
+
             if (!is_armed()) {
                 weapon = inv[i];
-                i_remn(i);
+                i_remn(static_cast<int>(i));
                 return true;
-            } else if (volume_carried() + weapon.volume() - inv[i].volume() < volume_capacity()) {
+            }
+
+            if (volume_carried() + static_cast<int>(weapon.volume())
+                    - static_cast<int>(inv[i].volume())
+                < volume_capacity()) {
                 inv.push_back(remove_weapon());
                 weapon = inv[i];
-                i_remn(i);
+                i_remn(static_cast<int>(i));
                 inv_sorted = false;
                 return true;
-            } else if (query_yn("No space in inventory for your %s.  Drop it?",
-                                weapon.tname().c_str())) {
+            }
+
+            if (query_yn("No space in inventory for your %s.  Drop it?", weapon.tname().c_str())) {
                 g->m.add_item(posx, posy, remove_weapon());
                 weapon = inv[i];
-                i_remn(i);
+                i_remn(static_cast<int>(i));
                 inv_sorted = false;
                 return true;
-            } else {
-                return false;
             }
+
+            return false;
         }
     }
+
     if (weapon.invlet == let)
         g->add_msg("You are already wielding your %s.", weapon.tname().c_str());
     else
@@ -3489,11 +3698,11 @@ bool player::wear(Game* g, char let)
         to_wear = &weapon;
         index = -2;
     } else {
-        for (int i = 0; i < inv.size(); i++) {
+        for (std::size_t i {0}; i < inv.size(); ++i) {
             if (inv[i].invlet == let) {
-                to_wear = &(inv[i]);
-                index = i;
-                i = inv.size();
+                to_wear = &inv[i];
+                index = static_cast<int>(i);
+                break;
             }
         }
     }
@@ -3546,23 +3755,26 @@ bool player::wear(Game* g, char let)
 
 bool player::takeoff(Game* g, char let)
 {
-    for (int i = 0; i < worn.size(); i++) {
+    for (std::size_t i {0}; i < worn.size(); ++i) {
         if (worn[i].invlet == let) {
             if (volume_capacity() - (dynamic_cast<it_armor*>(worn[i].type))->storage
                 > volume_carried() + worn[i].type->volume) {
                 inv.push_back(worn[i]);
-                worn.erase(worn.begin() + i);
+                worn.erase(worn.begin() + static_cast<std::ptrdiff_t>(i));
                 inv_sorted = false;
                 return true;
-            } else if (query_yn("No room in inventory for your %s.  Drop it?",
-                                worn[i].tname().c_str())) {
+            }
+
+            if (query_yn("No room in inventory for your %s. Drop it?", worn[i].tname().c_str())) {
                 g->m.add_item(posx, posy, worn[i]);
-                worn.erase(worn.begin() + i);
+                worn.erase(worn.begin() + static_cast<std::ptrdiff_t>(i));
                 return true;
-            } else
-                return false;
+            }
+
+            return false;
         }
     }
+
     g->add_msg("You are not wearing that item.");
     return false;
 }
@@ -3622,25 +3834,32 @@ press 'U' while wielding the unloaded gun.",
                        gun->tname().c_str());
             return;
         }
-        for (int i = 0; i < gun->contents.size(); i++) {
-            if (gun->contents[i].type->id == used->type->id) {
+
+        for (const auto& item : gun->contents) {
+            if (item.type->id == used->type->id) {
                 g->add_msg("Your %s already has a %s.", gun->tname().c_str(),
                            used->tname().c_str());
                 return;
-            } else if (mod->newtype != AT_NULL
-                       && (dynamic_cast<it_gunmod*>(gun->contents[i].type))->newtype != AT_NULL) {
+            }
+
+            if (mod->newtype != AT_NULL
+                && dynamic_cast<it_gunmod*>(item.type)->newtype != AT_NULL) {
                 g->add_msg("Your %s's caliber has already been modified.", gun->tname().c_str());
                 return;
-            } else if ((mod->id == itm_barrel_big || mod->id == itm_barrel_small)
-                       && (gun->contents[i].type->id == itm_barrel_big
-                           || gun->contents[i].type->id == itm_barrel_small)) {
+            }
+
+            if ((mod->id == itm_barrel_big || mod->id == itm_barrel_small)
+                && (item.type->id == itm_barrel_big || item.type->id == itm_barrel_small)) {
                 g->add_msg("Your %s already has a barrel replacement", gun->tname().c_str());
                 return;
-            } else if ((mod->id == itm_clip || mod->id == itm_clip2) && gun->clip_size() <= 2) {
+            }
+
+            if ((mod->id == itm_clip || mod->id == itm_clip2) && gun->clip_size() <= 2) {
                 g->add_msg("You can not extend the ammo capacity of your %s", gun->tname().c_str());
                 return;
             }
         }
+
         g->add_msg("You attach the %s to your %s.", used->tname().c_str(), gun->tname().c_str());
         gun->contents.push_back(i_rem(let));
     } else if (used->is_food() || used->is_food_container())
@@ -3660,10 +3879,10 @@ void player::read(Game* g, char ch)
     if (weapon.invlet == ch)
         index = -2;
     else {
-        for (int i = 0; i < inv.size(); i++) {
+        for (int i {0}; i < std::ssize(inv); ++i) {
             if (inv[i].invlet == ch) {
                 index = i;
-                i = inv.size();
+                break;
             }
         }
     }
@@ -3730,10 +3949,13 @@ bool player::can_sleep(Game* g)
 int player::warmth(body_part bp)
 {
     int ret = 0;
-    for (int i = 0; i < worn.size(); i++) {
-        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & flag_to_bit_position(bp))
-            ret += (dynamic_cast<it_armor*>(worn[i].type))->warmth;
+
+    for (const auto& item : worn) {
+        if ((dynamic_cast<it_armor*>(item.type)->covers & flag_to_bit_position(bp)) != 0U) {
+            ret += (dynamic_cast<it_armor*>(item.type))->warmth;
+        }
     }
+
     return ret;
 }
 
@@ -3742,18 +3964,25 @@ int player::encumb(body_part bp)
     int ret = 0;
     int layers = 0;
     it_armor* armor;
-    for (int i = 0; i < worn.size(); i++) {
-        if (!worn[i].is_armor())
+
+    for (std::size_t i {0}; i < worn.size(); ++i) {
+        if (!worn[i].is_armor()) {
             debugmsg("%s::encumb hit a non-armor item at worn[%d] (%s)", name.c_str(), i,
                      worn[i].tname().c_str());
+        }
+
         armor = dynamic_cast<it_armor*>(worn[i].type);
-        if (armor->covers & flag_to_bit_position(bp)
-            || (bp == bp_torso && (armor->covers & flag_to_bit_position(bp_arms)))) {
+
+        if (((armor->covers & flag_to_bit_position(bp)) != 0U)
+            || (bp == bp_torso && ((armor->covers & flag_to_bit_position(bp_arms)) != 0U))) {
             ret += armor->encumber;
-            if (armor->encumber > 0 || bp != bp_torso)
-                layers++;
+
+            if (armor->encumber > 0 || bp != bp_torso) {
+                ++layers;
+            }
         }
     }
+
     if (layers > 1)
         ret += (layers - 1) * (bp == bp_torso ? .5 : 2); // Easier to layer on torso
     if ((bp == bp_head && has_bionic(bio_armor_head))
@@ -3769,11 +3998,15 @@ int player::armor_bash(body_part bp)
 {
     int ret = 0;
     it_armor* armor;
-    for (int i = 0; i < worn.size(); i++) {
-        armor = dynamic_cast<it_armor*>(worn[i].type);
-        if (armor->covers & flag_to_bit_position(bp))
+
+    for (const auto& item : worn) {
+        armor = dynamic_cast<it_armor*>(item.type);
+
+        if ((armor->covers & flag_to_bit_position(bp)) != 0U) {
             ret += armor->dmg_resist;
+        }
     }
+
     if (has_bionic(bio_carbon))
         ret += 2;
     if (bp == bp_head && has_bionic(bio_armor_head))
@@ -3795,11 +4028,15 @@ int player::armor_cut(body_part bp)
 {
     int ret = 0;
     it_armor* armor;
-    for (int i = 0; i < worn.size(); i++) {
-        armor = dynamic_cast<it_armor*>(worn[i].type);
-        if (armor->covers & flag_to_bit_position(bp))
+
+    for (const auto& item : worn) {
+        armor = dynamic_cast<it_armor*>(item.type);
+
+        if ((armor->covers & flag_to_bit_position(bp)) != 0U) {
             ret += armor->cut_resist;
+        }
     }
+
     if (has_bionic(bio_carbon))
         ret += 4;
     if (bp == bp_head && has_bionic(bio_armor_head))
@@ -3916,10 +4153,13 @@ void player::absorb(Game* g, body_part bp, int& dam, int& cut)
 int player::resist(body_part bp)
 {
     int ret = 0;
-    for (int i = 0; i < worn.size(); i++) {
-        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & flag_to_bit_position(bp))
-            ret += (dynamic_cast<it_armor*>(worn[i].type))->env_resist;
+
+    for (const auto& item : worn) {
+        if ((dynamic_cast<it_armor*>(item.type)->covers & flag_to_bit_position(bp)) != 0U) {
+            ret += (dynamic_cast<it_armor*>(item.type))->env_resist;
+        }
     }
+
     if (bp == bp_mouth && has_bionic(bio_purifier) && ret < 5) {
         ret += 2;
         if (ret == 6)
@@ -3930,11 +4170,10 @@ int player::resist(body_part bp)
 
 bool player::wearing_something_on(body_part bp)
 {
-    for (int i = 0; i < worn.size(); i++) {
-        if ((dynamic_cast<it_armor*>(worn[i].type))->covers & flag_to_bit_position(bp))
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(worn, [&](const auto& item) {
+        const auto* armor {dynamic_cast<const it_armor*>(item.type)};
+        return armor && (armor->covers & flag_to_bit_position(bp));
+    });
 }
 
 void player::practice(skill s, int amount)
@@ -3967,22 +4206,26 @@ std::vector<int> player::has_ammo(ammotype at)
     std::vector<int> ret;
     it_ammo* tmp;
     bool newtype = true;
-    for (int a = 0; a < inv.size(); a++) {
+
+    for (int a = 0; a < std::ssize(inv); ++a) {
         if (inv[a].is_ammo() && dynamic_cast<it_ammo*>(inv[a].type)->type == at) {
             newtype = true;
             tmp = dynamic_cast<it_ammo*>(inv[a].type);
-            for (int i = 0; i < ret.size(); i++) {
-                if (tmp->id == inv[ret[i]].type->id && inv[a].charges == inv[ret[i]].charges) {
-                    // They're effectively the same; don't add it to the list
-                    // TODO: Bullets may become rusted, etc., so this if statement may change
+
+            for (const int index : ret) {
+                if (tmp->id == inv[index].type->id && inv[a].charges == inv[index].charges) {
+                    // They're effectively the same; don't add it to the list.
+                    // TODO: Bullets may become rusted, etc., so this if statement may change.
                     newtype = false;
-                    i = ret.size();
+                    break;
                 }
             }
+
             if (newtype)
                 ret.push_back(a);
         }
     }
+
     return ret;
 }
 

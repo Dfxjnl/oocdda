@@ -217,8 +217,9 @@ void trapfuncm::shotgun(Game* g, Monster* z, int x, int y)
         g->m.tr_at(x, y) = tr_null;
         g->m.add_item(x, y, g->itypes[itm_shotgun_sawn], 0);
         g->m.add_item(x, y, g->itypes[itm_string_6], 0);
-    } else
-        g->m.tr_at(x, y) == tr_shotgun_1;
+    } else {
+        g->m.tr_at(x, y) = trap_id::tr_shotgun_1;
+    }
 }
 
 void trapfunc::blade(Game* g, int x, int y)

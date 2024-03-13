@@ -8,6 +8,7 @@
 #include "bionics.hpp"
 #include "bodypart.hpp"
 #include "game.hpp"
+#include "itype.hpp"
 #include "monster_type.hpp"
 #include "output.hpp"
 #include "player.hpp"
@@ -185,7 +186,7 @@ std::string Item::info(bool showtext)
     dump << " Volume: " << volume() << "    Weight: " << weight() << "\n"
          << " Bash: " << int(type->melee_dam) << "  Cut: " << int(type->melee_cut)
          << "  To-hit bonus: " << (type->m_to_hit > 0 ? "+" : "") << int(type->m_to_hit) << "\n";
-    char buff[256];
+
     if (is_food()) {
         it_comest* food = dynamic_cast<it_comest*>(type);
         dump << " Nutrituion: " << int(food->nutr) << "\n Quench: " << int(food->quench)
@@ -211,8 +212,10 @@ std::string Item::info(bool showtext)
             dump << " Burst size: " << burst_size();
         if (contents.size() > 0)
             dump << "\n";
-        for (int i = 0; i < contents.size(); i++)
-            dump << "\n+" << contents[i].tname();
+
+        for (auto& content : contents) {
+            dump << "\n+" << content.tname();
+        }
     } else if (is_gunmod()) {
         it_gunmod* mod = dynamic_cast<it_gunmod*>(type);
         if (mod->accuracy != 0)
@@ -288,8 +291,9 @@ std::string Item::info(bool showtext)
         dump << "\n\n " << type->description << "\n";
         if (contents.size() > 0) {
             if (is_gun()) {
-                for (int i = 0; i < contents.size(); i++)
-                    dump << "\n " << contents[i].type->description;
+                for (const auto& content : contents) {
+                    dump << "\n " << content.type->description;
+                }
             } else
                 dump << "\n " << contents[0].type->description;
             dump << "\n";
@@ -311,8 +315,10 @@ std::string Item::tname()
     }
     if (is_gun() && contents.size() > 0) {
         ret = type->name;
-        for (int i = 0; i < contents.size(); i++)
-            ret += "+";
+
+        for (std::size_t i {0}; i < contents.size(); ++i) {
+            ret += '+';
+        }
     } else if (contents.size() == 1)
         ret = type->name + " of " + contents[0].tname();
     else if (contents.size() > 0)
@@ -420,15 +426,19 @@ nc_color Item::color()
 int Item::price()
 {
     int ret = type->price;
-    for (int i = 0; i < contents.size(); i++)
-        ret += contents[i].price();
+
+    for (auto& content : contents) {
+        ret += content.price();
+    }
+
     return ret;
 }
 
 unsigned int Item::weight()
 {
     if (type->id == itm_corpse) {
-        int ret;
+        int ret {0};
+
         switch (corpse->size) {
         case MS_TINY:
             ret = 5;
@@ -457,8 +467,11 @@ unsigned int Item::weight()
         ret *= charges;
         ret /= 100;
     }
-    for (int i = 0; i < contents.size(); i++)
-        ret += contents[i].weight();
+
+    for (auto& content : contents) {
+        ret += static_cast<int>(content.weight());
+    }
+
     return ret;
 }
 
@@ -478,19 +491,18 @@ unsigned int Item::volume()
             return 600;
         }
     }
-    int ret = type->volume;
-    if (is_gun()) {
-        for (int i = 0; i < contents.size(); i++)
-            ret += contents[i].volume();
-    }
+
     return type->volume;
 }
 
 unsigned char Item::volume_contained()
 {
     int ret = 0;
-    for (int i = 0; i < contents.size(); i++)
-        ret += contents[i].volume();
+
+    for (auto& content : contents) {
+        ret += static_cast<int>(content.volume());
+    }
+
     return ret;
 }
 
@@ -525,7 +537,8 @@ bool Item::is_two_handed(player* u)
 {
     if (is_gun() && (dynamic_cast<it_gun*>(type))->skill_used != sk_pistol)
         return true;
-    return (volume() > 10 || weight() > u->str_cur * 4);
+
+    return volume() > 10 || static_cast<int>(weight()) > u->str_cur * 4;
 }
 
 bool Item::made_of(material mat)
@@ -643,12 +656,14 @@ int Item::clip_size()
         return 0;
     it_gun* gun = dynamic_cast<it_gun*>(type);
     int ret = gun->clip;
-    for (int i = 0; i < contents.size(); i++) {
-        if (contents[i].is_gunmod()) {
-            int bonus = (ret * (dynamic_cast<it_gunmod*>(contents[i].type))->clip) / 100;
-            ret = int(ret + bonus);
+
+    for (auto& content : contents) {
+        if (content.is_gunmod()) {
+            int bonus = (ret * (dynamic_cast<it_gunmod*>(content.type))->clip) / 100;
+            ret += bonus;
         }
     }
+
     return ret;
 }
 
@@ -658,10 +673,13 @@ int Item::accuracy()
         return 0;
     it_gun* gun = dynamic_cast<it_gun*>(type);
     int ret = gun->accuracy;
-    for (int i = 0; i < contents.size(); i++) {
-        if (contents[i].is_gunmod())
-            ret -= (dynamic_cast<it_gunmod*>(contents[i].type))->accuracy;
+
+    for (auto& content : contents) {
+        if (content.is_gunmod()) {
+            ret -= dynamic_cast<it_gunmod*>(content.type)->accuracy;
+        }
     }
+
     ret += damage * 2;
     return ret;
 }
@@ -674,10 +692,13 @@ int Item::gun_damage()
     int ret = gun->dmg_bonus;
     if (curammo != NULL)
         ret += curammo->damage;
-    for (int i = 0; i < contents.size(); i++) {
-        if (contents[i].is_gunmod())
-            ret += (dynamic_cast<it_gunmod*>(contents[i].type))->damage;
+
+    for (auto& content : contents) {
+        if (content.is_gunmod()) {
+            ret += dynamic_cast<it_gunmod*>(content.type)->damage;
+        }
     }
+
     ret -= damage * 2;
     return ret;
 }
@@ -691,10 +712,13 @@ int Item::noise()
         ret = curammo->damage * .8;
     if (ret >= 5)
         ret += 20;
-    for (int i = 0; i < contents.size(); i++) {
-        if (contents[i].is_gunmod())
-            ret += (dynamic_cast<it_gunmod*>(contents[i].type))->loudness;
+
+    for (auto& content : contents) {
+        if (content.is_gunmod()) {
+            ret += dynamic_cast<it_gunmod*>(content.type)->loudness;
+        }
     }
+
     return ret;
 }
 
@@ -704,10 +728,13 @@ int Item::burst_size()
         return 0;
     it_gun* gun = dynamic_cast<it_gun*>(type);
     int ret = gun->burst;
-    for (int i = 0; i < contents.size(); i++) {
-        if (contents[i].is_gunmod())
-            ret += (dynamic_cast<it_gunmod*>(contents[i].type))->burst;
+
+    for (auto& content : contents) {
+        if (content.is_gunmod()) {
+            ret += dynamic_cast<it_gunmod*>(content.type)->burst;
+        }
     }
+
     if (ret < 0)
         return 0;
     return ret;
@@ -721,10 +748,13 @@ int Item::recoil()
     int ret = gun->recoil;
     if (curammo != NULL)
         ret += curammo->recoil;
-    for (int i = 0; i < contents.size(); i++) {
-        if (contents[i].is_gunmod())
-            ret += (dynamic_cast<it_gunmod*>(contents[i].type))->recoil;
+
+    for (auto& content : contents) {
+        if (content.is_gunmod()) {
+            ret += dynamic_cast<it_gunmod*>(content.type)->recoil;
+        }
     }
+
     return ret;
 }
 
@@ -733,13 +763,17 @@ ammotype Item::ammo()
     if (is_gun()) {
         it_gun* gun = dynamic_cast<it_gun*>(type);
         ammotype ret = gun->ammo;
-        for (int i = 0; i < contents.size(); i++) {
-            if (contents[i].is_gunmod()) {
-                it_gunmod* mod = dynamic_cast<it_gunmod*>(contents[i].type);
-                if (mod->newtype != AT_NULL)
+
+        for (auto& content : contents) {
+            if (content.is_gunmod()) {
+                const auto* mod {dynamic_cast<const it_gunmod*>(content.type)};
+
+                if (mod->newtype != ammotype::AT_NULL) {
                     ret = mod->newtype;
+                }
             }
         }
+
         return ret;
     } else if (is_tool()) {
         it_tool* tool = dynamic_cast<it_tool*>(type);
@@ -754,28 +788,23 @@ int Item::pick_reload_ammo(player& u, bool interactive)
         debugmsg("RELOADING NON-GUN NON-TOOL");
         return false;
     }
-    bool single_load = false;
-    int max_load = 0;
+
     std::vector<int> am; // List of indicies of valid ammo
 
     if (type->is_gun()) {
         if (charges > 0) {
             itype_id aid = itype_id(curammo->id);
-            for (int i = 0; i < u.inv.size(); i++) {
-                if (u.inv[i].type->id == aid)
-                    am.push_back(i);
+
+            for (std::size_t i {0}; i < u.inv.size(); ++i) {
+                if (u.inv[i].type->id == aid) {
+                    am.push_back(static_cast<int>(i));
+                }
             }
         } else {
-            it_gun* tmp = dynamic_cast<it_gun*>(type);
             am = u.has_ammo(ammo());
-            max_load = tmp->clip;
-            if (tmp->skill_used == sk_shotgun)
-                single_load = true;
         }
     } else {
-        it_tool* tmp = dynamic_cast<it_tool*>(type);
         am = u.has_ammo(ammo());
-        max_load = tmp->max_charges;
     }
 
     int index = -1;
@@ -783,26 +812,31 @@ int Item::pick_reload_ammo(player& u, bool interactive)
     if (am.size() > 1 && interactive) { // More than one option; list 'em and pick
         WINDOW* w_ammo = newwin(am.size() + 1, 80, 0, 0);
         if (charges == 0) {
-            char ch;
+            int ch {0};
             clear();
             it_ammo* ammo_type;
             mvwprintw(w_ammo, 0, 0, "\
 Choose ammo type:         Damage     Armor Pierce     Range     Accuracy");
-            for (int i = 0; i < am.size(); i++) {
+
+            for (std::size_t i {0}; i < am.size(); ++i) {
                 ammo_type = dynamic_cast<it_ammo*>(u.inv[am[i]].type);
                 mvwaddch(w_ammo, i + 1, 1, i + 'a');
-                mvwprintw(w_ammo, i + 1, 3, "%s (%d)", u.inv[am[i]].tname().c_str(),
-                          u.inv[am[i]].charges);
-                mvwprintw(w_ammo, i + 1, 27, "%d", ammo_type->damage);
-                mvwprintw(w_ammo, i + 1, 38, "%d", ammo_type->pierce);
-                mvwprintw(w_ammo, i + 1, 55, "%d", ammo_type->range);
-                mvwprintw(w_ammo, i + 1, 65, "%d", 100 - ammo_type->accuracy);
+                mvwprintw(w_ammo, static_cast<int>(i) + 1, 3, "%s (%d)",
+                          u.inv[am[i]].tname().c_str(), u.inv[am[i]].charges);
+                mvwprintw(w_ammo, static_cast<int>(i) + 1, 27, "%d", ammo_type->damage);
+                mvwprintw(w_ammo, static_cast<int>(i) + 1, 38, "%d", ammo_type->pierce);
+                mvwprintw(w_ammo, static_cast<int>(i) + 1, 55, "%d", ammo_type->range);
+                mvwprintw(w_ammo, static_cast<int>(i) + 1, 65, "%d", 100 - ammo_type->accuracy);
             }
+
             refresh();
             wrefresh(w_ammo);
-            do
+
+            do {
                 ch = getch();
-            while ((ch < 'a' || ch - 'a' > am.size() - 1) && ch != ' ' && ch != 27);
+            } while ((ch < 'a' || ch - 'a' > static_cast<int>(am.size()) - 1) && ch != ' '
+                     && ch != 27);
+
             werase(w_ammo);
             delwin(w_ammo);
             erase();
@@ -812,10 +846,12 @@ Choose ammo type:         Damage     Armor Pierce     Range     Accuracy");
                 index = am[ch - 'a'];
         } else {
             int smallest = 500;
-            for (int i = 0; i < am.size(); i++) {
-                if (u.inv[am[i]].type->id == curammo->id && u.inv[am[i]].charges < smallest) {
-                    smallest = u.inv[am[i]].charges;
-                    index = am[i];
+
+            for (const int current_index : am) {
+                if (u.inv[current_index].type->id == curammo->id
+                    && u.inv[current_index].charges < smallest) {
+                    smallest = u.inv[current_index].charges;
+                    index = current_index;
                 }
             }
         }
@@ -826,8 +862,9 @@ Choose ammo type:         Damage     Armor Pierce     Range     Accuracy");
 
 bool Item::reload(player& u, int index)
 {
-    bool single_load;
-    int max_load;
+    bool single_load {false};
+    int max_load {0};
+
     if (is_gun()) {
         it_gun* reloading = dynamic_cast<it_gun*>(type);
         single_load = (reloading->skill_used == sk_shotgun);

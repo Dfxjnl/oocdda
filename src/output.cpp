@@ -1,6 +1,8 @@
 #include <cstdarg>
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -91,6 +93,7 @@ void mvputch_inv(int y, int x, nc_color FG, long ch)
     nc_color HC;
     switch (FG) {
     case c_white:
+    default:
         HC = i_white;
         break;
     case c_ltgray:
@@ -146,6 +149,7 @@ void mvwputch_inv(WINDOW* w, int y, int x, nc_color FG, long ch)
     nc_color HC;
     switch (FG) {
     case c_white:
+    default:
         HC = i_white;
         break;
     case c_ltgray:
@@ -201,6 +205,7 @@ void mvputch_hi(int y, int x, nc_color FG, long ch)
     nc_color HC;
     switch (FG) {
     case c_white:
+    default:
         HC = h_white;
         break;
     case c_ltgray:
@@ -256,6 +261,7 @@ void mvwputch_hi(WINDOW* w, int y, int x, nc_color FG, long ch)
     nc_color HC;
     switch (FG) {
     case c_white:
+    default:
         HC = h_white;
         break;
     case c_ltgray:
@@ -451,23 +457,31 @@ int menu_vec(const char* mes, std::vector<std::string> options)
     }
     std::string title = mes;
     int height = 3 + options.size(), width = title.length() + 2;
-    for (int i = 0; i < options.size(); i++) {
-        if (options[i].length() + 6 > width)
-            width = options[i].length() + 6;
+
+    for (const auto& option : options) {
+        if (static_cast<int>(option.length()) + 6 > width) {
+            width = static_cast<int>(option.length()) + 6;
+        }
     }
+
     WINDOW* w = newwin(height, width, 6, 10);
     wattron(w, c_white);
     wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
             LINE_XOOX);
     mvwprintw(w, 1, 1, "%s", title.c_str());
 
-    for (int i = 0; i < options.size(); i++)
-        mvwprintw(w, i + 2, 1, "%d: %s", i + 1, options[i].c_str());
+    for (std::size_t i {0}; i < options.size(); ++i) {
+        mvwprintw(w, static_cast<int>(i) + 2, 1, "%d: %s", static_cast<int>(i) + 1,
+                  options[i].c_str());
+    }
+
     long ch;
     wrefresh(w);
-    do
+
+    do {
         ch = getch();
-    while (ch < '1' || ch >= '1' + options.size());
+    } while (ch < '1' || ch >= '1' + std::ssize(options));
+
     werase(w);
     wrefresh(w);
     delwin(w);
@@ -505,13 +519,19 @@ void popup_top(const char* mes, ...)
     size_t pos = tmp.find_first_of('\n');
     while (pos != std::string::npos) {
         height++;
-        if (pos > width)
-            width = pos;
+
+        if (static_cast<int>(pos) > width) {
+            width = static_cast<int>(pos);
+        }
+
         tmp = tmp.substr(pos + 1);
         pos = tmp.find_first_of('\n');
     }
-    if (width == 0 || tmp.length() > width)
-        width = tmp.length();
+
+    if (width == 0 || static_cast<int>(tmp.length()) > width) {
+        width = static_cast<int>(tmp.length());
+    }
+
     width += 2;
     WINDOW* w = newwin(height + 1, width, 0, int((80 - width) / 2));
     wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
@@ -553,13 +573,19 @@ void popup(const char* mes, ...)
     size_t pos = tmp.find_first_of('\n');
     while (pos != std::string::npos) {
         height++;
-        if (pos > width)
-            width = pos;
+
+        if (static_cast<int>(pos) > width) {
+            width = static_cast<int>(pos);
+        }
+
         tmp = tmp.substr(pos + 1);
         pos = tmp.find_first_of('\n');
     }
-    if (width == 0 || tmp.length() > width)
-        width = tmp.length();
+
+    if (width == 0 || static_cast<int>(tmp.length()) > width) {
+        width = static_cast<int>(tmp.length());
+    }
+
     width += 2;
     if (height > 25)
         height = 25;
@@ -656,6 +682,9 @@ nc_color hilite(nc_color c)
         return h_pink;
     case c_yellow:
         return h_yellow;
+
+    default:
+        return nc_color::h_white;
     }
     return h_white;
 }

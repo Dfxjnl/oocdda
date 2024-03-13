@@ -1,5 +1,6 @@
 #include <cmath>
 #include <cstdarg>
+#include <cstddef>
 #include <cstdlib>
 #include <sstream>
 #include <string>
@@ -259,7 +260,8 @@ void say_listen_need(Game* g, dialogue& d)
             opt2 = d.opt("Directions to what?", "\"A gun store.\"", "\"A pharmacy.\"",
                          "\"A grocery store.\"", "\"A liquor store.\"", "\"A hardware store.\"",
                          "\"Bye.\"", NULL);
-            oter_id look;
+            auto look {oter_id::ot_null};
+
             switch (opt2) {
             case 1:
                 look = ot_s_gun_north;
@@ -521,12 +523,15 @@ int dialogue::opt(std::string challenge, ...)
     va_start(ap, challenge);
     std::vector<std::string> options;
     char* tmp;
-    while (tmp = va_arg(ap, char*))
-        options.push_back(tmp);
+
+    while ((tmp = va_arg(ap, char*)) != nullptr) {
+        options.emplace_back(tmp);
+    }
+
     va_end(ap);
     nc_color cols[options.size()];
 
-    for (int i = 0; i < options.size(); i++) {
+    for (std::size_t i {0}; i < options.size(); ++i) {
         if (options[i][0] == '!') {
             cols[i] = c_red;
             options[i] = options[i].substr(1);
@@ -540,10 +545,13 @@ int dialogue::opt(std::string challenge, ...)
             cols[i] = c_white;
         }
         std::stringstream msg;
-        if (i < options.size() - 1)
+
+        if (i < options.size() - 1) {
             msg << i + 1 << ": " << options[i];
-        else
+        } else {
             msg << "0: " << options[i];
+        }
+
         options[i] = msg.str();
     }
 
@@ -556,26 +564,31 @@ int dialogue::opt(std::string challenge, ...)
 
     int curline = 23, curhist = 1;
     nc_color col;
-    while (curhist <= history.size() && curline > 0) {
-        if (curhist <= hilight_lines)
+
+    while (curhist <= static_cast<int>(history.size()) && curline > 0) {
+        if (curhist <= hilight_lines) {
             col = c_red;
-        else
+        } else {
             col = c_dkgray;
+        }
+
         mvwprintz(win, curline, 1, col, history[history.size() - curhist].c_str());
-        curline--;
-        curhist++;
+        --curline;
+        ++curhist;
     }
 
     curline = 3;
-    for (int i = 0; i < options.size(); i++) {
+
+    for (std::size_t i {0}; i < options.size(); ++i) {
         while (options[i].size() > 36) {
             split = options[i].find_last_of(' ', 36);
             mvwprintz(win, curline, 42, cols[i], options[i].substr(0, split).c_str());
             options[i] = "  " + options[i].substr(split);
-            curline++;
+            ++curline;
         }
+
         mvwprintz(win, curline, 42, cols[i], options[i].c_str());
-        curline++;
+        ++curline;
     }
 
     wrefresh(win);
@@ -588,7 +601,8 @@ int dialogue::opt(std::string challenge, ...)
             r = ch - 1;
             if (r < 0)
                 r += options.size();
-        } while (ch < 0 || ch >= options.size());
+        } while (ch < 0 || ch >= static_cast<int>(options.size()));
+
         okay = false;
         if (cols[r] == c_white || cols[r] == c_green)
             okay = true;
@@ -632,14 +646,15 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
     bool getting_theirs[theirs.size()], getting_yours[yours.size()];
 
     // Adjust the prices based on your barter skill.
-    for (int i = 0; i < their_price.size(); i++) {
-        their_price[i] *= (price_adjustment(d.alpha->sklevel[sk_barter])
-                           + (d.beta->int_cur - d.alpha->int_cur) / 15);
+    for (std::size_t i {0}; i < their_price.size(); ++i) {
+        their_price[i] *= static_cast<int>(price_adjustment(d.alpha->sklevel[skill::sk_barter]))
+            + (d.beta->int_cur - d.alpha->int_cur) / 15;
         getting_theirs[i] = false;
     }
-    for (int i = 0; i < your_price.size(); i++) {
-        your_price[i] /= (price_adjustment(d.alpha->sklevel[sk_barter])
-                          + (d.beta->int_cur - d.alpha->int_cur) / 15);
+
+    for (std::size_t i {0}; i < your_price.size(); ++i) {
+        your_price[i] /= static_cast<int>(price_adjustment(d.alpha->sklevel[skill::sk_barter]))
+            + (d.beta->int_cur - d.alpha->int_cur) / 15;
         getting_yours[i] = false;
     }
 
@@ -647,7 +662,8 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
     bool focus_them = true;        // Is the focus on them?
     bool update = true;            // Re-draw the screen?
     int them_off = 0, you_off = 0; // Offset from the start of the list
-    char ch, help;
+    int ch {0};
+    int help {0};
 
     do {
         if (update) { // Time to re-draw
@@ -679,26 +695,39 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
                       d.beta->name.c_str(), d.beta->cash);
             mvwprintz(w_you, 0, 2, (cash > 0 || d.alpha->cash >= cash * -1 ? c_green : c_red),
                       "You: $%d", d.alpha->cash);
-            // Draw their list of items, starting from them_off
-            for (int i = them_off; i < theirs.size() && i < 17; i++)
+
+            // Draw their list of items, starting from them_off.
+            for (auto i {static_cast<std::size_t>(them_off)}; i < theirs.size() && i < 17; ++i) {
                 mvwprintz(w_them, i - them_off + 1, 1, (getting_theirs[i] ? c_white : c_ltgray),
-                          "%c %c %s - $%d", char(i + 'a'), (getting_theirs[i] ? '+' : '-'),
+                          "%c %c %s - $%d", static_cast<char>(i + 'a'),
+                          (getting_theirs[i] ? '+' : '-'),
                           d.beta->inv[theirs[i + them_off]].tname().substr(0, 25).c_str(),
                           their_price[i + them_off]);
+            }
+
             if (them_off > 0)
                 mvwprintw(w_them, 19, 1, "< Back");
-            if (them_off + 17 < theirs.size())
+
+            if (them_off + 17 < static_cast<int>(theirs.size())) {
                 mvwprintw(w_them, 19, 9, "More >");
-            // Draw your list of items, starting from you_off
-            for (int i = you_off; i < yours.size() && i < 17; i++)
-                mvwprintz(w_you, i - you_off + 1, 1, (getting_yours[i] ? c_white : c_ltgray),
-                          "%c %c %s - $%d", char(i + 'a'), (getting_yours[i] ? '+' : '-'),
+            }
+
+            // Draw your list of items, starting from you_off.
+            for (auto i {static_cast<std::size_t>(you_off)}; i < yours.size() && i < 17; ++i) {
+                mvwprintz(w_you, static_cast<int>(i) - you_off + 1, 1,
+                          (getting_yours[i] ? c_white : c_ltgray), "%c %c %s - $%d",
+                          static_cast<char>(i + 'a'), (getting_yours[i] ? '+' : '-'),
                           d.alpha->inv[yours[i + you_off]].tname().substr(0, 25).c_str(),
                           your_price[i + you_off]);
+            }
+
             if (you_off > 0)
                 mvwprintw(w_you, 19, 1, "< Back");
-            if (you_off + 17 < yours.size())
+
+            if (you_off + 17 < static_cast<int>(yours.size())) {
                 mvwprintw(w_you, 19, 9, "More >");
+            }
+
             wrefresh(w_head);
             wrefresh(w_them);
             wrefresh(w_you);
@@ -724,12 +753,12 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             break;
         case '>':
             if (focus_them) {
-                if (them_off + 17 < theirs.size()) {
+                if (them_off + 17 < static_cast<int>(theirs.size())) {
                     them_off += 17;
                     update = true;
                 }
             } else {
-                if (you_off + 17 < yours.size()) {
+                if (you_off + 17 < static_cast<int>(yours.size())) {
                     you_off += 17;
                     update = true;
                 }
@@ -748,11 +777,13 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             delwin(w_tmp);
             wrefresh(w_head);
             if (focus_them) {
-                if (help >= 0 && help < theirs.size())
+                if (help >= 0 && help < static_cast<int>(theirs.size())) {
                     popup(d.beta->inv[theirs[help]].info().c_str());
+                }
             } else {
-                if (help >= 0 && help < yours.size())
+                if (help >= 0 && help < static_cast<int>(yours.size())) {
                     popup(d.alpha->inv[theirs[help]].info().c_str());
+                }
             }
             break;
         case '\n': // Check if we have enough cash...
@@ -770,21 +801,27 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
             if (ch >= 'a' && ch <= 'z') {
                 ch -= 'a';
                 if (focus_them) {
-                    if (ch < theirs.size()) {
+                    if (ch < static_cast<int>(theirs.size())) {
                         getting_theirs[ch] = !getting_theirs[ch];
-                        if (getting_theirs[ch])
+
+                        if (getting_theirs[ch]) {
                             cash -= their_price[ch];
-                        else
+                        } else {
                             cash += their_price[ch];
+                        }
+
                         update = true;
                     }
                 } else { // Focus is on the player's inventory
-                    if (ch < yours.size()) {
+                    if (ch < static_cast<int>(yours.size())) {
                         getting_yours[ch] = !getting_yours[ch];
-                        if (getting_yours[ch])
+
+                        if (getting_yours[ch]) {
                             cash += your_price[ch];
-                        else
+                        } else {
                             cash -= your_price[ch];
+                        }
+
                         update = true;
                     }
                 }
@@ -797,37 +834,49 @@ Tab key to switch lists, letters to pick items, Enter to finalize, Esc to quit\n
         int practice = 0;
         std::vector<char> removing;
         debugmsg("Old size: %d", d.beta->inv.size());
-        for (int i = 0; i < yours.size(); i++) {
+
+        for (std::size_t i {0}; i < yours.size(); ++i) {
             if (getting_yours[i]) {
                 d.beta->inv.push_back(d.alpha->inv[yours[i]]);
-                practice++;
+                ++practice;
                 debugmsg("Gave a %s", d.alpha->inv[yours[i]].tname().c_str());
                 removing.push_back(d.alpha->inv[yours[i]].invlet);
             }
         }
+
         debugmsg("New size: %d", d.beta->inv.size());
-        // Do it in two passes, so removing items doesn't corrupt yours[]
-        for (int i = 0; i < removing.size(); i++)
-            d.alpha->i_rem(removing[i]);
+
+        // Do it in two passes, so removing items doesn't corrupt yours.
+        for (const char item : removing) {
+            d.alpha->i_rem(item);
+        }
 
         std::vector<Item> newinv;
-        for (int i = 0; i < theirs.size(); i++) {
+
+        for (std::size_t i {0}; i < theirs.size(); ++i) {
             Item tmp = d.beta->inv[theirs[i]];
+
             if (getting_theirs[i]) {
                 practice += 2;
                 tmp.invlet = 'a';
+
                 while (d.alpha->has_item(tmp.invlet)) {
-                    if (tmp.invlet == 'z')
+                    if (tmp.invlet == 'z') {
                         tmp.invlet = 'A';
-                    else if (tmp.invlet == 'Z')
-                        return false; // TODO: Do something else with these.
-                    else
+                    } else if (tmp.invlet == 'Z') {
+                        // TODO: Do something else with these.
+                        return false;
+                    } else {
                         tmp.invlet++;
+                    }
                 }
+
                 d.alpha->inv.push_back(tmp);
-            } else
+            } else {
                 newinv.push_back(tmp);
+            }
         }
+
         d.alpha->practice(sk_barter, practice / 2);
         d.beta->inv = newinv;
         d.alpha->cash += cash;

@@ -265,10 +265,10 @@ void iuse::pkill_1(Game* g, Item* it, bool t)
     if (!g->u.has_disease(DI_PKILL1))
         g->u.add_disease(DI_PKILL1, 120, g);
     else {
-        for (int i = 0; i < g->u.illness.size(); i++) {
-            if (g->u.illness[i].type == DI_PKILL1) {
-                g->u.illness[i].duration = 50;
-                i = g->u.illness.size();
+        for (auto& disease : g->u.illness) {
+            if (disease.type == dis_type::DI_PKILL1) {
+                disease.duration = 50;
+                break;
             }
         }
     }
@@ -316,9 +316,11 @@ void iuse::cig(Game* g, Item* it, bool t)
 {
     g->add_msg("You light a cigarette and smoke it.");
     g->u.add_disease(DI_CIG, 90, g);
-    for (int i = 0; i < g->u.illness.size(); i++) {
-        if (g->u.illness[i].type == DI_CIG && g->u.illness[i].duration > 200)
+
+    for (const auto& disease : g->u.illness) {
+        if (disease.type == dis_type::DI_CIG && disease.duration > 200) {
             g->add_msg("Ugh, too much smoke... you feel gross.");
+        }
     }
 }
 
@@ -836,12 +838,13 @@ void iuse::two_way_radio(Game* g, Item* it, bool t)
     } else if (ch == '3') { // General S.O.S.
         g->u.moves -= 150;
         std::vector<npc*> in_range;
-        for (int i = 0; i < g->cur_om.npcs.size(); i++) {
-            if (g->cur_om.npcs[i].op_of_u.value >= 4
-                && trig_dist(g->levx, g->levy, g->cur_om.npcs[i].mapx, g->cur_om.npcs[i].mapy)
-                    <= 30)
-                in_range.push_back(&(g->cur_om.npcs[i]));
+
+        for (auto& npc : g->cur_om.npcs) {
+            if (npc.op_of_u.value >= 4 && trig_dist(g->levx, g->levy, npc.mapx, npc.mapy) <= 30) {
+                in_range.push_back(&npc);
+            }
         }
+
         if (in_range.size() > 0) {
             npc* coming = in_range[rng(0, in_range.size() - 1)];
             popup("A reply!  %s says, \"I'm on my way; give me %d minutes!\"", coming->name.c_str(),
@@ -875,23 +878,27 @@ void iuse::radio_on(Game* g, Item* it, bool t)
             it->charges--; // Radios last a long long time.
         int best_signal = 0;
         std::string message = "Radio: Kssssssssssssh.";
-        for (int k = 0; k < g->cur_om.radios.size(); k++) {
-            int signal = g->cur_om.radios[k].strength
-                - trig_dist(g->cur_om.radios[k].x, g->cur_om.radios[k].y, g->levx, g->levy);
+
+        for (const auto& radio : g->cur_om.radios) {
+            const int signal {radio.strength - trig_dist(radio.x, radio.y, g->levx, g->levy)};
+
             if (signal > best_signal) {
                 best_signal = signal;
-                message = g->cur_om.radios[k].message;
+                message = radio.message;
             }
         }
+
         if (best_signal > 0) {
-            for (int j = 0; j < message.length(); j++) {
+            for (char& character : message) {
                 if (dice(10, 100) > dice(10, best_signal * 5)) {
-                    if (!one_in(10))
-                        message[j] = '#';
-                    else
-                        message[j] = char(rng('a', 'z'));
+                    if (!one_in(10)) {
+                        character = '#';
+                    } else {
+                        character = static_cast<char>(rng('a', 'z'));
+                    }
                 }
             }
+
             message = "radio: " + message;
         }
         Point p = g->find_item(it);

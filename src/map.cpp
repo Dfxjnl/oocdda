@@ -1,4 +1,6 @@
+#include <array>
 #include <cmath>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -12,6 +14,7 @@
 #include "color.hpp"
 #include "enums.hpp"
 #include "game.hpp"
+#include "itype.hpp"
 #include "iuse.hpp"
 #include "line.hpp"
 #include "monster.hpp"
@@ -118,18 +121,24 @@ bool Map::is_destructable(int x, int y)
 bool Map::bash(int x, int y, int str, std::string& sound)
 {
     sound = "";
-    for (int i = 0; i < i_at(x, y).size(); i++) { // Destroy glass items (maybe)
+
+    for (std::size_t i {0}; i < i_at(x, y).size(); ++i) {
+        // Destroy glass items (maybe).
         if (i_at(x, y)[i].made_of(GLASS) && one_in(2)) {
             if (sound == "")
                 sound = "A " + i_at(x, y)[i].tname() + " shatters!";
             else
                 sound = "Some items shatter!";
-            for (int j = 0; j < i_at(x, y)[i].contents.size(); j++)
-                i_at(x, y).push_back(i_at(x, y)[i].contents[j]);
+
+            for (const auto& content : i_at(x, y)[i].contents) {
+                i_at(x, y).push_back(content);
+            }
+
             i_rem(x, y, i);
             i--;
         }
     }
+
     switch (ter(x, y)) {
     case t_door_c:
     case t_door_locked:
@@ -242,7 +251,11 @@ bool Map::bash(int x, int y, int str, std::string& sound)
             sound += "plunk.";
             return true;
         }
+
+    default:
+        break;
     }
+
     if (move_cost(x, y) == 0) {
         sound += "thump!";
         return true;
@@ -365,8 +378,10 @@ void Map::shoot(Game* g, int x, int y, int& dam, bool hit_items)
     if ((move_cost(x, y) == 2 && !hit_items) || x < 0 || x >= SEEX * 3 || y < 0 || y >= SEEY * 3)
         return; // Items on floor-type spaces won't be shot up.
     bool destroyed;
-    for (int i = 0; i < i_at(x, y).size(); i++) {
+
+    for (std::size_t i {0}; i < i_at(x, y).size(); ++i) {
         destroyed = false;
+
         switch (i_at(x, y)[i].type->m1) {
         case GLASS:
         case PAPER:
@@ -388,10 +403,16 @@ void Map::shoot(Game* g, int x, int y, int& dam, bool hit_items)
             if (i_at(x, y)[i].damage >= 5)
                 destroyed = true;
             break;
+
+        default:
+            break;
         }
+
         if (destroyed) {
-            for (int j = 0; j < i_at(x, y)[i].contents.size(); j++)
-                i_at(x, y).push_back(i_at(x, y)[i].contents[j]);
+            for (const auto& content : i_at(x, y)[i].contents) {
+                i_at(x, y).push_back(content);
+            }
+
             i_rem(x, y, i);
             i--;
         }
@@ -478,8 +499,10 @@ Item Map::water_from(int x, int y)
 
 void Map::i_rem(int x, int y, int index)
 {
-    if (index > i_at(x, y).size() - 1)
+    if (index > static_cast<int>(i_at(x, y).size()) - 1) {
         return;
+    }
+
     i_at(x, y).erase(i_at(x, y).begin() + index);
 }
 
@@ -490,9 +513,10 @@ Point Map::find_item(Item* it)
     Point ret;
     for (ret.x = 0; ret.x < SEEX * 3; ret.x++) {
         for (ret.y = 0; ret.y < SEEY * 3; ret.y++) {
-            for (int i = 0; i < i_at(ret.x, ret.y).size(); i++) {
-                if (it == &i_at(ret.x, ret.y)[i])
+            for (const auto& item : i_at(ret.x, ret.y)) {
+                if (it == &item) {
                     return ret;
+                }
             }
         }
     }
@@ -547,7 +571,7 @@ void Map::process_active_items(Game* g)
     iuse use;
     for (int i = 0; i < SEEX * 3; i++) {
         for (int j = 0; j < SEEY * 3; j++) {
-            for (int n = 0; n < i_at(i, j).size(); n++) {
+            for (std::size_t n {0}; n < i_at(i, j).size(); ++n) {
                 if (i_at(i, j)[n].active) {
                     tmp = dynamic_cast<it_tool*>(i_at(i, j)[n].type);
                     (use.*tmp->use)(g, &i_at(i, j)[n], true);
@@ -585,7 +609,6 @@ trap_id& Map::tr_at(int x, int y)
 
 void Map::add_trap(int x, int y, trap_id t)
 {
-    int oldx = x, oldy = y;
     int nonant;
     cast_to_nonant(x, y, nonant);
     grid[nonant].trp[x][y] = t;
@@ -610,9 +633,11 @@ void Map::disarm_trap(Game* g, int x, int y)
     if (roll >= diff) {
         g->add_msg("You disarm the trap!");
         std::vector<itype_id> comp = g->traps[tr_at(x, y)]->components;
-        for (int i = 0; i < comp.size(); i++) {
-            if (comp[i] != itm_null)
-                add_item(x, y, g->itypes[comp[i]], 0);
+
+        for (const auto& component : comp) {
+            if (component != itype_id::itm_null) {
+                add_item(x, y, g->itypes[component], 0);
+            }
         }
     } else if (roll >= diff * .8)
         g->add_msg("You fail to disarm the trap.");
@@ -890,17 +915,23 @@ void Map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
 
     // Dump the turn this was last visited on.
     fout << turn << std::endl;
+
     // Dump the terrain. Add 33 to ter to get a human-readable number or symbol.
     for (int j = 0; j < SEEY; j++) {
-        for (int i = 0; i < SEEX; i++)
-            fout << char(int(grid[n].ter[i][j]) + 42);
+        for (const auto& terrain : grid[n].ter) {
+            fout << static_cast<char>(static_cast<int>(terrain[j]) + 42);
+        }
+
         fout << std::endl;
     }
-    // Dump the radiation
+
+    // Dump the radiation.
     for (int j = 0; j < SEEY; j++) {
-        for (int i = 0; i < SEEX; i++)
-            fout << grid[n].rad[i][j] << " ";
+        for (const auto& radiation : grid[n].rad) {
+            fout << radiation[j] << ' ';
+        }
     }
+
     fout << std::endl;
 
     // Items section; designate it with an I.  Then check itm[][] for each square
@@ -910,12 +941,14 @@ void Map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
     Item tmp;
     for (int j = 0; j < SEEY; j++) {
         for (int i = 0; i < SEEX; i++) {
-            for (int k = 0; k < grid[n].itm[i][j].size(); k++) {
-                tmp = grid[n].itm[i][j][k];
+            for (const auto& item : grid[n].itm[i][j]) {
+                tmp = item;
                 fout << "I " << i << " " << j << std::endl;
                 fout << tmp.save_info() << std::endl;
-                for (int l = 0; l < tmp.contents.size(); l++)
-                    fout << "C " << std::endl << tmp.contents[l].save_info() << std::endl;
+
+                for (auto& content : tmp.contents) {
+                    fout << "C " << '\n' << content.save_info() << '\n';
+                }
             }
         }
     }
@@ -939,11 +972,13 @@ void Map::saven(overmap* om, unsigned int turn, int worldx, int worldy, int grid
     }
     // Output the spawn points
     spawn_point tmpsp;
-    for (int i = 0; i < grid[n].spawns.size(); i++) {
-        tmpsp = grid[n].spawns[i];
-        fout << "S " << int(tmpsp.type) << " " << tmpsp.count << " " << tmpsp.posx << " "
-             << tmpsp.posy << std::endl;
+
+    for (const auto spawn : grid[n].spawns) {
+        tmpsp = spawn;
+        fout << "S " << static_cast<int>(tmpsp.type) << ' ' << tmpsp.count << ' ' << tmpsp.posx
+             << ' ' << tmpsp.posy << '\n';
     }
+
     // Close the file; that's all we need.
     fout.close();
 }
@@ -971,8 +1006,9 @@ bool Map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
     if (mapin.is_open()) {
         // Load turn number
         mapin >> old_turn;
-        // Turns since last visited
-        int turndif = (g->turn > old_turn ? g->turn - old_turn : 0);
+        // Turns since last visited.
+        const int turn_diff {
+            (static_cast<int>(g->turn) > old_turn ? static_cast<int>(g->turn) - old_turn : 0)};
         mapin.getline(line, 1);
         // Load terrain
         for (int j = 0; j < SEEY; j++) {
@@ -984,17 +1020,22 @@ bool Map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
                 grid[gridn].fld[i][j] = field();
             }
         }
-        // Load irradiation
+
+        // Load irradiation.
         for (int j = 0; j < SEEY; j++) {
-            for (int i = 0; i < SEEX; i++) {
-                int radtmp;
+            for (auto& radiation : grid[gridn].rad) {
+                int radtmp {0};
                 mapin >> radtmp;
-                radtmp -= int(turndif / 100); // Radiation slowly decays
-                if (radtmp < 0)
+                radtmp -= turn_diff / 100; // Radiation slowly decays.
+
+                if (radtmp < 0) {
                     radtmp = 0;
-                grid[gridn].rad[i][j] = radtmp;
+                }
+
+                radiation[j] = radtmp;
             }
         }
+
         // Load items and traps and fields and spawn points
         while (!mapin.eof()) {
             t = 0;
@@ -1025,10 +1066,10 @@ bool Map::loadn(Game* g, int worldx, int worldy, int gridx, int gridy)
             }
         }
         mapin.close();
-        if (fields_here && turndif >= 8) {
-            for (int i = 0; i < int(turndif / 8); i++) {
+        if (fields_here && turn_diff >= 8) {
+            for (int i = 0; i < int(turn_diff / 8); i++) {
                 if (!process_fields(g))
-                    i = int(turndif / 8) + 1;
+                    i = int(turn_diff / 8) + 1;
             }
         }
     } else {
@@ -1057,16 +1098,17 @@ void Map::spawn_monsters(Game* g)
     for (int gx = 0; gx < 3; gx++) {
         for (int gy = 0; gy < 3; gy++) {
             int n = gx + gy * 3;
-            for (int i = 0; i < grid[n].spawns.size(); i++) {
-                for (int j = 0; j < grid[n].spawns[i].count; j++) {
+
+            for (const auto& spawn : grid[n].spawns) {
+                for (int j {0}; j < spawn.count; ++j) {
                     int tries = 0;
-                    int mx = grid[n].spawns[i].posx, my = grid[n].spawns[i].posy;
-                    Monster tmp(g->mtypes[grid[n].spawns[i].type]);
+                    int mx = spawn.posx, my = spawn.posy;
+                    Monster tmp(g->mtypes[spawn.type]);
                     while (tries < 10
                            && (g->mon_at(mx + gx * SEEX, my + gy * SEEY) != -1
                                || !tmp.can_move_to(g->m, mx + gx * SEEX, my + gy * SEEY))) {
-                        mx = grid[n].spawns[i].posx + rng(-3, 3);
-                        my = grid[n].spawns[i].posy + rng(-3, 3);
+                        mx = spawn.posx + rng(-3, 3);
+                        my = spawn.posy + rng(-3, 3);
                         tries++;
                     }
                     if (tries != 10) {
@@ -1081,6 +1123,7 @@ void Map::spawn_monsters(Game* g)
                     }
                 }
             }
+
             grid[n].spawns.clear();
         }
     }

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
@@ -198,24 +199,30 @@ std::string Monster::save_info()
     pack << int(type->id) << " " << posx << " " << posy << " " << wandx << " " << wandy << " "
          << wandf << " " << moves << " " << speed << " " << hp << " " << sp_timeout << " "
          << plans.size() << " " << friendly << " " << dead;
-    for (int i = 0; i < plans.size(); i++) {
-        pack << " " << plans[i].x << " " << plans[i].y;
+
+    for (const auto& plan : plans) {
+        pack << ' ' << plan.x << ' ' << plan.y;
     }
+
     return pack.str();
 }
 
 void Monster::debug(player& u)
 {
-    char buff[2];
+    char buff[12];
     debugmsg("%s has %d steps planned.", name().c_str(), plans.size());
     debugmsg("%s Moves %d Speed %d HP %d", name().c_str(), moves, speed, hp);
-    for (int i = 0; i < plans.size(); i++) {
-        sprintf(buff, "%d", i);
-        if (i < 10)
+
+    for (std::size_t i {0}; i < plans.size(); ++i) {
+        std::sprintf(buff, "%d", static_cast<int>(i));
+
+        if (i < 10) {
             mvaddch(plans[i].y - SEEY + u.posy, plans[i].x - SEEX + u.posx, buff[0]);
-        else
+        } else {
             mvaddch(plans[i].y - SEEY + u.posy, plans[i].x - SEEX + u.posx, buff[1]);
+        }
     }
+
     getch();
 }
 
@@ -223,9 +230,10 @@ void Monster::shift(int sx, int sy)
 {
     posx -= sx * SEEX;
     posy -= sy * SEEY;
-    for (int i = 0; i < plans.size(); i++) {
-        plans[i].x -= sx * SEEX;
-        plans[i].y -= sy * SEEY;
+
+    for (auto& plan : plans) {
+        plan.x -= sx * SEEX;
+        plan.y -= sy * SEEY;
     }
 }
 
@@ -260,7 +268,8 @@ int Monster::hit(player& p, body_part& bp_hit)
     if (dice(numdice, 10) <= dice(p.dodge(), 10))
         return 0; // We missed!
     int ret = 0;
-    int highest_hit;
+    int highest_hit {0};
+
     switch (type->size) {
     case MS_TINY:
         highest_hit = 3;
@@ -312,6 +321,7 @@ void Monster::hit_monster(Game* g, int i)
 
     int numdice = type->melee_skill;
     int dodgedice = target->type->sk_dodge;
+
     switch (target->type->size) {
     case MS_TINY:
         dodgedice += 2;
@@ -324,6 +334,9 @@ void Monster::hit_monster(Game* g, int i)
         break;
     case MS_HUGE:
         numdice += 3;
+        break;
+
+    default:
         break;
     }
 
@@ -363,8 +376,10 @@ void Monster::die(Game* g)
     if (type->item_chance != 0 && g->monitems[type->id].size() == 0)
         debugmsg("Type %s has item_chance %d but no items assigned!", type->name.c_str(),
                  type->item_chance);
-    for (int i = 0; i < it.size(); i++)
-        total_chance += it[i].chance;
+
+    for (const auto& item : it) {
+        total_chance += item.chance;
+    }
 
     while (rng(0, 99) < abs(type->item_chance) && !animal_done) {
         cur_chance = rng(1, total_chance);
@@ -375,8 +390,11 @@ void Monster::die(Game* g)
         }
         total_it_chance = 0;
         mapit = g->mapitems[it[selected_location].loc];
-        for (int i = 0; i < mapit.size(); i++)
-            total_it_chance += g->itypes[mapit[i]]->rarity;
+
+        for (const auto& item_type : mapit) {
+            total_it_chance += g->itypes[item_type]->rarity;
+        }
+
         cur_chance = rng(1, total_it_chance);
         selected_item = -1;
         while (cur_chance > 0) {

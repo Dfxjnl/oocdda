@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -17,9 +19,8 @@ void Game::wish()
 {
     int a = 0, shift = 0;
     int line;
-    char ch;
+    char ch {0};
     bool grep = false, found = false;
-    ;
     int search;
     std::string pattern;
     std::string info;
@@ -39,17 +40,21 @@ void Game::wish()
                 if (ch == ' ')
                     ch = '.'; // Don't escape the wish function yet!
             }
-            for (search = 0; search < itypes.size() && !found; search++) {
+
+            for (search = 0; search < std::ssize(itypes) && !found; ++search) {
                 if (itypes[search]->name.find(pattern) != std::string::npos) {
                     shift = search;
                     a = 0;
-                    if (shift + 23 > itypes.size()) {
-                        a = shift + 23 - itypes.size();
-                        shift = itypes.size() - 23;
+
+                    if (shift + 23 > static_cast<int>(itypes.size())) {
+                        a = shift + 23 - static_cast<int>(itypes.size());
+                        shift = static_cast<int>(itypes.size()) - 23;
                     }
+
                     found = true;
                 }
             }
+
             if (found)
                 mvprintw(1, 0, "%s               ", pattern.c_str());
             else if (grep)
@@ -75,13 +80,18 @@ void Game::wish()
         if (a > 22) {
             a = 22;
             shift++;
-            if (shift + 23 > itypes.size())
-                shift = itypes.size() - 23;
+
+            if (shift + 23 > static_cast<int>(itypes.size())) {
+                shift = static_cast<int>(itypes.size()) - 23;
+            }
         }
-        for (int i = 1; i < LESS(24, itypes.size()); i++) {
-            mvprintz(i, 40, c_white, itypes[i - 1 + shift]->name.c_str());
+
+        for (std::size_t i {1}; i < LESS(24, itypes.size()); ++i) {
+            mvprintz(static_cast<int>(i), 40, nc_color::c_white,
+                     itypes[i - 1 + shift]->name.c_str());
             printz(itypes[i - 1 + shift]->color, "%c%", itypes[i - 1 + shift]->sym);
         }
+
         tmp.make(itypes[a + shift]);
         if (tmp.is_tool())
             tmp.charges = dynamic_cast<it_tool*>(tmp.type)->def_charges;

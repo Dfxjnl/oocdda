@@ -1,5 +1,8 @@
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdarg>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
@@ -18,13 +21,19 @@
 #include "enums.hpp"
 #include "file_utils.hpp"
 #include "item.hpp"
+#include "itype.hpp"
 #include "keypress.hpp"
 #include "line.hpp"
+#include "mapdata.hpp"
+#include "monster_type.hpp"
+#include "npc.hpp"
+#include "omdata.hpp"
 #include "output.hpp"
 #include "pldata.hpp"
 #include "rng.hpp"
 #include "skill.hpp"
 #include "trap.hpp"
+#include "tutorial.hpp"
 
 namespace oocdda {
 #define LONG_RANGE 10
@@ -70,18 +79,24 @@ Game::Game()
     werase(w_status);
     // Even though we may already have 'd', nextinv will be incremented as needed
     nextinv = 'd';
-    last_target = -1;                      // We haven't targeted any monsters yet
-    curmes = 0;                            // We haven't read any messages yet
-    uquit = false;                         // We haven't quit the game
-    debugmon = false;                      // We're not debugging monster behavior
-    in_tutorial = false;                   // We're not in a tutorial game
-    for (int i = 0; i < num_monsters; i++) // Reset kill counts to 0
-        kills[i] = 0;
-    // Set the scent map to 0
-    for (int i = 0; i < SEEX * 3; i++) {
-        for (int j = 0; j < SEEX * 3; j++)
-            grscent[i][j] = 0;
+    last_target = -1;    // We haven't targeted any monsters yet
+    curmes = 0;          // We haven't read any messages yet
+    uquit = false;       // We haven't quit the game
+    debugmon = false;    // We're not debugging monster behavior
+    in_tutorial = false; // We're not in a tutorial game
+
+    // Reset kill counts to 0.
+    for (int& kill : kills) {
+        kill = 0;
     }
+
+    // Set the scent map to 0.
+    for (auto& rows : grscent) {
+        for (int& scent : rows) {
+            scent = 0;
+        }
+    }
+
     if (opening_screen()) { // Opening menu
         // Finally, draw the screen!
         refresh_all();
@@ -91,10 +106,13 @@ Game::Game()
 
 Game::~Game()
 {
-    for (int i = 0; i < itypes.size(); i++)
-        delete itypes[i];
-    for (int i = 0; i < mtypes.size(); i++)
-        delete mtypes[i];
+    for (const auto& itype : itypes) {
+        delete itype;
+    }
+
+    for (const auto& mtype : mtypes) {
+        delete mtype;
+    }
 
     for (const auto& trap : traps) {
         delete trap;
@@ -125,11 +143,15 @@ bool Game::opening_screen()
     std::string tmp;
     dirent* dp;
     DIR* dir = opendir("save");
-    while (dp = readdir(dir)) {
+
+    while ((dp = readdir(dir)) != nullptr) {
         tmp = dp->d_name;
-        if (tmp.find(".sav") != std::string::npos && savegames.size() < 18)
+
+        if (tmp.find(".sav") != std::string::npos && savegames.size() < 18) {
             savegames.push_back(tmp.substr(0, tmp.find(".sav")));
+        }
     }
+
     wrefresh(w_open);
     int sel1 = 1, sel2 = 1, layer = 1;
     char ch;
@@ -226,21 +248,29 @@ bool Game::opening_screen()
                 if (savegames.size() == 0)
                     mvwprintz(w_open, 5, 12, c_red, "No save games found!");
                 else {
-                    for (int i = 0; i < savegames.size(); i++)
-                        mvwprintz(w_open, 5 + i, 12, (sel2 - 1 == i ? h_white : c_white),
+                    for (int i {0}; i < static_cast<int>(savegames.size()); ++i) {
+                        mvwprintz(w_open, 5 + i, 12,
+                                  (sel2 - 1 == i ? nc_color::h_white : nc_color::c_white),
                                   savegames[i].c_str());
+                    }
                 }
                 wrefresh(w_open);
                 refresh();
                 ch = input();
                 if (ch == 'k' && sel2 > 1)
                     sel2--;
-                if (ch == 'j' && sel2 < savegames.size())
-                    sel2++;
+
+                if (ch == 'j' && sel2 < static_cast<int>(savegames.size())) {
+                    ++sel2;
+                }
+
                 if (ch == 'h' || ch == '<' || ch == KEY_ESCAPE) {
                     layer = 1;
-                    for (int i = 0; i < savegames.size() + 1; i++)
-                        mvwprintz(w_open, 5 + i, 12, c_black, "                                ");
+
+                    for (int i {0}; i < static_cast<int>(savegames.size()) + 1; ++i) {
+                        mvwprintz(w_open, 5 + i, 12, nc_color::c_black,
+                                  "                                ");
+                    }
                 }
                 if (ch == 'l' || ch == '\n' || ch == '>') {
                     if (sel2 > 0 && savegames.size() > 0) {
@@ -329,17 +359,25 @@ void Game::start_game()
     Monster doggy(mtypes[mon_dog], u.posx - 1, u.posy - 1);
     doggy.friendly = -1;
     z.push_back(doggy);
+
+    m.add_field(this, u.posx + 1, u.posy + 1, field_id::fd_blood, 1);
+    m.add_field(this, u.posx + 1, u.posy + 1, field_id::fd_blood, 1);
+    m.add_field(this, u.posx + 1, u.posy + 1, field_id::fd_blood, 1);
 }
 
 void Game::start_tutorial(tut_type type)
 {
-    for (int i = 0; i < NUM_LESSONS; i++)
-        tutorials_seen[i] = false;
-    // Set the scent map to 0
-    for (int i = 0; i < SEEX * 3; i++) {
-        for (int j = 0; j < SEEX * 3; j++)
-            grscent[i][j] = 0;
+    for (bool& seen : tutorials_seen) {
+        seen = false;
     }
+
+    // Set the scent map to 0.
+    for (auto& row : grscent) {
+        for (int& element : row) {
+            element = 0;
+        }
+    }
+
     temp = 65; // Kind of cool for June, but okay.
     in_tutorial = true;
     switch (type) {
@@ -484,12 +522,13 @@ bool Game::do_turn()
         u.get_sick(this);
     }
 
-    // The following happens when we stay still; 40/240 minutes overdue for spawn
-    if ((!u.has_trait(PF_INCONSPICUOUS) && turn > nextspawn + 400)
-        || (u.has_trait(PF_INCONSPICUOUS) && turn > nextspawn + 2400)) {
-        spawn_mon(-1 + 2 * rng(0, 1), -1 + 2 * rng(0, 1));
-        nextspawn = turn;
+    // The following happens when we stay still; 40/240 minutes overdue for spawn.
+    if ((!u.has_trait(pl_flag::PF_INCONSPICUOUS) && static_cast<int>(turn) > nextspawn + 400)
+        || (u.has_trait(pl_flag::PF_INCONSPICUOUS) && static_cast<int>(turn) > nextspawn + 2400)) {
+        spawn_mon(-1 + 2 * static_cast<int>(rng(0, 1)), -1 + 2 * static_cast<int>(rng(0, 1)));
+        nextspawn = static_cast<int>(turn);
     }
+
     m.process_fields(this);
     m.process_active_items(this);
     m.step_in_field(u.posx, u.posy, this);
@@ -555,19 +594,20 @@ void Game::update_skills()
 
 void Game::process_events()
 {
-    for (int i = 0; i < events.size(); i++) {
-        if (events[i].turn <= turn) {
+    for (std::size_t i {0}; i < events.size(); ++i) {
+        if (events[i].turn <= static_cast<int>(turn)) {
             events[i].actualize(this);
-            events.erase(events.begin() + i);
-            i--;
+            events.erase(events.begin() + static_cast<std::ptrdiff_t>(i));
+            --i;
         }
     }
 }
 
 void Game::process_activity()
 {
-    it_gun* reloading;
-    it_book* reading;
+    it_gun* reloading {nullptr};
+    it_book* reading {nullptr};
+
     if (u.activity.type != ACT_NULL) {
         draw();
         if (u.activity.type == ACT_WAIT) { // Based on time, not speed
@@ -622,6 +662,9 @@ void Game::process_activity()
                 break;
             case ACT_CRAFT:
                 complete_craft();
+                break;
+
+            default:
                 break;
             }
             u.activity.type = ACT_NULL;
@@ -731,10 +774,12 @@ void Game::get_input()
         erase();
         mvprintw(0, 0, "%zu addictions", u.addictions.size());
 
-        for (int i = 0; i < u.addictions.size(); i++) {
-            mvprintw(1 + i, 0, "%d: int %d sate %d", int(u.addictions[i].type),
-                     u.addictions[i].intensity, u.addictions[i].sated);
+        for (std::size_t i {0}; i < u.addictions.size(); ++i) {
+            mvprintw(1 + static_cast<int>(i), 0, "%d: int %d sate %d",
+                     static_cast<int>(u.addictions[i].type), u.addictions[i].intensity,
+                     u.addictions[i].sated);
         }
+
         mvprintw(20, 0, "Turn %d; nextspawn %d", turn, nextspawn);
         getch();
     } else if (ch == 'Z')
@@ -792,8 +837,11 @@ void Game::get_input()
         your_body.make_corpse(itypes[itm_corpse], mtypes[mon_null], turn);
         your_body.name = u.name;
         m.add_item(u.posx, u.posy, your_body);
-        for (int i = 0; i < tmp.size(); i++)
-            m.add_item(u.posx, u.posy, tmp[i]);
+
+        for (const auto& item : tmp) {
+            m.add_item(u.posx, u.posy, item);
+        }
+
         m.save(&cur_om, turn, levx, levy);
         uquit = true;
     } else if (ch == '?') {
@@ -894,11 +942,14 @@ void Game::load(std::string name)
     run_mode = tmprun;
     last_target = tmptar;
     temp = tmptemp;
+
     // Next, the scent map.
-    for (int i = 0; i < SEEX * 3; i++) {
-        for (int j = 0; j < SEEY * 3; j++)
-            fin >> grscent[i][j];
+    for (auto& row : grscent) {
+        for (int& element : row) {
+            fin >> element;
+        }
     }
+
     // Now the number of monsters...
     int nummon;
     fin >> nummon;
@@ -938,9 +989,12 @@ void Game::load(std::string name)
         else if (item_place == 'c')
             u.weapon.contents.push_back(Item(itemdata, this));
     }
-    // And the kill counts;
-    for (int i = 0; i < num_monsters; i++)
-        fin >> kills[i];
+
+    // And the kill counts.
+    for (int& kill : kills) {
+        fin >> kill;
+    }
+
     fin.close();
     draw();
 }
@@ -955,19 +1009,29 @@ void Game::save()
     fout << turn << " " << int(last_target) << " " << int(run_mode) << " " << mostseen << " "
          << nextinv << " " << nextspawn << " " << int(temp) << " " << levx << " " << levy << " "
          << levz << " " << cur_om.posx << " " << cur_om.posy << " " << std::endl;
+
     // Next, the scent map.
-    for (int i = 0; i < SEEX * 3; i++) {
-        for (int j = 0; j < SEEY * 3; j++)
-            fout << grscent[i][j] << " ";
+    for (const auto& row : grscent) {
+        for (const int element : row) {
+            fout << element << ' ';
+        }
     }
+
     // Now save all monsters.
     fout << std::endl << z.size() << std::endl;
-    for (int i = 0; i < z.size(); i++)
-        fout << z[i].save_info() << std::endl;
+
+    for (auto& monster : z) {
+        fout << monster.save_info() << '\n';
+    }
+
     // And finally the player.
     fout << u.save_info() << std::endl;
-    for (int i = 0; i < num_monsters; i++) // Save the kill counts, too.
-        fout << kills[i] << " ";
+
+    // Save the kill counts, too.
+    for (const int kill : kills) {
+        fout << kill << ' ';
+    }
+
     fout << std::endl;
     fout.close();
     // aaaand the overmap, and the local map.
@@ -998,12 +1062,14 @@ void Game::add_msg(const char* msg, ...)
     curmes++;
     std::string s(buff);
     size_t split;
-    while (s.length() > maxlength) {
+
+    while (static_cast<int>(s.length()) > maxlength) {
         split = s.find_last_of(' ', maxlength);
         messages.push_back(s.substr(0, split));
         curmes++;
         s = s.substr(split);
     }
+
     messages.push_back(s);
 }
 
@@ -1014,21 +1080,19 @@ void Game::add_event(event_type type, int on_turn, faction* rel)
     events.push_back(tmp);
 }
 
-void Game::debug()
-{
-    WINDOW* w = newwin(80, 25, 0, 0);
-    // mvwprintw(w,
-}
-
 void Game::mondebug()
 {
     int tc;
-    for (int i = 0; i < z.size(); i++) {
-        z[i].debug(u);
-        if (z[i].has_flag(MF_SEES) && m.sees(z[i].posx, z[i].posy, u.posx, u.posy, -1, tc))
-            debugmsg("The %s can see you.", z[i].name().c_str());
-        else
-            debugmsg("The %s can't see you...", z[i].name().c_str());
+
+    for (auto& monster : z) {
+        monster.debug(u);
+
+        if (monster.has_flag(m_flags::MF_SEES)
+            && m.sees(monster.posx, monster.posy, u.posx, u.posy, -1, tc)) {
+            debugmsg("The %s can see you.", monster.name().c_str());
+        } else {
+            debugmsg("The %s can't see you...", monster.name().c_str());
+        }
     }
 }
 
@@ -1037,15 +1101,18 @@ void Game::groupdebug()
     erase();
     mvprintw(0, 0, "OM %d : %d    M %d : %d", cur_om.posx, cur_om.posy, levx, levy);
     int dist, linenum = 1;
-    for (int i = 0; i < cur_om.zg.size(); i++) {
+
+    for (std::size_t i {0}; i < cur_om.zg.size(); ++i) {
         dist = trig_dist(levx, levy, cur_om.zg[i].posx, cur_om.zg[i].posy);
+
         if (dist <= cur_om.zg[i].radius) {
-            mvprintw(linenum, 0, "Zgroup %d: Centered at %d:%d, radius %d, pop %d", i,
+            mvprintw(linenum, 0, "Zgroup %zu: Centered at %d:%d, radius %d, pop %d", i,
                      cur_om.zg[i].posx, cur_om.zg[i].posy, cur_om.zg[i].radius,
                      cur_om.zg[i].population);
-            linenum++;
+            ++linenum;
         }
     }
+
     getch();
 }
 
@@ -1057,7 +1124,7 @@ void Game::draw_overmap()
     std::string note, npc_name;
     int cursx = (levx + 1) / 2, cursy = (levy + 1) / 2;
     int origx = cursx, origy = cursy;
-    char ch;
+    char ch {};
     overmap hori, vert, diag;
     do {
         int omx, omy;
@@ -1092,14 +1159,16 @@ void Game::draw_overmap()
                 if (omx >= 0 && omx < OMAPX && omy >= 0 && omy < OMAPY) { // It's in-bounds
                     cur_ter = cur_om.ter(omx, omy);
                     seen = cur_om.seen(omx, omy);
-                    if (note_here = cur_om.has_note(omx, omy))
+
+                    if ((note_here = cur_om.has_note(omx, omy))) {
                         note = cur_om.note(omx, omy);
-                    for (int n = 0; n < cur_om.npcs.size(); n++) {
-                        if ((cur_om.npcs[n].mapx + 1) / 2 == omx
-                            && (cur_om.npcs[n].mapy + 1) / 2 == omy) {
+                    }
+
+                    for (const auto& npc : cur_om.npcs) {
+                        if ((npc.mapx + 1) / 2 == omx && (npc.mapy + 1) / 2 == omy) {
                             npc_here = true;
-                            npc_name = cur_om.npcs[n].name;
-                            n = cur_om.npcs.size();
+                            npc_name = npc.name;
+                            break;
                         }
                     }
                 } else if (omx < 0) {
@@ -1108,13 +1177,17 @@ void Game::draw_overmap()
                         omy += (omy < 0 ? OMAPY : 0 - OMAPY);
                         cur_ter = diag.ter(omx, omy);
                         seen = diag.seen(omx, omy);
-                        if (note_here = diag.has_note(omx, omy))
+
+                        if ((note_here = diag.has_note(omx, omy))) {
                             note = diag.note(omx, omy);
+                        }
                     } else {
                         cur_ter = hori.ter(omx, omy);
                         seen = hori.seen(omx, omy);
-                        if (note_here = hori.has_note(omx, omy))
+
+                        if ((note_here = hori.has_note(omx, omy))) {
                             note = hori.note(omx, omy);
+                        }
                     }
                 } else if (omx >= OMAPX) {
                     omx -= OMAPX;
@@ -1122,27 +1195,34 @@ void Game::draw_overmap()
                         omy += (omy < 0 ? OMAPY : 0 - OMAPY);
                         cur_ter = diag.ter(omx, omy);
                         seen = diag.seen(omx, omy);
-                        if (note_here = diag.has_note(omx, omy))
+
+                        if ((note_here = diag.has_note(omx, omy))) {
                             note = diag.note(omx, omy);
+                        }
                     } else {
                         cur_ter = hori.ter(omx, omy);
                         seen = hori.seen(omx, omy);
-                        if (note_here = hori.has_note(omx, omy))
+
+                        if ((note_here = hori.has_note(omx, omy))) {
                             note = hori.note(omx, omy);
+                        }
                     }
                 } else if (omy < 0) {
                     omy += OMAPY;
                     cur_ter = vert.ter(omx, omy);
                     seen = vert.seen(omx, omy);
-                    if (note_here = vert.has_note(omx, omy))
+
+                    if ((note_here = vert.has_note(omx, omy))) {
                         note = vert.note(omx, omy);
+                    }
                 } else if (omy >= OMAPY) {
                     omy -= OMAPY;
                     cur_ter = vert.ter(omx, omy);
                     seen = vert.seen(omx, omy);
-                    if (note_here = vert.has_note(omx, omy))
+
+                    if ((note_here = vert.has_note(omx, omy))) {
                         note = vert.note(omx, omy);
-                    // </Out of bounds replacement>
+                    }
                 } else
                     debugmsg("No data loaded! omx: %d omy: %d", omx, omy);
                 if (seen) {
@@ -1173,14 +1253,19 @@ void Game::draw_overmap()
         }
         if (cur_om.has_note(cursx, cursy)) {
             note = cur_om.note(cursx, cursy);
-            for (int i = 0; i < note.length(); i++)
-                mvwputch(w_map, 1, i, c_white, LINE_OXOX);
+
+            for (int i {0}; i < static_cast<int>(note.length()); ++i) {
+                mvwputch(w_map, 1, i, nc_color::c_white, LINE_OXOX);
+            }
+
             mvwputch(w_map, 1, note.length(), c_white, LINE_XOOX);
             mvwputch(w_map, 0, note.length(), c_white, LINE_XOXO);
             mvwprintz(w_map, 0, 0, c_yellow, note.c_str());
         } else if (npc_here) {
-            for (int i = 0; i < npc_name.length(); i++)
-                mvwputch(w_map, 1, i, c_white, LINE_OXOX);
+            for (int i {0}; i < static_cast<int>(npc_name.length()); ++i) {
+                mvwputch(w_map, 1, i, nc_color::c_white, LINE_OXOX);
+            }
+
             mvwputch(w_map, 1, npc_name.length(), c_white, LINE_XOOX);
             mvwputch(w_map, 0, npc_name.length(), c_white, LINE_XOXO);
             mvwprintz(w_map, 0, 0, c_yellow, npc_name.c_str());
@@ -1298,7 +1383,7 @@ void Game::disp_kills()
         return;
     }
 
-    for (int i = 0; i < types.size(); i++) {
+    for (std::size_t i {0}; i < types.size(); ++i) {
         if (i < 24) {
             mvwprintz(w, i + 1, 0, types[i]->color, "%c %s", types[i]->sym, types[i]->name.c_str());
             int hori = 25;
@@ -1337,7 +1422,8 @@ void Game::disp_NPCs()
     mvwprintz(w, 0, 0, c_white, "Your position: %d:%d", levx, levy);
     std::vector<npc*> closest;
     closest.push_back(&cur_om.npcs[0]);
-    for (int i = 1; i < cur_om.npcs.size(); i++) {
+
+    for (std::size_t i {1}; i < cur_om.npcs.size(); ++i) {
         if (closest.size() < 20)
             closest.push_back(&cur_om.npcs[i]);
         else if (rl_dist(levx, levy, cur_om.npcs[i].mapx, cur_om.npcs[i].mapy)
@@ -1352,6 +1438,7 @@ void Game::disp_NPCs()
             }
         }
     }
+
     for (int i = 0; i < 20; i++)
         mvwprintz(w, i + 2, 0, c_white, "%s: %d:%d", closest[i]->name.c_str(), closest[i]->mapx,
                   closest[i]->mapy);
@@ -1366,10 +1453,13 @@ void Game::disp_NPCs()
 faction* Game::list_factions(std::string title)
 {
     std::vector<faction> valfac; // Factions that we know of.
-    for (int i = 0; i < factions.size(); i++) {
-        if (factions[i].known_by_u)
-            valfac.push_back(factions[i]);
+
+    for (const auto& faction : factions) {
+        if (faction.known_by_u) {
+            valfac.push_back(faction);
+        }
     }
+
     if (valfac.size() == 0) { // We don't know of any factions!
         popup("You don't know of any factions.  Press Spacebar...");
         return NULL;
@@ -1381,10 +1471,12 @@ faction* Game::list_factions(std::string title)
 
     // Init w_list content
     mvwprintz(w_list, 0, 0, c_white, title.c_str());
-    for (int i = 0; i < valfac.size(); i++) {
-        nc_color col = (i == 0 ? h_white : c_white);
-        mvwprintz(w_list, i + 1, 0, col, valfac[i].name.c_str());
+
+    for (std::size_t i {0}; i < valfac.size(); ++i) {
+        const nc_color col = i == 0 ? nc_color::h_white : nc_color::c_white;
+        mvwprintz(w_list, static_cast<int>(i) + 1, 0, col, valfac[i].name.c_str());
     }
+
     wrefresh(w_list);
     // Init w_info content
     // fac_*_text() is in faction.cpp
@@ -1392,13 +1484,15 @@ faction* Game::list_factions(std::string title)
     mvwprintz(w_info, 1, 0, c_white, "Respect: %s", fac_respect_text(valfac[0].respects_u).c_str());
     std::string desc = valfac[0].describe();
     int linenum = 3;
-    while (desc.length() > maxlength) {
+
+    while (static_cast<int>(desc.length()) > maxlength) {
         size_t split = desc.find_last_of(' ', maxlength);
         std::string line = desc.substr(0, split);
         mvwprintz(w_info, linenum, 0, c_white, line.c_str());
         desc = desc.substr(split + 1);
         linenum++;
     }
+
     mvwprintz(w_info, linenum, 0, c_white, desc.c_str());
     wrefresh(w_info);
     char ch;
@@ -1407,9 +1501,11 @@ faction* Game::list_factions(std::string title)
         switch (ch) {
         case 'j': // Move selection down
             mvwprintz(w_list, sel + 1, 0, c_white, valfac[sel].name.c_str());
-            if (sel == valfac.size() - 1)
-                sel = 0; // Wrap around
-            else
+
+            if (sel == static_cast<int>(valfac.size()) - 1) {
+                // Wrap around.
+                sel = 0;
+            } else
                 sel++;
             break;
         case 'k': // Move selection up
@@ -1435,13 +1531,15 @@ faction* Game::list_factions(std::string title)
                       fac_respect_text(valfac[sel].respects_u).c_str());
             std::string desc = valfac[sel].describe();
             int linenum = 3;
-            while (desc.length() > maxlength) {
+
+            while (static_cast<int>(desc.length()) > maxlength) {
                 size_t split = desc.find_last_of(' ', maxlength);
                 std::string line = desc.substr(0, split);
                 mvwprintz(w_info, linenum, 0, c_white, line.c_str());
                 desc = desc.substr(split + 1);
                 linenum++;
             }
+
             mvwprintz(w_info, linenum, 0, c_white, desc.c_str());
             wrefresh(w_info);
         }
@@ -1459,11 +1557,12 @@ faction* Game::list_factions(std::string title)
 void Game::display_scent()
 {
     int sc;
-    char ch[1];
+    char ch[12];
+
     for (int x = u.posx - SEEX; x <= u.posx + SEEX; x++) {
         for (int y = u.posy - SEEY; y <= u.posy + SEEY; y++) {
             sc = scent(x, y);
-            sprintf(ch, "%d", 10 * (sc - ((sc - 1) / (u.scent / 6))));
+            std::sprintf(ch, "%d", 10 * (sc - ((sc - 1) / (u.scent / 6))));
             mvputch(y + SEEY - u.posy, x + SEEX - u.posx, sev((sc - 1) / (u.scent / 6)), ch[0]);
         }
     }
@@ -1483,6 +1582,9 @@ void Game::tutorial_message(tut_lesson lesson)
                 break;
             case LESSON_LOOK:
                 lesson = NUM_LESSONS;
+                break;
+
+            default:
                 break;
             }
         }
@@ -1536,22 +1638,31 @@ void Game::draw_ter()
 
     // Draw monsters
     int distx, disty;
-    for (int i = 0; i < z.size(); i++) {
-        disty = abs(z[i].posy - u.posy);
-        distx = abs(z[i].posx - u.posx);
-        if (distx <= SEEX && disty <= SEEY && u_see(&(z[i]), t))
-            z[i].draw(w_terrain, u.posx, u.posy, false);
-        else if (z[i].has_flag(MF_WARM) && distx <= SEEX && disty <= SEEY
-                 && (u.has_active_bionic(bio_infrared) || u.has_trait(PF_INFRARED)))
-            mvwputch(w_terrain, SEEY + z[i].posy - u.posy, SEEX + z[i].posx - u.posx, c_red, '?');
+
+    for (auto& monster : z) {
+        disty = std::abs(monster.posy - u.posy);
+        distx = std::abs(monster.posx - u.posx);
+
+        if (distx <= SEEX && disty <= SEEY && u_see(&monster, t)) {
+            monster.draw(w_terrain, u.posx, u.posy, /*inv=*/false);
+        } else if (monster.has_flag(m_flags::MF_WARM) && distx <= SEEX && disty <= SEEY
+                   && (u.has_active_bionic(bionic_id::bio_infrared)
+                       || u.has_trait(pl_flag::PF_INFRARED))) {
+            mvwputch(w_terrain, SEEY + monster.posy - u.posy, SEEX + monster.posx - u.posx,
+                     nc_color::c_red, '?');
+        }
     }
-    // Draw NPCs
-    for (int i = 0; i < active_npc.size(); i++) {
-        disty = abs(active_npc[i].posy - u.posy);
-        distx = abs(active_npc[i].posx - u.posx);
-        if (distx <= SEEX && disty <= SEEY && u_see(active_npc[i].posx, active_npc[i].posy, t))
-            active_npc[i].draw(w_terrain, u.posx, u.posy, false);
+
+    // Draw NPCs.
+    for (auto& npc : active_npc) {
+        disty = std::abs(npc.posy - u.posy);
+        distx = std::abs(npc.posx - u.posx);
+
+        if (distx <= SEEX && disty <= SEEY && u_see(npc.posx, npc.posy, t)) {
+            npc.draw(w_terrain, u.posx, u.posy, /*inv=*/false);
+        }
     }
+
     if (u.has_disease(DI_VISUALS))
         hallucinate();
     wrefresh(w_terrain);
@@ -1646,7 +1757,7 @@ void Game::draw_minimap()
     int cursx = (levx + 1) / 2;
     int cursy = (levy + 1) / 2;
     int omx, omy;
-    oter_id cur_ter;
+    auto cur_ter {oter_id::ot_null};
     nc_color ter_color;
     long ter_sym;
     bool seen = true;
@@ -1839,12 +1950,15 @@ Point Game::find_item(Item* it)
     Point ret = m.find_item(it);
     if (ret.x != -1 && ret.y != -1)
         return ret;
-    for (int i = 0; i < active_npc.size(); i++) {
-        for (int j = 0; j < active_npc[i].inv.size(); j++) {
-            if (it == &(active_npc[i].inv[j]))
-                return Point(active_npc[i].posx, active_npc[i].posy);
+
+    for (const auto& npc : active_npc) {
+        for (const auto& item : npc.inv) {
+            if (it == &item) {
+                return {npc.posx, npc.posy};
+            }
         }
     }
+
     return Point(-999, -999);
 }
 
@@ -1855,41 +1969,47 @@ void Game::remove_item(Item* it)
         u.remove_weapon();
         return;
     }
-    for (int i = 0; i < u.inv.size(); i++) {
+
+    for (std::size_t i {0}; i < u.inv.size(); ++i) {
         if (it == &u.inv[i]) {
-            u.i_remn(i);
+            u.i_remn(static_cast<int>(i));
             return;
         }
     }
-    for (int i = 0; i < u.worn.size(); i++) {
+
+    for (std::size_t i {0}; i < u.worn.size(); ++i) {
         if (it == &u.worn[i]) {
-            u.worn.erase(u.worn.begin() + i);
+            u.worn.erase(u.worn.begin() + static_cast<std::ptrdiff_t>(i));
             return;
         }
     }
+
     ret = m.find_item(it);
     if (ret.x != -1 && ret.y != -1) {
-        for (int i = 0; i < m.i_at(ret.x, ret.y).size(); i++) {
+        for (std::size_t i {0}; i < m.i_at(ret.x, ret.y).size(); ++i) {
             if (it == &m.i_at(ret.x, ret.y)[i]) {
-                m.i_rem(ret.x, ret.y, i);
+                m.i_rem(ret.x, ret.y, static_cast<int>(i));
                 return;
             }
         }
     }
-    for (int i = 0; i < active_npc.size(); i++) {
-        if (it == &active_npc[i].weapon) {
-            active_npc[i].remove_weapon();
+
+    for (auto& npc : active_npc) {
+        if (it == &npc.weapon) {
+            npc.remove_weapon();
             return;
         }
-        for (int j = 0; j < active_npc[i].inv.size(); j++) {
-            if (it == &active_npc[i].inv[j]) {
-                active_npc[i].i_remn(j);
+
+        for (std::size_t j {0}; j < npc.inv.size(); ++j) {
+            if (it == &npc.inv[j]) {
+                npc.i_remn(static_cast<int>(j));
                 return;
             }
         }
-        for (int j = 0; j < u.worn.size(); j++) {
-            if (it == &active_npc[i].worn[j]) {
-                active_npc[i].worn.erase(u.worn.begin() + j);
+
+        for (std::size_t j {0}; j < u.worn.size(); ++j) {
+            if (it == &npc.worn[j]) {
+                npc.worn.erase(u.worn.begin() + static_cast<int>(j));
                 return;
             }
         }
@@ -1898,11 +2018,7 @@ void Game::remove_item(Item* it)
 
 bool vector_has(std::vector<int> vec, int test)
 {
-    for (int i = 0; i < vec.size(); i++) {
-        if (vec[i] == test)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(vec, [test](const int value) { return test == value; });
 }
 
 void Game::mon_info()
@@ -1915,64 +2031,79 @@ void Game::mon_info()
     // 6 7 8
     std::vector<int> unique_types[10];
     int direction;
-    for (int i = 0; i < z.size(); i++) {
-        if (u_see(&(z[i]), buff)) {
-            if (!z[i].is_fleeing(u) && z[i].friendly == 0)
-                newseen++;
-            if (z[i].posx < u.posx - SEEX) {
-                if (z[i].posy < u.posy - SEEY)
-                    direction = 0;
-                else if (z[i].posy > u.posy + SEEY)
-                    direction = 6;
-                else
-                    direction = 3;
-            } else if (z[i].posx > u.posx + SEEX) {
-                if (z[i].posy < u.posy - SEEY)
-                    direction = 2;
-                else if (z[i].posy > u.posy + SEEY)
-                    direction = 8;
-                else
-                    direction = 5;
-            } else {
-                if (z[i].posy < u.posy - SEEY)
-                    direction = 1;
-                else if (z[i].posy > u.posy + SEEY)
-                    direction = 7;
-                else
-                    direction = 4;
+
+    for (auto& monster : z) {
+        if (u_see(&monster, buff)) {
+            if (!monster.is_fleeing(u) && monster.friendly == 0) {
+                ++newseen;
             }
 
-            if (!vector_has(unique_types[direction], z[i].type->id))
-                unique_types[direction].push_back(z[i].type->id);
+            if (monster.posx < u.posx - SEEX) {
+                if (monster.posy < u.posy - SEEY) {
+                    direction = 0;
+                } else if (monster.posy > u.posy + SEEY) {
+                    direction = 6;
+                } else {
+                    direction = 3;
+                }
+            } else if (monster.posx > u.posx + SEEX) {
+                if (monster.posy < u.posy - SEEY) {
+                    direction = 2;
+                } else if (monster.posy > u.posy + SEEY) {
+                    direction = 8;
+                } else {
+                    direction = 5;
+                }
+            } else {
+                if (monster.posy < u.posy - SEEY) {
+                    direction = 1;
+                } else if (monster.posy > u.posy + SEEY) {
+                    direction = 7;
+                } else {
+                    direction = 4;
+                }
+            }
+
+            if (!vector_has(unique_types[direction], monster.type->id)) {
+                unique_types[direction].push_back(monster.type->id);
+            }
         }
     }
-    for (int i = 0; i < active_npc.size(); i++) {
-        if (u_see(active_npc[i].posx, active_npc[i].posy, buff)) { // TODO: NPC invis
-            if (active_npc[i].attitude == NPCATT_KILL)
-                newseen++;
-            if (active_npc[i].posx < u.posx - SEEX) {
-                if (active_npc[i].posy < u.posy - SEEY)
-                    direction = 0;
-                else if (active_npc[i].posy > u.posy + SEEY)
-                    direction = 6;
-                else
-                    direction = 3;
-            } else if (active_npc[i].posx > u.posx + SEEX) {
-                if (active_npc[i].posy < u.posy - SEEY)
-                    direction = 2;
-                else if (active_npc[i].posy > u.posy + SEEY)
-                    direction = 8;
-                else
-                    direction = 5;
-            } else {
-                if (active_npc[i].posy < u.posy - SEEY)
-                    direction = 1;
-                else if (active_npc[i].posy > u.posy + SEEY)
-                    direction = 7;
-                else
-                    direction = 4;
+
+    for (std::size_t i {0}; i < active_npc.size(); ++i) {
+        if (u_see(active_npc[i].posx, active_npc[i].posy, buff)) {
+            // TODO: NPC invisibility.
+            if (active_npc[i].attitude == npc_attitude::NPCATT_KILL) {
+                ++newseen;
             }
-            unique_types[direction].push_back(-1 - i);
+
+            if (active_npc[i].posx < u.posx - SEEX) {
+                if (active_npc[i].posy < u.posy - SEEY) {
+                    direction = 0;
+                } else if (active_npc[i].posy > u.posy + SEEY) {
+                    direction = 6;
+                } else {
+                    direction = 3;
+                }
+            } else if (active_npc[i].posx > u.posx + SEEX) {
+                if (active_npc[i].posy < u.posy - SEEY) {
+                    direction = 2;
+                } else if (active_npc[i].posy > u.posy + SEEY) {
+                    direction = 8;
+                } else {
+                    direction = 5;
+                }
+            } else {
+                if (active_npc[i].posy < u.posy - SEEY) {
+                    direction = 1;
+                } else if (active_npc[i].posy > u.posy + SEEY) {
+                    direction = 7;
+                } else {
+                    direction = 4;
+                }
+            }
+
+            unique_types[direction].push_back(-1 - static_cast<int>(i));
         }
     }
 
@@ -2017,7 +2148,8 @@ void Game::mon_info()
             }
             line++;
         }
-        for (int j = 0; j < unique_types[i].size() && line < 12; j++) {
+
+        for (std::size_t j {0}; j < unique_types[i].size() && line < 12; ++j) {
             buff = unique_types[i][j];
             if (buff < 0) {
                 switch (active_npc[(buff + 1) * -1].attitude) {
@@ -2049,9 +2181,10 @@ void Game::mon_info()
 
 void Game::monmove()
 {
-    for (int i = 0; i < z.size(); i++) {
+    for (std::size_t i {0}; i < z.size(); ++i) {
         if (i < 0 || i > z.size())
             debugmsg("Moving out of bounds monster! i %d, z.size() %d", i, z.size());
+
         while (!z[i].can_move_to(m, z[i].posx, z[i].posy) && i < z.size()) {
             // If we can't move to our current position, assign us to a new one
             bool okay = false;
@@ -2116,16 +2249,18 @@ void Game::monmove()
     }
 
     // Now, do active NPCs.
-    for (int i = 0; i < active_npc.size(); i++) {
+    for (std::size_t i {0}; i < active_npc.size(); ++i) {
         if (active_npc[i].hp_cur[hp_head] <= 0 || active_npc[i].hp_cur[hp_torso] <= 0) {
             active_npc[i].die(this);
-            active_npc.erase(active_npc.begin() + i);
-            i--;
+            active_npc.erase(active_npc.begin() + static_cast<std::ptrdiff_t>(i));
+            --i;
         } else {
             active_npc[i].reset();
             active_npc[i].suffer(this);
-            while (active_npc[i].moves > 0)
+
+            while (active_npc[i].moves > 0) {
                 active_npc[i].move(this);
+            }
         }
     }
 }
@@ -2247,15 +2382,20 @@ void Game::sound(int x, int y, int vol, std::string description)
 {
     // First, alert all monsters (that can hear) to the sound
     double dist;
-    for (int i = 0; i < z.size(); i++) {
-        if (z[i].has_flag(MF_HEARS)) {
-            dist = trig_dist(x, y, z[i].posx, z[i].posy);
-            if (z[i].has_flag(MF_GOODHEARING) && int(dist) >> 1 <= vol)
-                z[i].wander_to(x, y, int(vol - (int(dist) >> 1)));
-            else if (dist <= vol && dist >= 2) // Adjacent sounds are likely cause by us
-                z[i].wander_to(x, y, int(vol - dist));
+
+    for (auto& monster : z) {
+        if (monster.has_flag(m_flags::MF_HEARS)) {
+            dist = trig_dist(x, y, monster.posx, monster.posy);
+
+            if (monster.has_flag(m_flags::MF_GOODHEARING) && static_cast<int>(dist) / 2 <= vol) {
+                monster.wander_to(x, y, vol - (static_cast<int>(dist) / 2));
+            } else if (dist <= vol && dist >= 2) {
+                // Adjacent sounds are likely cause by us.
+                monster.wander_to(x, y, static_cast<int>(vol - dist));
+            }
         }
     }
+
     // Loud sounds make the next spawn sooner!
     if (vol >= 20 && nextspawn > vol + 20) {
         int max = (vol - 20);
@@ -2367,7 +2507,8 @@ void Game::explosion(int x, int y, int power, int shrapnel, bool fire)
         else
             traj = line_to(x, y, sx, sy, 0);
         dam = rng(40, 100);
-        for (int j = 0; j < traj.size(); j++) {
+
+        for (std::size_t j {0}; j < traj.size(); ++j) {
             if (i > 0)
                 m.drawsq(w_terrain, u, traj[i - 1].x, traj[i - 1].y, false, true);
             if (u_see(traj[i].x, traj[i].y, ijunk)) {
@@ -2395,8 +2536,9 @@ void Game::explosion(int x, int y, int power, int shrapnel, bool fire)
                     active_npc[npcdex].die(this);
                     active_npc.erase(active_npc.begin() + npcdex);
                 }
-            } else
+            } else {
                 m.shoot(this, tx, ty, dam, j == traj.size() - 1);
+            }
         }
     }
 }
@@ -2426,6 +2568,7 @@ void Game::use_computer(int x, int y)
     int success = u.sklevel[sk_computer] - difficulty + int((u.int_cur - 8) / 2)
         + rng(0 - int(difficulty / 2), int(difficulty / 2));
     int choice = menu_vec(m.tername(x, y).c_str(), options);
+
     switch (m.ter(x, y)) {
     case t_computer_nether:
         if (success < -2) {
@@ -2618,6 +2761,9 @@ void Game::use_computer(int x, int y)
             break;
         }
         break;
+
+    default:
+        break;
     }
 }
 
@@ -2704,6 +2850,7 @@ void Game::emp_blast(int x, int y)
         m.ter(x, y) = t_computer_broken;
         return;
     }
+
     // TODO: More terrain effects.
     switch (m.ter(x, y)) {
     case t_card_reader:
@@ -2722,7 +2869,11 @@ void Game::emp_blast(int x, int y)
             }
         }
         break;
+
+    default:
+        break;
     }
+
     int mondex = mon_at(x, y);
     if (mondex != -1) {
         if (z[mondex].has_flag(MF_ELECTRONIC)) {
@@ -2740,54 +2891,64 @@ void Game::emp_blast(int x, int y)
         }
         // TODO: More effects?
     }
-    // Drain any items of their battery charge
-    for (int i = 0; i < m.i_at(x, y).size(); i++) {
-        if (m.i_at(x, y)[i].is_tool()
-            && (dynamic_cast<it_tool*>(m.i_at(x, y)[i].type))->ammo == AT_BATT)
-            m.i_at(x, y)[i].charges = 0;
+
+    // Drain any items of their battery charge.
+    for (auto& item : m.i_at(x, y)) {
+        if (item.is_tool() && dynamic_cast<it_tool*>(item.type)->ammo == ammotype::AT_BATT) {
+            item.charges = 0;
+        }
     }
+
     // TODO: Drain NPC energy reserves
 }
 
 int Game::npc_at(int x, int y)
 {
-    for (int i = 0; i < active_npc.size(); i++) {
-        if (active_npc[i].posx == x && active_npc[i].posy == y)
-            return i;
+    for (std::size_t i {0}; i < active_npc.size(); ++i) {
+        if (active_npc[i].posx == x && active_npc[i].posy == y) {
+            return static_cast<int>(i);
+        }
     }
+
     return -1;
 }
 
 int Game::mon_at(int x, int y)
 {
-    for (int i = 0; i < z.size(); i++) {
-        if (z[i].posx == x && z[i].posy == y)
-            return i;
+    for (std::size_t i {0}; i < z.size(); ++i) {
+        if (z[i].posx == x && z[i].posy == y) {
+            return static_cast<int>(i);
+        }
     }
+
     return -1;
 }
 
 void Game::kill_mon(int index)
 {
-    if (index < 0 || index >= z.size()) {
+    if (index < 0 || index >= static_cast<int>(z.size())) {
         debugmsg("Tried to kill monster %d! (%d in play)", index, z.size());
         return;
     }
+
     if (z[index].dead)
         return;
     z[index].dead = true;
     kills[z[index].type->id]++; // Increment our kill counter
-    for (int i = 0; i < active_npc.size(); i++) {
-        if (active_npc[i].target == &z[index])
-            active_npc[i].target = NULL;
+
+    for (auto& npc : active_npc) {
+        if (npc.target == &z[index]) {
+            npc.target = nullptr;
+        }
     }
+
     z[index].die(this);
     // If they left a corpse, give a tutorial message on butchering
     if (in_tutorial && !(tutorials_seen[LESSON_BUTCHER])) {
-        for (int i = 0; i < m.i_at(z[index].posx, z[index].posy).size(); i++) {
-            if (m.i_at(z[index].posx, z[index].posy)[i].type->id == itm_corpse) {
-                tutorial_message(LESSON_BUTCHER);
-                i = m.i_at(z[index].posx, z[index].posy).size();
+        for (const auto& item : m.i_at(z[index].posx, z[index].posy)) {
+            if (item.type->id == itype_id::itm_corpse) {
+                tutorial_message(tut_lesson::LESSON_BUTCHER);
+                break;
             }
         }
     }
@@ -2884,8 +3045,11 @@ void Game::smash()
             u.practice(sk_melee, rng(0, 1) * rng(0, 1));
         if (u.weapon.made_of(GLASS) && rng(0, u.weapon.volume() + 8) < u.weapon.volume()) {
             add_msg("Your %s shatters!", u.weapon.tname().c_str());
-            for (int i = 0; i < u.weapon.contents.size(); i++)
-                m.add_item(u.posx, u.posy, u.weapon.contents[i]);
+
+            for (const auto& content : u.weapon.contents) {
+                m.add_item(u.posx, u.posy, content);
+            }
+
             sound(u.posx, u.posy, 16, "");
             u.hit(this, bp_hands, 1, 0, rng(0, u.weapon.volume()));
             if (u.weapon.volume() > 20) // Hurt left arm too, if it was big
@@ -2899,7 +3063,8 @@ void Game::smash()
 void Game::use_item()
 {
     char ch = inv("Use item:");
-    itype_id tut;
+    auto tut {itype_id::itm_null};
+
     if (in_tutorial)
         tut = itype_id(u.i_at(ch).type->id);
     u.use(this, ch);
@@ -2932,13 +3097,17 @@ void Game::examine()
             std::string buff;
             if (m.i_at(examx, examy).size() <= 3 && m.i_at(examx, examy).size() != 0) {
                 buff = "It contains ";
-                for (int i = 0; i < m.i_at(examx, examy).size(); i++) {
+
+                for (std::size_t i {0}; i < m.i_at(examx, examy).size(); ++i) {
                     buff += m.i_at(examx, examy)[i].tname();
-                    if (i + 2 < m.i_at(examx, examy).size())
+
+                    if (i + 2 < m.i_at(examx, examy).size()) {
                         buff += ", ";
-                    else if (i + 1 < m.i_at(examx, examy).size())
+                    } else if (i + 1 < m.i_at(examx, examy).size()) {
                         buff += ", and ";
+                    }
                 }
+
                 buff += ",";
             } else if (m.i_at(examx, examy).size() != 0)
                 buff = "It contains many items,";
@@ -3018,7 +3187,7 @@ void Game::examine()
     } else if (m.ter(examx, examy) == t_gas_pump && query_yn("Pump gas?")) {
         char ch = inv("Select container or tool to hold gas:");
         Item* cont = &(u.i_at(ch));
-        bool ok = true;
+
         if (cont->is_tool() && (dynamic_cast<it_tool*>(cont->type))->ammo == AT_GAS) {
             add_msg("You fill your %s with gasoline.", cont->tname().c_str());
             cont->curammo = dynamic_cast<it_ammo*>(itypes[itm_gasoline]);
@@ -3121,9 +3290,12 @@ void Game::look_around()
                           m.move_cost(lx, ly) * 50);
             mvwprintw(w_look, 2, 1, "%s", m.features(lx, ly).c_str());
             field tmpfield = m.field_at(lx, ly);
-            if (tmpfield.type != fd_null)
-                mvwprintz(w_look, 4, 1, fieldlist[tmpfield.type].color[tmpfield.density - 1], "%s",
-                          fieldlist[tmpfield.type].name[tmpfield.density - 1].c_str());
+
+            if (tmpfield.type != field_id::fd_null) {
+                mvwprintz(w_look, 4, 1, fieldlist.at(tmpfield.type).color[tmpfield.density - 1],
+                          "%s", fieldlist.at(tmpfield.type).name[tmpfield.density - 1].c_str());
+            }
+
             if (m.tr_at(lx, ly) != tr_null
                 && u.per_cur - u.encumb(bp_eyes) >= traps[m.tr_at(lx, ly)]->visibility)
                 mvwprintz(w_look, 5, 1, traps[m.tr_at(lx, ly)]->color, "%s",
@@ -3187,11 +3359,14 @@ void Game::pickup(int posx, int posy, int min)
             else {
                 Item water = m.water_from(posx, posy);
                 it_container* cont_type = dynamic_cast<it_container*>(cont->type);
-                if (!cont_type->flags & flag_to_bit_position(con_wtight)) {
+
+                if ((cont_type->flags & flag_to_bit_position(container_flags::con_wtight)) == 0U) {
                     add_msg("That %s isn't watertight!", cont->tname().c_str());
                     return;
-                } else if (!cont_type->flags & flag_to_bit_position(con_seals)) {
-                    if (query_yn("Can't transport water in a %s.  Drink it now?",
+                }
+
+                if ((cont_type->flags & flag_to_bit_position(container_flags::con_seals)) == 0U) {
+                    if (query_yn("Can't transport water in a %s. Drink it now?",
                                  cont->tname().c_str())) {
                         cont->put_in(water);
                         u.eat(this, cont->invlet);
@@ -3204,7 +3379,9 @@ void Game::pickup(int posx, int posy, int min)
         }
         return;
         // Few item here, just get it
-    } else if (m.i_at(posx, posy).size() <= min) {
+    }
+
+    if (static_cast<int>(m.i_at(posx, posy).size()) <= min) {
         int iter = 0;
         Item newit = m.i_at(posx, posy)[0];
         if (newit.made_of(LIQUID)) {
@@ -3219,10 +3396,12 @@ void Game::pickup(int posx, int posy, int min)
         if (iter == 52) {
             add_msg("You're carrying too many items!");
             return;
-        } else if (u.weight_carried() + newit.weight() > u.weight_capacity()) {
+        }
+
+        if (u.weight_carried() + static_cast<int>(newit.weight()) > u.weight_capacity()) {
             add_msg("The %s is too heavy!", newit.tname().c_str());
-            nextinv--;
-        } else if (u.volume_carried() + newit.volume() > u.volume_capacity()) {
+            --nextinv;
+        } else if (u.volume_carried() + static_cast<int>(newit.volume()) > u.volume_capacity()) {
             if (u.is_armed()) {
                 if (u.weapon.type->id < num_items && // Not a bionic
                     query_yn("Drop your %s and pick up %s?", u.weapon.tname().c_str(),
@@ -3271,7 +3450,8 @@ void Game::pickup(int posx, int posy, int min)
                 }
             }
         } else if (!u.is_armed()
-                   && (u.volume_carried() + newit.volume() > u.volume_capacity() - 2
+                   && (u.volume_carried() + static_cast<int>(newit.volume())
+                           > u.volume_capacity() - 2
                        || newit.is_weap())) {
             u.weapon = newit;
             m.i_clear(posx, posy);
@@ -3329,9 +3509,12 @@ void Game::pickup(int posx, int posy, int min)
     int maxitems = 9; // Number of items to show at one time.
     std::vector<Item> here = m.i_at(posx, posy);
     bool getitem[here.size()];
-    for (int i = 0; i < here.size(); i++)
+
+    for (std::size_t i {0}; i < here.size(); ++i) {
         getitem[i] = false;
-    char ch = ' ';
+    }
+
+    int ch {' '};
     int start = 0, cur_it, iter;
     int new_weight = u.weight_carried(), new_volume = u.volume_carried();
     bool update = true;
@@ -3347,11 +3530,13 @@ void Game::pickup(int posx, int posy, int min)
             start -= maxitems;
             mvwprintw(w_pickup, maxitems + 2, 0, "         ");
         }
-        if (ch == '>' && start + maxitems < here.size()) {
+
+        if (ch == '>' && start + maxitems < static_cast<int>(here.size())) {
             start += maxitems;
             mvwprintw(w_pickup, maxitems + 2, 12, "            ");
         }
-        if (ch >= 'a' && ch <= 'a' + here.size() - 1) {
+
+        if (ch >= 'a' && ch <= 'a' + static_cast<int>(here.size()) - 1) {
             ch -= 'a';
             getitem[ch] = !getitem[ch];
             if (getitem[ch]) {
@@ -3372,29 +3557,37 @@ void Game::pickup(int posx, int posy, int min)
                 update = true;
             }
         }
+
         if (ch == ',' || ch == 'g') {
             int count = 0;
-            for (int i = 0; i < here.size(); i++) {
-                if (getitem[i])
-                    count++;
-                else {
-                    new_weight += here[i].weight();
-                    new_volume += here[i].volume();
+
+            for (std::size_t i {0}; i < here.size(); ++i) {
+                if (getitem[i]) {
+                    ++count;
+                } else {
+                    new_weight += static_cast<int>(here[i].weight());
+                    new_volume += static_cast<int>(here[i].volume());
                 }
+
                 getitem[i] = true;
             }
-            if (count == here.size()) {
-                for (int i = 0; i < here.size(); i++)
+
+            if (count == static_cast<int>(here.size())) {
+                for (std::size_t i {0}; i < here.size(); ++i) {
                     getitem[i] = false;
+                }
+
                 new_weight = u.weight_carried();
                 new_volume = u.volume_carried();
             }
+
             update = true;
         }
         for (cur_it = start; cur_it < start + maxitems; cur_it++) {
             mvwprintw(w_pickup, 1 + (cur_it % maxitems), 0,
                       "                                        ");
-            if (cur_it < here.size()) {
+
+            if (cur_it < static_cast<int>(here.size())) {
                 mvwputch(w_pickup, 1 + (cur_it % maxitems), 0, c_white, char(cur_it + 'a'));
                 if (getitem[cur_it])
                     wprintw(w_pickup, " + ");
@@ -3409,8 +3602,11 @@ void Game::pickup(int posx, int posy, int min)
         }
         if (start > 0)
             mvwprintw(w_pickup, maxitems + 2, 0, "< Go Back");
-        if (cur_it < here.size())
+
+        if (cur_it < static_cast<int>(here.size())) {
             mvwprintw(w_pickup, maxitems + 2, 12, "> More items");
+        }
+
         if (update) { // Update weight & volume information
             update = false;
             mvwprintw(w_pickup, 0, 7, "                           ");
@@ -3432,9 +3628,9 @@ void Game::pickup(int posx, int posy, int min)
     }
     // At this point we've selected our items, now we add them to our inventory
     int curmit = 0;
-    bool did_tut = false;   // Tutorial message displayed
     bool got_water = false; // Did we try to pick up water?
-    for (int i = 0; i < here.size(); i++) {
+
+    for (std::size_t i {0}; i < here.size(); ++i) {
         iter = 0;
         // This while loop guarantees the inventory letter won't be a repeat. If it
         // tries all 52 letters, it fails and we don't pick it up.
@@ -3452,10 +3648,13 @@ void Game::pickup(int posx, int posy, int min)
                 wrefresh(w_pickup);
                 delwin(w_pickup);
                 return;
-            } else if (u.weight_carried() + here[i].weight() > u.weight_capacity()) {
+            }
+
+            if (u.weight_carried() + static_cast<int>(here[i].weight()) > u.weight_capacity()) {
                 add_msg("The %s is too heavy!", here[i].tname().c_str());
-                nextinv--;
-            } else if (u.volume_carried() + here[i].volume() > u.volume_capacity()) {
+                --nextinv;
+            } else if (u.volume_carried() + static_cast<int>(here[i].volume())
+                       > u.volume_capacity()) {
                 if (u.is_armed()) {
                     if (u.weapon.type->id < num_items && // Not a bionic
                         query_yn("Drop your %s and pick up %s?", u.weapon.tname().c_str(),
@@ -3506,7 +3705,8 @@ void Game::pickup(int posx, int posy, int min)
                     }
                 }
             } else if (!u.is_armed()
-                       && (u.volume_carried() + here[i].volume() > u.volume_capacity() - 2
+                       && (u.volume_carried() + static_cast<int>(here[i].volume())
+                               > u.volume_capacity() - 2
                            || here[i].is_weap())) {
                 u.weapon = here[i];
                 m.i_rem(posx, posy, curmit);
@@ -3554,6 +3754,7 @@ void Game::pickup(int posx, int posy, int min)
         }
         curmit++;
     }
+
     if (got_water)
         add_msg("You can't pick up a liquid!");
     if (weight_is_okay && u.weight_carried() >= u.weight_capacity() * .25)
@@ -3599,25 +3800,27 @@ char Game::inv(std::string title)
         u.sort_inv();
     int first_gun = -1, first_ammo = -1, first_weap = -1, first_armor = -1, first_food = -1,
         first_tool = -1, first_book = -1, first_other = -1;
-    for (int i = 0; i < u.inv.size(); i++) {
-        if (first_gun == -1 && u.inv[i].is_gun())
-            first_gun = i;
-        else if (first_ammo == -1 && u.inv[i].is_ammo())
-            first_ammo = i;
-        else if (first_armor == -1 && u.inv[i].is_armor())
-            first_armor = i;
-        else if (first_food == -1 && (u.inv[i].is_food() || u.inv[i].is_food_container()))
-            first_food = i;
-        else if (first_tool == -1 && u.inv[i].is_tool())
-            first_tool = i;
-        else if (first_book == -1 && u.inv[i].is_book())
-            first_book = i;
-        else if (first_weap == -1 && u.inv[i].is_weap())
-            first_weap = i;
-        else if (first_other == -1 && !u.inv[i].is_food() && !u.inv[i].is_ammo()
-                 && !u.inv[i].is_gun() && !u.inv[i].is_armor() && !u.inv[i].is_book()
-                 && !u.inv[i].is_tool() && !u.inv[i].is_weap() && !u.inv[i].is_food_container())
-            first_other = i;
+
+    for (std::size_t i {0}; i < u.inv.size(); ++i) {
+        if (first_gun == -1 && u.inv[i].is_gun()) {
+            first_gun = static_cast<int>(i);
+        } else if (first_ammo == -1 && u.inv[i].is_ammo()) {
+            first_ammo = static_cast<int>(i);
+        } else if (first_armor == -1 && u.inv[i].is_armor()) {
+            first_armor = static_cast<int>(i);
+        } else if (first_food == -1 && (u.inv[i].is_food() || u.inv[i].is_food_container())) {
+            first_food = static_cast<int>(i);
+        } else if (first_tool == -1 && u.inv[i].is_tool()) {
+            first_tool = static_cast<int>(i);
+        } else if (first_book == -1 && u.inv[i].is_book()) {
+            first_book = static_cast<int>(i);
+        } else if (first_weap == -1 && u.inv[i].is_weap()) {
+            first_weap = static_cast<int>(i);
+        } else if (first_other == -1 && !u.inv[i].is_food() && !u.inv[i].is_ammo()
+                   && !u.inv[i].is_gun() && !u.inv[i].is_armor() && !u.inv[i].is_book()
+                   && !u.inv[i].is_tool() && !u.inv[i].is_weap() && !u.inv[i].is_food_container()) {
+            first_other = static_cast<int>(i);
+        }
     }
 
     mvwprintw(w_inv, 0, 0, "%s", title.c_str());
@@ -3640,9 +3843,10 @@ char Game::inv(std::string title)
         mvwputch(w_inv, 3, 40, c_white, u.weapon.invlet);
     if (u.worn.size() > 0)
         mvwprintz(w_inv, 5, 40, c_magenta, "ITEMS WORN:");
-    for (int i = 0; i < u.worn.size(); i++) {
-        mvwputch(w_inv, 6 + i, 40, c_white, u.worn[i].invlet);
-        mvwprintw(w_inv, 6 + i, 42, " %s", u.worn[i].tname().c_str());
+
+    for (std::size_t i {0}; i < u.worn.size(); ++i) {
+        mvwputch(w_inv, 6 + static_cast<int>(i), 40, nc_color::c_white, u.worn[i].invlet);
+        mvwprintw(w_inv, 6 + static_cast<int>(i), 42, " %s", u.worn[i].tname().c_str());
     }
 
     do {
@@ -3654,12 +3858,17 @@ char Game::inv(std::string title)
                 start = 0;
             mvwprintw(w_inv, maxitems + 2, 0, "         ");
         }
-        if (ch == '>' && cur_it < u.inv.size()) {
+
+        if (ch == '>' && cur_it < static_cast<int>(u.inv.size())) {
             start = cur_it;
             mvwprintw(w_inv, maxitems + 2, 12, "            ");
-            for (int i = 1; i < 25; i++)
-                mvwprintz(w_inv, i, 0, c_black, "                                        ");
+
+            for (int i {1}; i < 25; ++i) {
+                mvwprintz(w_inv, i, 0, nc_color::c_black,
+                          "                                        ");
+            }
         }
+
         int cur_line = 2;
         for (cur_it = start; cur_it < start + maxitems && cur_line < 23; cur_it++) {
             // Clear the current line;
@@ -3690,18 +3899,25 @@ char Game::inv(std::string title)
                 mvwprintz(w_inv, cur_line, 0, c_magenta, "OTHER:");
                 cur_line++;
             }
-            if (cur_it < u.inv.size()) {
-                mvwputch(w_inv, cur_line, 0, c_white, u.inv[cur_it].invlet);
+
+            if (cur_it < static_cast<int>(u.inv.size())) {
+                mvwputch(w_inv, cur_line, 0, nc_color::c_white, u.inv[cur_it].invlet);
                 mvwprintw(w_inv, cur_line, 1, " %s", u.inv[cur_it].tname().c_str());
-                if (u.inv[cur_it].charges > 0)
+
+                if (u.inv[cur_it].charges > 0) {
                     wprintw(w_inv, " (%d)", u.inv[cur_it].charges);
+                }
             }
+
             cur_line++;
         }
         if (start > 0)
             mvwprintw(w_inv, maxitems + 4, 0, "< Go Back");
-        if (cur_it < u.inv.size())
+
+        if (cur_it < static_cast<int>(u.inv.size())) {
             mvwprintw(w_inv, maxitems + 4, 12, "> More items");
+        }
+
         wrefresh(w_inv);
         ch = getch();
     } while (ch == '<' || ch == '>');
@@ -3746,14 +3962,18 @@ void Game::plthrow()
     std::vector<Monster> mon_targets;
     std::vector<int> targetindices;
     int passtarget = -1;
-    for (int i = 0; i < z.size(); i++) {
-        if (u_see(&(z[i]), junk) && z[i].posx >= x0 && z[i].posx <= x1 && z[i].posy >= y0
+
+    for (std::size_t i {0}; i < z.size(); ++i) {
+        if (u_see(&z[i], junk) && z[i].posx >= x0 && z[i].posx <= x1 && z[i].posy >= y0
             && z[i].posy <= y1) {
             mon_targets.push_back(z[i]);
-            targetindices.push_back(i);
-            if (i == last_target)
-                passtarget = mon_targets.size() - 1;
-            z[i].draw(w_terrain, u.posx, u.posy, true);
+            targetindices.push_back(static_cast<int>(i));
+
+            if (static_cast<char>(i) == last_target) {
+                passtarget = static_cast<int>(mon_targets.size()) - 1;
+            }
+
+            z[i].draw(w_terrain, u.posx, u.posy, /*inv=*/true);
         }
     }
 
@@ -3823,12 +4043,15 @@ void Game::throw_item(player& p, int tarx, int tary, Item& thrown, std::vector<P
     std::string message;
     int dam = (thrown.weight() + thrown.type->melee_dam + p.str_cur)
         / double(2 + double(thrown.volume() / 6));
-    int i, tx, ty;
-    for (i = 0; i < trajectory.size() && dam > 0; i++) {
+    std::size_t index {0};
+    int tx {0};
+    int ty {0};
+
+    for (index = 0; index < trajectory.size() && dam > 0; ++index) {
         message = "";
         double goodhit = missed_by;
-        tx = trajectory[i].x;
-        ty = trajectory[i].y;
+        tx = trajectory[index].x;
+        ty = trajectory[index].y;
         // If there's a monster in the path of our item, and either our aim was true,
         //  OR it's not the monster we were aiming at and we were lucky enough to hit it
         if (mon_at(tx, ty) != -1 && (!missed || one_in(7 - int(z[mon_at(tx, ty)].type->size)))) {
@@ -3845,16 +4068,22 @@ void Game::throw_item(player& p, int tarx, int tary, Item& thrown, std::vector<P
                 rng(0, thrown.volume() + 8) - rng(0, p.str_cur) < thrown.volume()) {
                 if (u_see(tx, ty, tart))
                     add_msg("The %s shatters!", thrown.tname().c_str());
-                for (int i = 0; i < thrown.contents.size(); i++)
-                    m.add_item(tx, ty, thrown.contents[i]);
+
+                for (const auto& content : thrown.contents) {
+                    m.add_item(tx, ty, content);
+                }
+
                 sound(tx, ty, 16, "glass breaking!");
                 int glassdam = rng(0, thrown.volume() * 2);
                 if (glassdam > z[mon_at(tx, ty)].armor())
                     dam += (glassdam - z[mon_at(tx, ty)].armor());
             } else
                 m.add_item(tx, ty, thrown);
-            if (i < trajectory.size() - 1)
-                goodhit = double(double(rand() / RAND_MAX) / 2);
+
+            if (index < trajectory.size() - 1) {
+                goodhit = static_cast<double>(rand() / RAND_MAX) / 2;
+            }
+
             if (goodhit < .1 && !z[mon_at(tx, ty)].has_flag(MF_NOHEAD)) {
                 message = "Headshot!";
                 dam = rng(dam, dam * 3);
@@ -3880,21 +4109,24 @@ void Game::throw_item(player& p, int tarx, int tary, Item& thrown, std::vector<P
         } else // No monster hit, but the terrain might be.
             m.shoot(this, tx, ty, dam, false);
         if (m.move_cost(tx, ty) == 0) {
-            tx = trajectory[i - 1].x;
-            ty = trajectory[i - 1].y;
-            i = trajectory.size();
+            tx = trajectory[index - 1].x;
+            ty = trajectory[index - 1].y;
+            index = trajectory.size();
         }
     }
     if (m.move_cost(tx, ty) == 0) {
-        tx = trajectory[i - 2].x;
-        ty = trajectory[i - 2].y;
+        tx = trajectory[index - 2].x;
+        ty = trajectory[index - 2].y;
     }
     if (thrown.made_of(GLASS) && !thrown.active && // active means molotov, etc
         rng(0, thrown.volume() + 8) - rng(0, p.str_cur) < thrown.volume()) {
         if (u_see(tx, ty, tart))
             add_msg("The %s shatters!", thrown.tname().c_str());
-        for (int i = 0; i < thrown.contents.size(); i++)
-            m.add_item(tx, ty, thrown.contents[i]);
+
+        for (const auto& content : thrown.contents) {
+            m.add_item(tx, ty, content);
+        }
+
         sound(tx, ty, 16, "glass breaking!");
     } else {
         sound(tx, ty, 8, "thud.");
@@ -3932,14 +4164,18 @@ void Game::plfire(bool burst)
     std::vector<Monster> mon_targets;
     std::vector<int> targetindices;
     int passtarget = -1;
-    for (int i = 0; i < z.size(); i++) {
+
+    for (std::size_t i {0}; i < z.size(); ++i) {
         if (z[i].posx >= x0 && z[i].posx <= x1 && z[i].posy >= y0 && z[i].posy <= y1
-            && z[i].friendly == 0 && u_see(&(z[i]), junk)) {
+            && z[i].friendly == 0 && u_see(&z[i], junk)) {
             mon_targets.push_back(z[i]);
-            targetindices.push_back(i);
-            if (i == last_target)
-                passtarget = mon_targets.size() - 1;
-            z[i].draw(w_terrain, u.posx, u.posy, true);
+            targetindices.push_back(static_cast<int>(i));
+
+            if (static_cast<char>(i) == last_target) {
+                passtarget = static_cast<int>(mon_targets.size()) - 1;
+            }
+
+            z[i].draw(w_terrain, u.posx, u.posy, /*inv=*/true);
         }
     }
 
@@ -4160,7 +4396,8 @@ missed_by %f deviation %f trange %d charges %d myx %d myy %d monx %d mony %d",
             }
         }
         int dam = p.weapon.gun_damage();
-        for (int i = 0; i < trajectory.size() && dam > 0; i++) {
+
+        for (std::size_t i {0}; i < trajectory.size() && dam > 0; ++i) {
             if (i > 0)
                 m.drawsq(w_terrain, u, trajectory[i - 1].x, trajectory[i - 1].y, false, true);
             // Drawing the bullet uses player u, and not player p, because it's drawn
@@ -4247,7 +4484,7 @@ missed_by %f deviation %f trange %d charges %d myx %d myy %d monx %d mony %d",
                     }
                 }
             } else if ((!missed || one_in(5))
-                       && (npc_at(tx, ty) != -1 || u.posx == tx && u.posy == ty)) {
+                       && (npc_at(tx, ty) != -1 || (u.posx == tx && u.posy == ty))) {
                 double goodhit = missed_by;
                 body_part hit;
                 player* h;
@@ -4319,9 +4556,11 @@ missed_by %f deviation %f trange %d charges %d myx %d myy %d monx %d mony %d",
                         }
                     }
                 }
-            } else
+            } else {
                 m.shoot(this, tx, ty, dam, i == trajectory.size() - 1);
+            }
         }
+
         if (is_bolt
             && ((u.weapon.curammo->m1 == WOOD && !one_in(5))
                 || (u.weapon.curammo->m1 != WOOD && !one_in(15)))) {
@@ -4342,10 +4581,13 @@ missed_by %f deviation %f trange %d charges %d myx %d myy %d monx %d mony %d",
 void Game::butcher()
 {
     std::vector<int> corpses;
-    for (int i = 0; i < m.i_at(u.posx, u.posy).size(); i++) {
-        if (m.i_at(u.posx, u.posy)[i].type->id == itm_corpse)
-            corpses.push_back(i);
+
+    for (std::size_t i {0}; i < m.i_at(u.posx, u.posy).size(); ++i) {
+        if (m.i_at(u.posx, u.posy)[i].type->id == itype_id::itm_corpse) {
+            corpses.push_back(static_cast<int>(i));
+        }
     }
+
     if (corpses.size() == 0) {
         add_msg("There are no corpses here to butcher.");
         return;
@@ -4362,7 +4604,9 @@ void Game::butcher()
         if (query_yn("Butcher the %s corpse?", corpse->name.c_str())) {
             int age = m.i_at(u.posx, u.posy)[corpses[i]].bday;
             m.i_rem(u.posx, u.posy, corpses[i]);
-            int time_to_cut, pieces, pelts;
+            int time_to_cut {0};
+            int pieces {0};
+            int pelts {0};
             double skill_shift = 0.;
             switch (corpse->size) {
             case MS_TINY:
@@ -4565,8 +4809,10 @@ void Game::unload()
                 advance_nextinv();
                 iter++;
             }
-            if (u.volume_carried() + mod.volume() <= u.volume_capacity()
-                && u.weight_carried() + mod.weight() <= u.weight_capacity() && iter < 52) {
+
+            if (u.volume_carried() + static_cast<int>(mod.volume()) <= u.volume_capacity()
+                && u.weight_carried() + static_cast<int>(mod.weight()) <= u.weight_capacity()
+                && iter < 52) {
                 add_msg("You put the %s in your inventory.", mod.tname().c_str());
                 u.i_add(mod);
             } else {
@@ -4581,12 +4827,14 @@ void Game::unload()
     u.moves -= int(u.weapon.reload_time(u) / 2);
     it_ammo* tmpammo;
     if (u.weapon.is_gun()) { // Gun ammo is combined with existing items
-        for (int i = 0; i < u.inv.size() && u.weapon.charges > 0; i++) {
+        for (std::size_t i {0}; i < u.inv.size() && u.weapon.charges > 0; ++i) {
             if (u.inv[i].is_ammo()) {
                 tmpammo = dynamic_cast<it_ammo*>(u.inv[i].type);
+
                 if (tmpammo->id == u.weapon.curammo->id && u.inv[i].charges < tmpammo->count) {
-                    u.weapon.charges -= (tmpammo->count - u.inv[i].charges);
+                    u.weapon.charges -= tmpammo->count - u.inv[i].charges;
                     u.inv[i].charges = tmpammo->count;
+
                     if (u.weapon.charges < 0) {
                         u.inv[i].charges += u.weapon.charges;
                         u.weapon.charges = 0;
@@ -4615,8 +4863,10 @@ void Game::unload()
             newam.charges += u.weapon.charges;
             u.weapon.charges = 0;
         }
-        if (u.weight_carried() + newam.weight() < u.weight_capacity()
-            && u.volume_carried() + newam.volume() < u.volume_capacity() && iter < 52) {
+
+        if (u.weight_carried() + static_cast<int>(newam.weight()) < u.weight_capacity()
+            && u.volume_carried() + static_cast<int>(newam.volume()) < u.volume_capacity()
+            && iter < 52) {
             if (newam.made_of(LIQUID)) { // Liquids need a container
                 if (query_yn("Pour %s on the ground?", newam.tname().c_str()))
                     m.add_item(u.posx, u.posy, newam);
@@ -4626,16 +4876,19 @@ void Game::unload()
                     text << "Container for " << newam.tname();
                     char ch = inv(text.str().c_str());
                     Item* cont = &(u.i_at(ch));
-                    bool ok = true;
+
                     if (cont->is_tool() && (dynamic_cast<it_tool*>(cont->type))->ammo == type
                         && (cont->charges == 0 || cont->curammo->id == newam.type->id)) {
                         add_msg("You pour %s into your %s.", ammo_name(type).c_str(),
                                 cont->tname().c_str());
                         cont->curammo = dynamic_cast<it_ammo*>(newam.type);
                         cont->charges += newam.charges;
-                        if (cont->charges > (dynamic_cast<it_tool*>(cont->type))->max_charges) {
+
+                        if (cont->charges
+                            > static_cast<int>(dynamic_cast<it_tool*>(cont->type)->max_charges)) {
                             int extra = 0 - cont->charges;
-                            cont->charges = (dynamic_cast<it_tool*>(cont->type))->max_charges;
+                            cont->charges
+                                = static_cast<int>(dynamic_cast<it_tool*>(cont->type)->max_charges);
                             u.weapon.charges += extra;
                             add_msg("There's some left over!");
                             return;
@@ -4701,28 +4954,40 @@ void Game::chat()
     }
     std::vector<npc*> available;
     int junk;
-    for (int i = 0; i < active_npc.size(); i++) {
-        if (u_see(active_npc[i].posx, active_npc[i].posy, junk)
-            && trig_dist(u.posx, u.posy, active_npc[i].posx, active_npc[i].posy) <= 12)
-            available.push_back(&active_npc[i]);
+
+    for (auto& npc : active_npc) {
+        if (u_see(npc.posx, npc.posy, junk)
+            && trig_dist(u.posx, u.posy, npc.posx, npc.posy) <= 12) {
+            available.push_back(&npc);
+        }
     }
+
     if (available.size() == 1)
         available[0]->talk_to_u(this);
     else {
         WINDOW* w = newwin(available.size() + 3, 40, 10, 20);
         wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX, LINE_XXOO,
                 LINE_XOOX);
-        for (int i = 0; i < available.size(); i++)
-            mvwprintz(w, i + 1, 1, c_white, "%d: %s", i + 1, available[i]->name.c_str());
+
+        for (std::size_t i {0}; i < available.size(); ++i) {
+            mvwprintz(w, static_cast<int>(i) + 1, 1, c_white, "%d: %s", static_cast<int>(i) + 1,
+                      available[i]->name.c_str());
+        }
+
         mvwprintz(w, available.size() + 1, 1, c_white, "%d: Cancel", available.size() + 1);
         wrefresh(w);
-        char ch;
+        int ch {0};
+
         do {
             ch = getch();
-        } while (ch < '1' || ch > '1' + available.size());
+        } while (ch < '1' || ch > '1' + static_cast<int>(available.size()));
+
         ch -= '1';
-        if (ch == available.size())
+
+        if (ch == static_cast<int>(available.size())) {
             return;
+        }
+
         delwin(w);
         available[ch]->talk_to_u(this);
     }
@@ -4808,8 +5073,11 @@ void Game::plmove(int x, int y)
                 && rng(0, u.weapon.volume() + 8) < u.weapon.volume() + u.str_cur) {
                 // Glass weapon shattered
                 add_msg("Your %s shatters!", u.weapon.tname().c_str());
-                for (int i = 0; i < u.weapon.contents.size(); i++)
-                    m.add_item(x, y, u.weapon.contents[i]);
+
+                for (const auto& content : u.weapon.contents) {
+                    m.add_item(x, y, content);
+                }
+
                 sound(u.posx, u.posy, 16, "");
                 u.hit(this, bp_hands, 1, 0, rng(0, u.weapon.volume() * 2));
                 if (u.weapon.is_two_handed(&u)) // Hurt left arm too, if it was big
@@ -4858,9 +5126,9 @@ void Game::plmove(int x, int y)
         if (!u.wearing_something_on(bp_feet))
             movecost += 15;
         if (u.recoil > 0) {
-            if (int(u.str_cur / 2) + u.sklevel[sk_gun] >= u.recoil)
+            if ((u.str_cur / 2) + u.sklevel[skill::sk_gun] >= static_cast<int>(u.recoil)) {
                 u.recoil = 0;
-            else {
+            } else {
                 u.recoil -= int(u.str_cur / 2) + u.sklevel[sk_gun];
                 u.recoil = int(u.recoil / 2);
             }
@@ -4936,13 +5204,17 @@ void Game::plmove(int x, int y)
             if (in_tutorial)
                 tutorial_message(LESSON_PICKUP);
             std::string buff = "You see here ";
-            for (int i = 0; i < m.i_at(x, y).size(); i++) {
+
+            for (std::size_t i {0}; i < m.i_at(x, y).size(); ++i) {
                 buff += m.i_at(x, y)[i].tname();
-                if (i + 2 < m.i_at(x, y).size())
+
+                if (i + 2 < m.i_at(x, y).size()) {
                     buff += ", ";
-                else if (i + 1 < m.i_at(x, y).size())
+                } else if (i + 1 < m.i_at(x, y).size()) {
                     buff += ", and ";
+                }
             }
+
             buff += ".";
             add_msg(buff.c_str());
         } else if (m.i_at(x, y).size() != 0)
@@ -5000,9 +5272,11 @@ void Game::plswim(int x, int y)
             popup("You need to breathe but you can't swim!  Get to dry land, quick!");
     }
     u.moves -= movecost;
-    for (int i = 0; i < u.inv.size(); i++) {
-        if (u.inv[i].type->m1 == IRON && u.inv[i].damage < 5 && one_in(3))
-            u.inv[i].damage++;
+
+    for (auto& item : u.inv) {
+        if (item.type->m1 == material::IRON && item.damage < 5 && one_in(3)) {
+            ++item.damage;
+        }
     }
 }
 
@@ -5032,12 +5306,18 @@ void Game::vertical_move(int movez, bool force)
         return;
     }
     levz += movez;
+
     if (levz == monbuffz
-        && monbuff_turn + 120 <= turn - trig_dist(levx, levy, monbuffx, monbuffy)) {
-        for (int i = 0; i < monbuff.size(); i++)
-            z.push_back(monbuff[i]);
+        && monbuff_turn + 120
+            <= static_cast<int>(turn) - trig_dist(levx, levy, monbuffx, monbuffy)) {
+
+        for (const auto& monster : monbuff) {
+            z.push_back(monster);
+        }
+
         monbuff.clear();
     }
+
     u.moves -= 100;
     if (force) {                                                 // Basically, we fell.
         int dam = int((u.str_max / 4) + rng(5, 10)) * rng(1, 3); // The bigger they are
@@ -5053,7 +5333,8 @@ void Game::vertical_move(int movez, bool force)
     monbuffx = levx;
     monbuffy = levy;
     monbuffz = levz - movez;
-    for (int i = 0; i < z.size(); i++) {
+
+    for (std::size_t i {0}; i < z.size(); ++i) {
         if (trig_dist(u.posx, u.posy, z[i].posx, z[i].posy) > 3) {
             monbuff.push_back(z[i]);
             group = valid_group((mon_id)(z[i].type->id), levx, levy);
@@ -5063,15 +5344,19 @@ void Game::vertical_move(int movez, bool force)
                     cur_om.zg[group].radius++;
             } else if (mt_to_mc((mon_id)(z[i].type->id)) != mcat_null)
                 cur_om.zg.push_back(mongroup(mt_to_mc(mon_id(z[i].type->id)), levx, levy, 1, 1));
-            for (int j = 0; j < active_npc.size(); j++) {
-                if (active_npc[j].target == &z[i])
-                    active_npc[j].target = NULL;
+
+            for (auto& npc : active_npc) {
+                if (npc.target == &z[i]) {
+                    npc.target = nullptr;
+                }
             }
+
             z.erase(z.begin() + i);
             i--;
         } else if (u_see(&(z[i]), junk))
             add_msg("The %s follows you %s.", z[i].name().c_str(), (movez == -1 ? "down" : "up"));
     }
+
     cur_om.save();
     m.save(&cur_om, turn, levx, levy);
     cur_om = overmap(this, cur_om.posx, cur_om.posy, cur_om.posz + movez);
@@ -5153,8 +5438,8 @@ void Game::update_map(int& x, int& y)
         cur_om = overmap(this, cur_om.posx + olevx, cur_om.posy + olevy, cur_om.posz);
     }
 
-    // Shift monsters
-    for (int i = 0; i < z.size(); i++) {
+    // Shift monsters.
+    for (std::size_t i {0}; i < z.size(); ++i) {
         z[i].shift(shiftx, shifty);
         if (z[i].posx < 0 - SEEX * 3 || z[i].posy < 0 - SEEX * 3 || z[i].posx > SEEX * 6
             || z[i].posy > SEEY * 6) {
@@ -5173,16 +5458,20 @@ void Game::update_map(int& x, int& y)
                     cur_om.zg.push_back(mongroup(mt_to_mc((mon_id)(z[i].type->id)), levx + shiftx,
                                                  levy + shifty, 1, 1));
             }
-            for (int j = 0; j < active_npc.size(); j++) {
-                if (active_npc[j].target == &z[i])
-                    active_npc[j].target = NULL;
+
+            for (auto& npc : active_npc) {
+                if (npc.target == &z[i]) {
+                    npc.target = nullptr;
+                }
             }
+
             z.erase(z.begin() + i);
             i--;
         }
     }
-    // Shift NPCs
-    for (int i = 0; i < active_npc.size(); i++) {
+
+    // Shift NPCs.
+    for (std::size_t i {0}; i < active_npc.size(); ++i) {
         active_npc[i].shift(shiftx, shifty);
         if (active_npc[i].posx < 0 - SEEX * 3 || active_npc[i].posy < 0 - SEEX * 3
             || active_npc[i].posx > SEEX * 6 || active_npc[i].posy > SEEY * 6) {
@@ -5191,10 +5480,12 @@ void Game::update_map(int& x, int& y)
             i--;
         }
     }
+
     // Spawn NPCs?
     if (!in_tutorial) {
         npc temp;
-        for (int i = 0; i < cur_om.npcs.size(); i++) {
+
+        for (std::size_t i {0}; i < cur_om.npcs.size(); ++i) {
             if (rl_dist(levx, levy, cur_om.npcs[i].mapx, cur_om.npcs[i].mapy) <= 2) {
                 int dx = cur_om.npcs[i].mapx - levx, dy = cur_om.npcs[i].mapy - levy;
                 if (debugmon)
@@ -5220,8 +5511,11 @@ void Game::update_map(int& x, int& y)
     }
     // Spawn monsters if appropriate
     m.spawn_monsters(this); // Static monsters
-    if (turn >= nextspawn)
+
+    if (static_cast<int>(turn) >= nextspawn) {
         spawn_mon(shiftx, shifty);
+    }
+
     // Shift scent
     unsigned int newscent[SEEX * 3][SEEY * 3];
     for (int i = 0; i < SEEX * 3; i++) {
@@ -5240,7 +5534,8 @@ void Game::spawn_mon(int shiftx, int shifty)
     int nlevx = levx + shiftx;
     int nlevy = levy + shifty;
     int group;
-    int monx, mony, rntype, curmon;
+    int monx {0};
+    int mony {0};
     int dist;
     int pop, rad;
     int iter;
@@ -5257,9 +5552,9 @@ void Game::spawn_mon(int shiftx, int shifty)
 
     // Now, spawn monsters (perhaps)
     Monster zom;
-    for (int i = 0; i < cur_om.zg.size(); i++) {
+
+    for (std::size_t i {0}; i < cur_om.zg.size(); ++i) {
         group = 0;
-        rntype = 0;
         dist = trig_dist(nlevx, nlevy, cur_om.zg[i].posx, cur_om.zg[i].posy);
         pop = cur_om.zg[i].population;
         rad = cur_om.zg[i].radius;
@@ -5311,12 +5606,15 @@ mon_id Game::valid_monster_from(std::vector<mon_id> group)
 {
     std::vector<mon_id> valid;
     int rntype = 0;
-    for (int i = 0; i < group.size(); i++) {
-        if (mtypes[group[i]]->frequency > 0 && turn + 900 >= mtypes[group[i]]->difficulty * 300) {
-            valid.push_back(group[i]);
-            rntype += mtypes[group[i]]->frequency;
+
+    for (const auto& monster_id : group) {
+        if (mtypes[monster_id]->frequency > 0
+            && static_cast<int>(turn) + 900 >= mtypes[monster_id]->difficulty * 300) {
+            valid.push_back(monster_id);
+            rntype += mtypes[monster_id]->frequency;
         }
     }
+
     if (valid.size() == 0)
         return mon_null;
     int curmon = -1;
@@ -5334,24 +5632,27 @@ int Game::valid_group(mon_id type, int x, int y)
     std::vector<int> valid_groups;
     std::vector<int> semi_valid; // Groups that're ALMOST big enough
     int dist;
-    for (int i = 0; i < cur_om.zg.size(); i++) {
+
+    for (std::size_t i {0}; i < cur_om.zg.size(); ++i) {
         dist = trig_dist(x, y, cur_om.zg[i].posx, cur_om.zg[i].posy);
+
         if (dist < cur_om.zg[i].radius) {
-            for (int j = 0; j < (moncats[cur_om.zg[i].type]).size(); j++) {
-                if (type == (moncats[cur_om.zg[i].type])[j]) {
-                    valid_groups.push_back(i);
-                    j = (moncats[cur_om.zg[i].type]).size();
+            for (const auto monster_id : moncats[cur_om.zg[i].type]) {
+                if (type == monster_id) {
+                    valid_groups.push_back(static_cast<int>(i));
+                    break;
                 }
             }
         } else if (dist < cur_om.zg[i].radius + 1) {
-            for (int j = 0; j < (moncats[cur_om.zg[i].type]).size(); j++) {
-                if (type == (moncats[cur_om.zg[i].type])[j]) {
-                    semi_valid.push_back(i);
-                    j = (moncats[cur_om.zg[i].type]).size();
+            for (const auto monster_id : moncats[cur_om.zg[i].type]) {
+                if (type == monster_id) {
+                    semi_valid.push_back(static_cast<int>(i));
+                    break;
                 }
             }
         }
     }
+
     if (valid_groups.size() == 0) {
         if (semi_valid.size() == 0) {
             return -1;
@@ -5370,7 +5671,8 @@ void Game::wait()
 {
     char ch = menu("Wait for how long?", "5 Minutes", "30 Minutes", "1 hour", "2 hours", "3 hours",
                    "6 hours", "Exit", NULL);
-    int time;
+    int time {0};
+
     if (ch == 7)
         return;
     switch (ch) {
@@ -5409,13 +5711,14 @@ void Game::write_msg()
     werase(w_messages);
     int size = 7;
     for (int i = size; i > 0; i--) {
-        if (messages.size() >= i) {
-            if (curmes >= i)
-                mvwprintz(w_messages, size - (i - 1), 0, c_ltred,
+        if (static_cast<int>(messages.size()) >= i) {
+            if (curmes >= i) {
+                mvwprintz(w_messages, size - (i - 1), 0, nc_color::c_ltred,
                           messages[messages.size() - i].c_str());
-            else
-                mvwprintz(w_messages, size - (i - 1), 0, c_dkgray,
+            } else {
+                mvwprintz(w_messages, size - (i - 1), 0, nc_color::c_dkgray,
                           messages[messages.size() - i].c_str());
+            }
         }
     }
     curmes = 0;
@@ -5467,11 +5770,13 @@ std::vector<Point> Game::target(int& x,
             // If no previous target, target the closest there is
             double closest = -1;
             double dist;
-            for (int i = 0; i < t.size(); i++) {
+
+            for (std::size_t i {0}; i < t.size(); ++i) {
                 dist = trig_dist(t[i].posx, t[i].posy, u.posx, u.posy);
+
                 if (closest < 0 || dist < closest) {
                     closest = dist;
-                    target = i;
+                    target = static_cast<int>(i);
                 }
             }
         }
@@ -5500,35 +5805,46 @@ std::vector<Point> Game::target(int& x,
                 mvwputch(w_target, i, j, c_white, ' ');
         }
         if (x != u.posx || y != u.posy) {
-            // Calculate the return vector (and draw it too)
-            for (int i = 0; i < ret.size(); i++)
-                m.drawsq(w_terrain, u, ret[i].x, ret[i].y, false, true);
+            // Calculate the return vector (and draw it too).
+            for (const auto& point : ret) {
+                m.drawsq(w_terrain, u, point.x, point.y, /*invert=*/false, /*show_items=*/true);
+            }
+
             // Draw the player
             mvwputch(w_terrain, SEEX, SEEY, u.color(), '@');
-            // Draw the Monsters
-            for (int i = 0; i < z.size(); i++) {
-                if (u_see(&(z[i]), tart) && z[i].posx >= lowx && z[i].posy >= lowy
-                    && z[i].posx <= hix && z[i].posy <= hiy)
-                    z[i].draw(w_terrain, u.posx, u.posy, false);
+
+            // Draw the monsters.
+            for (auto& monster : z) {
+                if (u_see(&monster, tart) && monster.posx >= lowx && monster.posy >= lowy
+                    && monster.posx <= hix && monster.posy <= hiy) {
+                    monster.draw(w_terrain, u.posx, u.posy, /*inv=*/false);
+                }
             }
-            // Draw the NPCs
-            for (int i = 0; i < active_npc.size(); i++) {
-                if (u_see(active_npc[i].posx, active_npc[i].posy, tart))
-                    active_npc[i].draw(w_terrain, u.posx, u.posy, false);
+
+            // Draw the NPCs.
+            for (auto& npc : active_npc) {
+                if (u_see(npc.posx, npc.posy, tart)) {
+                    npc.draw(w_terrain, u.posx, u.posy, /*inv=*/false);
+                }
             }
+
             if (m.sees(u.posx, u.posy, x, y, -1, tart)) {  // Selects a valid line-of-sight
                 ret = line_to(u.posx, u.posy, x, y, tart); // Sets the vector to that LOS
-                for (int i = 0; i < ret.size(); i++) {
-                    if (abs(ret[i].x - u.posx) <= sight_dist
-                        && abs(ret[i].y - u.posy) <= sight_dist) {
-                        if (mon_at(ret[i].x, ret[i].y) != -1
-                            && u_see(&(z[mon_at(ret[i].x, ret[i].y)]), tart))
-                            z[mon_at(ret[i].x, ret[i].y)].draw(w_terrain, u.posx, u.posy, true);
-                        else if (npc_at(ret[i].x, ret[i].y) != -1)
-                            active_npc[npc_at(ret[i].x, ret[i].y)].draw(w_terrain, u.posx, u.posy,
-                                                                        true);
-                        else
-                            m.drawsq(w_terrain, u, ret[i].x, ret[i].y, true, true);
+
+                for (auto& point : ret) {
+                    if (std::abs(point.x - u.posx) <= sight_dist
+                        && std::abs(point.y - u.posy) <= sight_dist) {
+                        if (mon_at(point.x, point.y) != -1
+                            && u_see(&z[mon_at(point.x, point.y)], tart)) {
+                            z[mon_at(point.x, point.y)].draw(w_terrain, u.posx, u.posy,
+                                                             /*inv=*/true);
+                        } else if (npc_at(point.x, point.y) != -1) {
+                            active_npc[npc_at(point.x, point.y)].draw(w_terrain, u.posx, u.posy,
+                                                                      /*inv=*/true);
+                        } else {
+                            m.drawsq(w_terrain, u, point.x, point.y, /*invert=*/true,
+                                     /*show_items=*/true);
+                        }
                     }
                 }
             }
@@ -5567,15 +5883,20 @@ std::vector<Point> Game::target(int& x,
             y = t[target].posy;
         } else if ((ch == '>') && (target != -1)) {
             target++;
-            if (target == t.size())
+
+            if (target == static_cast<int>(t.size())) {
                 target = 0;
+            }
+
             x = t[target].posx;
             y = t[target].posy;
         } else if (ch == '.' || ch == 'f') {
-            for (int i = 0; i < t.size(); i++) {
-                if (t[i].posx == x && t[i].posy == y)
-                    target = i;
+            for (std::size_t i {0}; i < t.size(); ++i) {
+                if (t[i].posx == x && t[i].posy == y) {
+                    target = static_cast<int>(i);
+                }
             }
+
             return ret;
         } else if (ch == KEY_ESCAPE) { // ESC hit - return false, e.g. CANCEL
             ret.clear();
@@ -5620,11 +5941,13 @@ oter_id Game::ter_at(int omx, int omy, bool& mark_as_seen)
 moncat_id Game::mt_to_mc(mon_id type)
 {
     for (int i = 0; i < num_moncats; i++) {
-        for (int j = 0; j < (moncats[i]).size(); j++) {
-            if ((moncats[i])[j] == type)
-                return (moncat_id)(i);
+        for (const auto& monster_id : moncats[i]) {
+            if (monster_id == type) {
+                return static_cast<moncat_id>(i);
+            }
         }
     }
+
     return mcat_null;
 }
 

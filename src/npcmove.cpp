@@ -1,4 +1,5 @@
 #include <cmath>
+#include <cstddef>
 #include <cstdlib>
 #include <string>
 #include <vector>
@@ -144,12 +145,14 @@ void npc::move(Game* g)
             move_to(g, path[0].x, path[0].y);
         break;
 
-    case npc_follow_player:
-        if (path.size() <= follow_distance()) // We're close enough to u.
+    case npc_action::npc_follow_player: {
+        if (static_cast<int>(path.size()) <= follow_distance()) {
+            // We're close enough to you.
             move_pause();
-        else
+        } else {
             move_to(g, path[0].x, path[0].y);
-        break;
+        }
+    } break;
 
     case npc_talk_to_player:
         talk_to_u(g);
@@ -184,31 +187,35 @@ Monster* npc::choose_monster_target(Game* g)
     int linet;
     bool defend_u = g->sees_u(posx, posy, linet) && !want_to_attack_player(g);
 
-    for (int i = 0; i < g->z.size(); i++) {
+    for (std::size_t i {0}; i < g->z.size(); ++i) {
         if (!g->z[i].is_fleeing(g->u) && !g->z[i].is_fleeing(*this)
             && g->pl_sees(this, &(g->z[i]), linet) && g->z[i].friendly == 0) {
             if (defend_u) {
                 distance = trig_dist(g->u.posx, g->u.posy, g->z[i].posx, g->z[i].posy);
+
                 if (distance < plclosest) {
-                    plindex = i;
+                    plindex = static_cast<int>(i);
                     plclosest = distance;
                     pllowHP = g->z[i].hp;
                 } else if (distance == plclosest && g->z[i].hp < pllowHP) {
-                    plindex = i;
+                    plindex = static_cast<int>(i);
                     pllowHP = g->z[i].hp;
                 }
             }
+
             distance = trig_dist(posx, posy, g->z[i].posx, g->z[i].posy);
+
             if (distance < closest) {
-                index = i;
+                index = static_cast<int>(i);
                 closest = distance;
                 lowHP = g->z[i].hp;
             } else if (distance == closest && g->z[i].hp < lowHP) {
-                index = i;
+                index = static_cast<int>(i);
                 lowHP = g->z[i].hp;
             }
         }
     }
+
     if (plindex != -1) { // Maybe defend the player.
         int importance = (g->u.hp_percentage() - hp_percentage()) / 20;
         importance -= op_of_u.value / 2;
@@ -244,14 +251,14 @@ void npc::find_items(Game* g)
     for (int x = minx; x <= maxx; x++) {
         for (int y = miny; y <= maxy; y++) {
             if (g->m.sees(posx, posy, x, y, dist, linet)) {
-                for (int i = 0; i < g->m.i_at(x, y).size(); i++) {
-                    Item* tmp = &(g->m.i_at(x, y)[i]);
-                    // We value it enough to pick it up
-                    if (value(*tmp) + personality.collector >= NPC_HI_VALUE
-                        && value(*tmp) > top_value
-                        && volume_carried() + tmp->volume() <= volume_capacity()
-                        && weight_carried() + tmp->weight() <= weight_capacity()) {
-                        top_value = value(g->m.i_at(x, y)[i]);
+                for (auto& item : g->m.i_at(x, y)) {
+                    // We value it enough to pick it up.
+                    if (value(item) + personality.collector >= NPC_HI_VALUE
+                        && value(item) > top_value
+                        && volume_carried() + static_cast<int>(item.volume()) <= volume_capacity()
+                        && weight_carried() + static_cast<int>(item.weight())
+                            <= weight_capacity()) {
+                        top_value = value(item);
                         itx = x;
                         ity = y;
                     }
@@ -279,15 +286,19 @@ void npc::pickup_items(Game* g)
         if (debug)
             debugmsg("Distance to item < 1; picking up items.");
         Item* tmp;
-        for (int i = 0; i < g->m.i_at(itx, ity).size(); i++) {
+
+        for (std::size_t i {0}; i < g->m.i_at(itx, ity).size(); ++i) {
             tmp = &(g->m.i_at(itx, ity)[i]);
-            if (value(*tmp) >= NPC_HI_VALUE && volume_carried() + tmp->volume() <= volume_capacity()
-                && weight_carried() + tmp->weight() <= weight_capacity()) {
+
+            if (value(*tmp) >= NPC_HI_VALUE
+                && volume_carried() + static_cast<int>(tmp->volume()) <= volume_capacity()
+                && weight_carried() + static_cast<int>(tmp->weight()) <= weight_capacity()) {
                 i_add(*tmp);
-                g->m.i_rem(itx, ity, i);
-                i--;
+                g->m.i_rem(itx, ity, static_cast<int>(i));
+                --i;
             }
         }
+
         moves -= 100;
         itx = 999;
         ity = 999;
@@ -553,7 +564,8 @@ void npc::set_destination(Game* g)
         */
     } else {                         // We do have at least one pressing need
         oter_id dest_type = ot_null; // Type of terrain we're looking for
-        switch (needs[0]) {
+
+        switch (needs.front()) {
         case need_ammo:
         case need_gun:
             dest_type = ot_s_gun_north;
@@ -567,7 +579,11 @@ void npc::set_destination(Game* g)
         case need_drink:
             dest_type = ot_s_liquor_north;
             break;
+
+        default:
+            break;
         }
+
         int dist = 0;
         Point p = g->cur_om.find_closest(Point(mapx, mapy), dest_type, 4, dist, false);
         goalx = p.x;
@@ -607,17 +623,16 @@ void npc::go_to_destination(Game* g)
 
 bool npc::can_move_to(Game* g, int x, int y)
 {
-    if (g->m.move_cost(x, y) > 0 || g->m.has_flag(bashable, x, y) && rl_dist(posx, posy, x, y) <= 1)
-        return true;
-    return false;
+    return g->m.move_cost(x, y) > 0
+        || (g->m.has_flag(t_flag::bashable, x, y) && rl_dist(posx, posy, x, y) <= 1);
 }
 
 void npc::move_to(Game* g, int x, int y)
 {
     if (recoil > 0) { // Start by dropping recoil a little
-        if (int(str_cur / 2) + sklevel[sk_gun] >= recoil)
+        if ((str_cur / 2) + sklevel[sk_gun] >= static_cast<int>(recoil)) {
             recoil = 0;
-        else {
+        } else {
             recoil -= int(str_cur / 2) + sklevel[sk_gun];
             recoil = int(recoil / 2);
         }
@@ -675,9 +690,9 @@ void npc::move_away_from(Game* g, int x, int y)
                 move_to(g, posx, posy + sy);
             else if (dy >= dx * 2 && can_move_to(g, posx - sx, posy + sy))
                 move_to(g, posx - sx, posy + sy);
-            else if (g, can_move_to(g, posx + sx, posy))
+            else if (can_move_to(g, posx + sx, posy)) {
                 move_to(g, posx + sx, posy);
-            else if (dy > 3 && can_move_to(g, posx + sx, posy - sy))
+            } else if (dy > 3 && can_move_to(g, posx + sx, posy - sy))
                 move_to(g, posx + sx, posy - sy);
             else
                 move_pause();
@@ -799,7 +814,8 @@ void npc::melee_player(Game* g, player& foe)
 void npc::heal_player(Game* g, player& patient)
 {
     int low_health = 400;
-    hp_part worst;
+    auto worst {hp_part::hp_head};
+
     // Chose the worst-hurting body part
     for (int i = 0; i < num_hp_parts; i++) {
         int hp = patient.hp_cur[i];
@@ -819,7 +835,8 @@ void npc::heal_player(Game* g, player& patient)
     else
         g->add_msg("%s heals you.", name.c_str());
 
-    int amount_healed;
+    int amount_healed {0};
+
     if (has_amount(itm_1st_aid, 1)) {
         switch (worst) {
         case hp_head:
@@ -879,10 +896,11 @@ void npc::mug_player(Game* g, player& mark)
                        mark.weapon.tname().c_str());
         else if (!mark.is_npc())
             g->add_msg("%d takes your %d.", name.c_str(), mark.weapon.tname().c_str());
-        if (volume_carried() + mark.weapon.volume() <= volume_capacity()
-            && weight_carried() + mark.weapon.weight() <= weight_capacity())
+
+        if (volume_carried() + static_cast<int>(mark.weapon.volume()) <= volume_capacity()
+            && weight_carried() + static_cast<int>(mark.weapon.weight()) <= weight_capacity()) {
             i_add(mark.weapon);
-        else {
+        } else {
             if (g->u_see(posx, posy, linet))
                 g->add_msg("%d drops it.", (male ? "He" : "She"));
             g->m.add_item(posx, posy, mark.weapon);
@@ -890,18 +908,21 @@ void npc::mug_player(Game* g, player& mark)
         mark.remove_weapon();
     } else { // We already took your weapon; start on inventory
         int best_value = 0, index = -1;
-        for (int i = 0; i < mark.inv.size(); i++) {
+
+        for (std::size_t i {0}; i < mark.inv.size(); ++i) {
             int itvalue = value(mark.inv[i]);
+
             if (itvalue >= NPC_LOW_VALUE
-                && volume_carried() + mark.inv[i].volume() <= volume_capacity()
-                && weight_carried() + mark.inv[i].weight() <= weight_capacity()
+                && volume_carried() + static_cast<int>(mark.inv[i].volume()) <= volume_capacity()
+                && weight_carried() + static_cast<int>(mark.inv[i].weight()) <= weight_capacity()
                 && (itvalue > best_value
                     || (itvalue == best_value
                         && mark.inv[i].volume() < mark.inv[index].volume()))) {
                 best_value = itvalue;
-                index = i;
+                index = static_cast<int>(i);
             }
         }
+
         if (index == -1) { // Nothing left to steal!
             attitude = NPCATT_FLEE;
             move_away_from(g, mark.posx, mark.posy);

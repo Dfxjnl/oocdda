@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <fstream>
@@ -10,6 +12,8 @@
 
 #include "faction.hpp"
 #include "line.hpp"
+#include "mongroup.hpp"
+#include "omdata.hpp"
 #include "output.hpp"
 #include "rng.hpp"
 #include "settlement.hpp"
@@ -181,33 +185,35 @@ bool& overmap::seen(int x, int y)
 
 bool overmap::has_note(int x, int y)
 {
-    for (int i = 0; i < notes.size(); i++) {
-        if (notes[i].x == x && notes[i].y == y)
-            return true;
-    }
-    return false;
+    return std::ranges::any_of(notes,
+                               [x, y](const auto& note) { return note.x == x && note.y == y; });
 }
 
 std::string overmap::note(int x, int y)
 {
-    for (int i = 0; i < notes.size(); i++) {
-        if (notes[i].x == x && notes[i].y == y)
-            return notes[i].text;
+    for (const auto& note : notes) {
+        if (note.x == x && note.y == y) {
+            return note.text;
+        }
     }
+
     return "";
 }
 
 void overmap::add_note(int x, int y, std::string message)
 {
-    for (int i = 0; i < notes.size(); i++) {
+    for (std::size_t i {0}; i < notes.size(); ++i) {
         if (notes[i].x == x && notes[i].y == y) {
-            if (message == "")
-                notes.erase(notes.begin() + i);
-            else
+            if (message.empty()) {
+                notes.erase(notes.begin() + static_cast<std::ptrdiff_t>(i));
+            } else {
                 notes[i].text = message;
+            }
+
             return;
         }
     }
+
     if (message.length() > 0)
         notes.push_back(om_note(x, y, notes.size(), message));
 }
@@ -239,9 +245,11 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                     river_start.push_back(Point(i, 0));
             }
         }
-        for (int i = 0; i < north->roads_out.size(); i++) {
-            if (north->roads_out[i].y == OMAPY - 1)
-                roads_out.push_back(city(north->roads_out[i].x, 0, 0));
+
+        for (const auto& road : north->roads_out) {
+            if (road.y == OMAPY - 1) {
+                roads_out.emplace_back(road.x, 0, 0);
+            }
         }
     }
     int rivers_from_north = river_start.size();
@@ -252,14 +260,18 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             if (west->ter(OMAPX - 1, i) == ot_river_center
                 && west->ter(OMAPX - 1, i - 1) == ot_river_center
                 && west->ter(OMAPX - 1, i + 1) == ot_river_center) {
-                if (river_start.size() == rivers_from_north
-                    || river_start[river_start.size() - 1].y < i - 6)
-                    river_start.push_back(Point(0, i));
+
+                if (static_cast<int>(river_start.size()) == rivers_from_north
+                    || river_start[river_start.size() - 1].y < i - 6) {
+                    river_start.emplace_back(0, i);
+                }
             }
         }
-        for (int i = 0; i < west->roads_out.size(); i++) {
-            if (west->roads_out[i].x == OMAPX - 1)
-                roads_out.push_back(city(0, west->roads_out[i].y, 0));
+
+        for (const auto& road : west->roads_out) {
+            if (road.x == OMAPX - 1) {
+                roads_out.emplace_back(0, road.y, 0);
+            }
         }
     }
     if (south != NULL) {
@@ -274,9 +286,11 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             if (south->ter(i, 0) == ot_road_nesw)
                 roads_out.push_back(city(i, OMAPY - 1, 0));
         }
-        for (int i = 0; i < south->roads_out.size(); i++) {
-            if (south->roads_out[i].y == 0)
-                roads_out.push_back(city(south->roads_out[i].x, OMAPY - 1, 0));
+
+        for (const auto& road : south->roads_out) {
+            if (road.y == 0) {
+                roads_out.emplace_back(road.x, OMAPY - 1, 0);
+            }
         }
     }
     int rivers_to_south = river_end.size();
@@ -286,16 +300,20 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
                 ter(OMAPX - 1, i) = ot_river_center;
             if (east->ter(0, i) == ot_river_center && east->ter(0, i - 1) == ot_river_center
                 && east->ter(0, i + 1) == ot_river_center) {
-                if (river_end.size() == rivers_to_south
-                    || river_end[river_end.size() - 1].y < i - 6)
-                    river_end.push_back(Point(OMAPX - 1, i));
+
+                if (static_cast<int>(river_end.size()) == rivers_to_south
+                    || river_end[river_end.size() - 1].y < i - 6) {
+                    river_end.emplace_back(OMAPX - 1, i);
+                }
             }
             if (east->ter(0, i) == ot_road_nesw)
                 roads_out.push_back(city(OMAPX - 1, i, 0));
         }
-        for (int i = 0; i < east->roads_out.size(); i++) {
-            if (east->roads_out[i].x == 0)
-                roads_out.push_back(city(OMAPX - 1, east->roads_out[i].y, 0));
+
+        for (const auto& road : east->roads_out) {
+            if (road.x == 0) {
+                roads_out.emplace_back(OMAPX - 1, road.y, 0);
+            }
         }
     }
     // Even up the start and end points of rivers. (difference of 1 is acceptable)
@@ -357,8 +375,10 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
         if (river_start.size() != river_end.size())
             debugmsg("river_start.size() = %d; river_end.size() = %d; not equal??",
                      river_start.size(), river_end.size());
-        for (int i = 0; i < river_start.size(); i++)
+
+        for (std::size_t i {0}; i < river_start.size(); ++i) {
             place_river(river_start[i], river_end[i]);
+        }
     }
 
     // Cities, forests, and settlements come next.
@@ -408,16 +428,26 @@ void overmap::generate(Game* g, overmap* north, overmap* east, overmap* south, o
             viable_roads.erase(viable_roads.begin() + tmp);
         }
     }
-    // Compile our master list of roads; it's less messy if road_points is first
-    for (int i = 0; i < roads_out.size(); i++)
-        road_points.push_back(roads_out[i]);
-    for (int i = 0; i < cities.size(); i++)
-        road_points.push_back(cities[i]);
+
+    // Compile our master list of roads; it's less messy if road_points is first.
+    road_points.reserve(roads_out.size());
+
+    for (const auto road : roads_out) {
+        road_points.push_back(road);
+    }
+
+    for (const auto city : cities) {
+        road_points.push_back(city);
+    }
+
     // And finally connect them via "highways"
     place_hiways(road_points, ot_road_nesw);
-    // Make the roads out road points;
-    for (int i = 0; i < roads_out.size(); i++)
-        ter(roads_out[i].x, roads_out[i].y) = ot_road_nesw;
+
+    // Make the roads out road points.
+    for (const auto& road : roads_out) {
+        ter(road.x, road.y) = oter_id::ot_road_nesw;
+    }
+
     // Clean up our roads and rivers
     polish();
     // Place the monsters, now that the terrain is laid out
@@ -466,22 +496,34 @@ void overmap::generate_sub(overmap* above)
     place_hiways(sewer_points, ot_sewer_nesw);
     polish(ot_sewer_ns, ot_sewer_nesw);
     place_hiways(subway_points, ot_subway_nesw);
-    for (int i = 0; i < subway_points.size(); i++)
-        ter(subway_points[i].x, subway_points[i].y) = ot_subway_station;
-    for (int i = 0; i < lab_points.size(); i++)
-        build_lab(lab_points[i].x, lab_points[i].y, lab_points[i].s);
-    for (int i = 0; i < ant_points.size(); i++)
-        build_anthill(ant_points[i].x, ant_points[i].y, ant_points[i].s);
-    for (int i = 0; i < goo_points.size(); i++)
-        build_slimepit(goo_points[i].x, goo_points[i].y, goo_points[i].s);
-    for (int i = 0; i < above->cities.size(); i++) {
-        if (one_in(3))
-            zg.push_back(mongroup(mcat_chud, above->cities[i].x * 2, above->cities[i].y * 2,
-                                  above->cities[i].s, above->cities[i].s * 20));
-        if (!one_in(8))
-            zg.push_back(mongroup(mcat_sewer, above->cities[i].x * 2, above->cities[i].y * 2,
-                                  above->cities[i].s * 3.5, above->cities[i].s * 70));
+
+    for (const auto& subway_point : subway_points) {
+        ter(subway_point.x, subway_point.y) = oter_id::ot_subway_station;
     }
+
+    for (const auto& lab_point : lab_points) {
+        build_lab(lab_point.x, lab_point.y, lab_point.s);
+    }
+
+    for (const auto& ant_point : ant_points) {
+        build_anthill(ant_point.x, ant_point.y, ant_point.s);
+    }
+
+    for (const auto& goo_point : goo_points) {
+        build_slimepit(goo_point.x, goo_point.y, goo_point.s);
+    }
+
+    for (const auto& city : above->cities) {
+        if (one_in(3)) {
+            zg.emplace_back(moncat_id::mcat_chud, city.x * 2, city.y * 2, city.s, city.s * 20);
+        }
+
+        if (!one_in(8)) {
+            zg.emplace_back(moncat_id::mcat_sewer, city.x * 2, city.y * 2, city.s * 3.5,
+                            city.s * 70);
+        }
+    }
+
     place_rifts();
     polish(ot_subway_ns, ot_subway_nesw);
     polish(ot_ants_ns, ot_ants_nesw);
@@ -570,16 +612,19 @@ void overmap::place_forest()
         fory = rng(0, OMAPY - 1);
         // fors determinds its basic size
         fors = rng(15, 40);
-        for (int j = 0; j < cities.size(); j++) {
-            while (dist(forx, fory, cities[j].x, cities[j].y) - fors / 2 < cities[j].s) {
-                // Set forx and fory far enough from cities
-                forx = rng(0, OMAPX - 1);
-                fory = rng(0, OMAPY - 1);
-                // Set fors to determine the size of the forest; usually won't overlap w/ cities
-                fors = rng(15, 40);
+
+        for (std::size_t j {0}; j < cities.size(); ++j) {
+            while (static_cast<int>(dist(forx, fory, cities[j].x, cities[j].y)) - fors / 2
+                   < cities[j].s) {
+                // Set forx and fory far enough from cities.
+                forx = static_cast<int>(rng(0, OMAPX - 1));
+                fory = static_cast<int>(rng(0, OMAPY - 1));
+                // Set fors to determine the size of the forest; usually won't overlap with cities.
+                fors = static_cast<int>(rng(15, 40));
                 j = 0;
             }
         }
+
         int swamps = SWAMPINESS; // How big the swamp may be...
         x = forx;
         y = fory;
@@ -614,9 +659,10 @@ void overmap::place_forest()
                     }
                 }
                 bool swampy = false;
-                if (swamps > 0 && swamp_chance > 0 && !one_in(swamp_chance)
-                        && (ter(x, y) == ot_forest || ter(x, y) == ot_forest_thick
-                            || ter(x, y) == ot_field)
+
+                if ((swamps > 0 && swamp_chance > 0 && !one_in(swamp_chance)
+                     && (ter(x, y) == oter_id::ot_forest || ter(x, y) == oter_id::ot_forest_thick
+                         || ter(x, y) == oter_id::ot_field))
                     || one_in(SWAMPCHANCE)) {
                     // ...and make a swamp.
                     ter(x, y) = ot_forest_water;
@@ -677,71 +723,73 @@ void overmap::place_settlements(Game* g)
         settlement tmp(posx, posy);
         tmp.posx = rng(30, OMAPX - 30);
         tmp.posy = rng(30, OMAPY - 30);
-        for (int j = 0; j < zg.size(); j++) {
-            // tmp.pos is doubled because monster groups on are a half-size scale.
-            // This is the most confusing part about the scaling of the overmap.
-            int dist = trig_dist(tmp.posx * 2, tmp.posy * 2, zg[j].posx, zg[j].posy);
-            int rad = zg[j].radius;
-            // Basically, the CENTER of the settlement can't be inside a group's radius,
-            //  but the OUTSKIRTS of town certain can be.
-            while (zg[j].type != mcat_forest && dist <= rad * 1.5) {
+
+        for (std::size_t j {0}; j < zg.size(); ++j) {
+            // tmp.pos is doubled because monster groups on are a half-size scale. This is the most
+            // confusing part about the scaling of the overmap.
+            int distance {trig_dist(tmp.posx * 2, tmp.posy * 2, zg[j].posx, zg[j].posy)};
+            const int rad {zg[j].radius};
+
+            // Basically, the center of the settlement can't be inside a group's radius, but the
+            // outskirts of town certain can be.
+            while (zg[j].type != moncat_id::mcat_forest && distance <= rad * 1.5) {
                 // tmp.pos is doubled because monster groups on are a half-size scale.
-                dist = trig_dist(tmp.posx * 2, tmp.posy * 2, zg[j].posx, zg[j].posy);
-                zg[j].radius;
-                tmp.posx = rng(30, OMAPX - 30);
-                tmp.posy = rng(30, OMAPY - 30);
+                distance = trig_dist(tmp.posx * 2, tmp.posy * 2, zg[j].posx, zg[j].posy);
+                tmp.posx = static_cast<int>(rng(30, OMAPX - 30));
+                tmp.posy = static_cast<int>(rng(30, OMAPY - 30));
                 j = 0;
             }
         }
+
         tmp.set_population();
         tmp.size = (tmp.pop < 24 ? 2 : tmp.pop / 8);
         towns.push_back(tmp);
     }
 
-    for (int i = 0; i < towns.size(); i++) {
-        for (int x = 0 - towns[i].size; x <= towns[i].size; x++) {
+    for (auto& town : towns) {
+        for (int x = 0 - town.size; x <= town.size; x++) {
             // First, build a wall around the town.  TODO: Not so square?
-            if (is_wall_material(ter(x, towns[i].posy - towns[i].size)))
-                ter(towns[i].posx + x, towns[i].posy - towns[i].size) = ot_wall;
-            if (is_wall_material(ter(x, towns[i].posy + towns[i].size)))
-                ter(towns[i].posx + x, towns[i].posy + towns[i].size) = ot_wall;
-            if (is_wall_material(ter(towns[i].posx - towns[i].size, x)))
-                ter(towns[i].posx - towns[i].size, towns[i].posy + x) = ot_wall;
-            if (is_wall_material(ter(towns[i].posx + towns[i].size, towns[i].posy + x)))
-                ter(towns[i].posx + towns[i].size, towns[i].posy + x) = ot_wall;
+            if (is_wall_material(ter(x, town.posy - town.size)))
+                ter(town.posx + x, town.posy - town.size) = ot_wall;
+            if (is_wall_material(ter(x, town.posy + town.size)))
+                ter(town.posx + x, town.posy + town.size) = ot_wall;
+            if (is_wall_material(ter(town.posx - town.size, x)))
+                ter(town.posx - town.size, town.posy + x) = ot_wall;
+            if (is_wall_material(ter(town.posx + town.size, town.posy + x)))
+                ter(town.posx + town.size, town.posy + x) = ot_wall;
         }
         // Pick a side and make an entrance over there
         switch (rng(0, 3)) {
         case 0:
-            ter(towns[i].posx, towns[i].posy - towns[i].size) = ot_gate;
+            ter(town.posx, town.posy - town.size) = ot_gate;
             break;
         case 1:
-            ter(towns[i].posx + towns[i].size, towns[i].posy) = ot_gate;
+            ter(town.posx + town.size, town.posy) = ot_gate;
             break;
         case 2:
-            ter(towns[i].posx, towns[i].posy + towns[i].size) = ot_gate;
+            ter(town.posx, town.posy + town.size) = ot_gate;
             break;
         case 3:
-            ter(towns[i].posx - towns[i].size, towns[i].posy) = ot_gate;
+            ter(town.posx - town.size, town.posy) = ot_gate;
             break;
         }
 
         // Clear the terrain around the city, place buildings inside the city
-        for (int x = towns[i].size * -2; x <= towns[i].size * 2; x++) {
-            for (int y = towns[i].size * -2; y <= towns[i].size * 2; y++) {
+        for (int x = town.size * -2; x <= town.size * 2; x++) {
+            for (int y = town.size * -2; y <= town.size * 2; y++) {
                 // Inside the walls, build buildings...
-                if (x >= 0 - towns[i].size + 1 && x <= towns[i].size - 1
-                    && y >= 0 - towns[i].size + 1 && y <= towns[i].size - 1)
-                    settlement_building(towns[i], towns[i].posx + x, towns[i].posy + y);
-                else if (is_ground(ter(towns[i].posx + x, towns[i].posy + y)))
-                    ter(towns[i].posx + x, towns[i].posy + y) = ot_field; // Clear terrain
+                if (x >= 0 - town.size + 1 && x <= town.size - 1 && y >= 0 - town.size + 1
+                    && y <= town.size - 1)
+                    settlement_building(town, town.posx + x, town.posy + y);
+                else if (is_ground(ter(town.posx + x, town.posy + y)))
+                    ter(town.posx + x, town.posy + y) = ot_field; // Clear terrain
             }
         }
         // Finally, pick a place for the town center (bulletin board, etc)
         int center_tries = 0, cx, cy;
         do {
-            cx = towns[i].posx + rng(towns[i].size * -1 + 1, towns[i].size - 1);
-            cy = towns[i].posy + rng(towns[i].size * -1 + 1, towns[i].size - 1);
+            cx = town.posx + rng(town.size * -1 + 1, town.size - 1);
+            cy = town.posy + rng(town.size * -1 + 1, town.size - 1);
             if (ter(cx, cy) == ot_set_house || ter(cx, cy) == ot_field
                 || ter(cx, cy) == ot_forest) {
                 ter(cx, cy) = ot_set_center;
@@ -752,7 +800,7 @@ void overmap::place_settlements(Game* g)
                     ter(cx, cy) = ot_set_center;
             }
         } while (center_tries != 10);
-        towns[i].populate(g);
+        town.populate(g);
     }
 }
 
@@ -762,7 +810,9 @@ void overmap::place_NPCs(Game* g)
     shopkeep.omx = posx;
     shopkeep.omy = posy;
     shopkeep.omz = posz;
-    int npcx, npcy;
+    int npcx {0};
+    int npcy {0};
+
     for (int x = 0; x < OMAPX; x++) {
         for (int y = 0; y < OMAPY; y++) {
             switch (ter(x, y)) {
@@ -1192,27 +1242,39 @@ void overmap::build_tunnel(int x, int y, int s, int dir)
                 valid.push_back(Point(i, j));
         }
     }
-    for (int i = 0; i < valid.size(); i++) {
-        if (valid[i].x != next.x || valid[i].y != next.y) {
+
+    for (const auto& position : valid) {
+        if (position.x != next.x || position.y != next.y) {
             if (one_in(s * 2)) {
-                if (one_in(2))
-                    ter(valid[i].x, valid[i].y) = ot_ants_food;
-                else
-                    ter(valid[i].x, valid[i].y) = ot_ants_larvae;
+                if (one_in(2)) {
+                    ter(position.x, position.y) = ot_ants_food;
+                } else {
+                    ter(position.x, position.y) = ot_ants_larvae;
+                }
             } else if (one_in(5)) {
-                int dir2;
-                if (valid[i].y == y - 1)
+                int dir2 {0};
+
+                if (position.y == y - 1) {
                     dir2 = 0;
-                if (valid[i].x == x + 1)
+                }
+
+                if (position.x == x + 1) {
                     dir2 = 1;
-                if (valid[i].y == y + 1)
+                }
+
+                if (position.y == y + 1) {
                     dir2 = 2;
-                if (valid[i].x == x - 1)
+                }
+
+                if (position.x == x - 1) {
                     dir2 = 3;
-                build_tunnel(valid[i].x, valid[i].y, s - rng(0, 3), dir2);
+                }
+
+                build_tunnel(position.x, position.y, s - static_cast<int>(rng(0, 3)), dir2);
             }
         }
     }
+
     build_tunnel(next.x, next.y, s - 1, dir);
 }
 
@@ -1245,11 +1307,13 @@ void overmap::place_rifts()
                 riftline = line_to(x - xdist, y - ydist + o, x + xdist, y + ydist, rng(0, 10));
             else
                 riftline = line_to(x - xdist + o, y - ydist, x + xdist, y + ydist, rng(0, 10));
-            for (int i = 0; i < riftline.size(); i++) {
-                if (i == riftline.size() / 2 && !one_in(3))
-                    ter(riftline[i].x, riftline[i].y) = ot_hellmouth;
-                else
-                    ter(riftline[i].x, riftline[i].y) = ot_rift;
+
+            for (std::size_t i {0}; i < riftline.size(); ++i) {
+                if (i == riftline.size() / 2 && !one_in(3)) {
+                    ter(riftline[i].x, riftline[i].y) = oter_id::ot_hellmouth;
+                } else {
+                    ter(riftline[i].x, riftline[i].y) = oter_id::ot_rift;
+                }
             }
         }
     }
@@ -1277,17 +1341,23 @@ void overmap::make_hiway(int x1, int y1, int x2, int y2, oter_id base)
             next.push_back(Point(x, y + 1));
         else if (y2 < y)
             next.push_back(Point(x, y - 1));
-        for (int i = 0; i < next.size(); i++) { // Take an existing road if we can
+
+        for (std::size_t i {0}; i < next.size(); ++i) {
+            // Take an existing road if we can.
             if (next[i].x != -1 && is_road(base, next[i].x, next[i].y)) {
                 x = next[i].x;
                 y = next[i].y;
-                dir = i; // We are moving... whichever way that highway is moving
+                dir = static_cast<int>(i); // We are moving... whichever way that highway is moving.
+
                 // If we're closer to the destination than to the origin, this highway is done!
-                if (dist(x, y, x1, y1) > dist(x, y, x2, y2))
+                if (dist(x, y, x1, y1) > dist(x, y, x2, y2)) {
                     return;
+                }
+
                 next.clear();
             }
         }
+
         if (!next.empty()) {       // Assuming we DIDN'T take an existing road...
             if (next[0].x == -1) { // X is correct, so we're taking the y-change
                 dir = 1;           // We are moving vertically
@@ -1401,20 +1471,25 @@ void overmap::place_hiways(std::vector<city> cities, oter_id base)
     int closest = -1;
     int distance;
     bool maderoad = false;
-    for (int i = 0; i < cities.size(); i++) {
+
+    for (std::size_t i {0}; i < cities.size(); ++i) {
         maderoad = false;
         closest = -1;
-        for (int j = i + 1; j < cities.size(); j++) {
-            distance = dist(cities[i].x, cities[i].y, cities[j].x, cities[j].y);
+
+        for (std::size_t j {i + 1}; j < cities.size(); ++j) {
+            distance = static_cast<int>(dist(cities[i].x, cities[i].y, cities[j].x, cities[j].y));
+
             if (distance < closest || closest < 0) {
                 closest = distance;
                 best = cities[j];
             }
+
             if (distance < TOP_HIWAY_DIST) {
                 maderoad = true;
                 make_hiway(cities[i].x, cities[i].y, cities[j].x, cities[j].y, base);
             }
         }
+
         if (!maderoad && closest > 0)
             make_hiway(cities[i].x, cities[i].y, best.x, best.y, base);
     }
@@ -1477,9 +1552,10 @@ void overmap::polish(oter_id min, oter_id max)
 bool overmap::is_road(int x, int y)
 {
     if (x < 0 || x >= OMAPX || y < 0 || y >= OMAPY) {
-        for (int i = 0; i < roads_out.size(); i++) {
-            if (abs(roads_out[i].x - x) + abs(roads_out[i].y - y) <= 1)
+        for (const auto& road : roads_out) {
+            if (std::abs(road.x - x) + std::abs(road.y - y) <= 1) {
                 return true;
+            }
         }
     }
     if ((ter(x, y) >= ot_road_null && ter(x, y) <= ot_bridge_ew)
@@ -1508,9 +1584,10 @@ bool overmap::is_road(oter_id base, int x, int y)
         return false;
     }
     if (x < 0 || x >= OMAPX || y < 0 || y >= OMAPY) {
-        for (int i = 0; i < roads_out.size(); i++) {
-            if (abs(roads_out[i].x - x) + abs(roads_out[i].y - y) <= 1)
+        for (const auto& road : roads_out) {
+            if (std::abs(road.x - x) + std::abs(road.y - y) <= 1) {
                 return true;
+            }
         }
     }
     if (ter(x, y) >= min && ter(x, y) <= max)
@@ -1638,11 +1715,12 @@ void overmap::good_river(int x, int y)
 
 void overmap::place_mongroups()
 {
-    // Cities are full of zombies
-    for (int i = 0; i < cities.size(); i++) {
-        if (!one_in(16) || cities[i].s > 5)
-            zg.push_back(mongroup(mcat_zombie, (cities[i].x * 2), (cities[i].y * 2),
-                                  int(cities[i].s * 2.5), cities[i].s * 80));
+    // Cities are full of zombies.
+    for (const auto& city : cities) {
+        if (!one_in(16) || city.s > 5) {
+            zg.emplace_back(moncat_id::mcat_zombie, city.x * 2, city.y * 2,
+                            static_cast<int>(city.s * 2.5), city.s * 80);
+        }
     }
 
     // Lots of random anthills
@@ -1723,20 +1801,29 @@ void overmap::save(int x, int y, int z)
         }
         fout << std::endl;
     }
-    for (int i = 0; i < zg.size(); i++)
-        fout << "Z " << zg[i].type << " " << zg[i].posx << " " << zg[i].posy << " "
-             << int(zg[i].radius) << " " << zg[i].population << std::endl;
-    for (int i = 0; i < cities.size(); i++)
-        fout << "C " << cities[i].x << " " << cities[i].y << " " << cities[i].s << std::endl;
-    for (int i = 0; i < roads_out.size(); i++)
-        fout << "R " << roads_out[i].x << " " << roads_out[i].y << std::endl;
-    for (int i = 0; i < radios.size(); i++)
-        fout << "T " << radios[i].x << " " << radios[i].y << " " << radios[i].strength << " "
-             << std::endl
-             << radios[i].message << std::endl;
-    for (int i = 0; i < notes.size(); i++)
-        fout << "N " << notes[i].x << " " << notes[i].y << " " << notes[i].num << std::endl
-             << notes[i].text << std::endl;
+
+    for (const auto& group : zg) {
+        fout << "Z " << group.type << ' ' << group.posx << ' ' << group.posy << ' '
+             << static_cast<int>(group.radius) << ' ' << group.population << '\n';
+    }
+
+    for (const auto& city : cities) {
+        fout << "C " << city.x << ' ' << city.y << ' ' << city.s << '\n';
+    }
+
+    for (const auto& road : roads_out) {
+        fout << "R " << road.x << ' ' << road.y << '\n';
+    }
+
+    for (const auto& radio : radios) {
+        fout << "T " << radio.x << ' ' << radio.y << ' ' << radio.strength << ' ' << '\n'
+             << radio.message << '\n';
+    }
+
+    for (const auto& note : notes) {
+        fout << "N " << note.x << ' ' << note.y << ' ' << note.num << '\n' << note.text << '\n';
+    }
+
     fout.close();
 }
 

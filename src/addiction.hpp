@@ -135,6 +135,9 @@ void addict_effect(Game* g, addiction& add)
             g->u.stim--;
         }
         break;
+
+    default:
+        break;
     }
 }
 
@@ -190,6 +193,9 @@ Movement rate reduction.  Depression.  Weak immune system.  Frequent cravings.";
 
     case ADD_COKE:
         return "Perception - 1;   Intelligence - 1;  Frequent cravings.";
+
+    default:
+        return "";
     }
 
     return "";

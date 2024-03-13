@@ -587,7 +587,7 @@ struct itype {
 struct it_comest : public itype {
     signed char quench;    // Many things make you thirstier!
     unsigned char nutr;    // Nutrition imparted
-    signed char spoils;    // How long it takes to spoil (hours / 600 turns)
+    int spoils {0};        // How long it takes to spoil (hours / 600 turns).
     unsigned char addict;  // Addictiveness potential
     unsigned char charges; // Defaults # of charges (drugs, loaf of bread? etc)
     signed char stim;
@@ -616,10 +616,9 @@ struct it_comest : public itype {
               signed char pmelee_dam,
               signed char pmelee_cut,
               signed char pm_to_hit,
-
               signed char pquench,
               unsigned char pnutr,
-              signed char pspoils,
+              const int p_spoils,
               signed char pstim,
               signed char phealthy,
               unsigned char paddict,
@@ -629,24 +628,12 @@ struct it_comest : public itype {
               itype_id ptool,
               void (iuse::*puse)(Game*, Item*, bool),
               add_type padd)
-        : itype(pid,
-                prarity,
-                pprice,
-                pname,
-                pdes,
-                psym,
-                pcolor,
-                pm1,
-                MNULL,
-                pvolume,
-                pweight,
-                pmelee_dam,
-                pmelee_cut,
-                pm_to_hit)
+        : itype {pid, prarity,         pprice,  pname,   pdes,       psym,       pcolor,
+                 pm1, material::MNULL, pvolume, pweight, pmelee_dam, pmelee_cut, pm_to_hit}
+        , spoils {p_spoils}
     {
         quench = pquench;
         nutr = pnutr;
-        spoils = pspoils;
         stim = pstim;
         healthy = phealthy;
         addict = paddict;
@@ -1094,8 +1081,11 @@ struct it_bionic : public itype {
         va_list ap;
         va_start(ap, pdifficulty);
         bionic_id tmp;
-        while (tmp = (bionic_id)va_arg(ap, int))
+
+        while ((tmp = static_cast<bionic_id>(va_arg(ap, int))) != 0U) {
             options.push_back(tmp);
+        }
+
         va_end(ap);
     }
 };

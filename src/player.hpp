@@ -22,7 +22,8 @@ struct trap;
 class player {
 public:
     player();
-    ~player();
+    virtual ~player() = default;
+
     bool create(Game* g, character_type type);
     int random_good_trait(character_type type);
     int random_bad_trait(character_type type);

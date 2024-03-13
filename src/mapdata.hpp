@@ -1,6 +1,7 @@
 #ifndef OOCDDA_MAPDATA_HPP
 #define OOCDDA_MAPDATA_HPP
 
+#include <array>
 #include <string>
 #include <vector>
 
@@ -291,79 +292,91 @@ enum field_id {
     num_fields
 };
 
-const field_t fieldlist[] = {
-    {{
-         "",
-         "",
-         "",
-     },                                                     '%',
-     {c_white, c_white, c_white},
-     {true, true, true},
-     {false, false, false},
-     0   },
-    {{"blood splatter", "blood stain", "puddle of blood"},
-     '%',                                                             {c_red, c_red, c_red},
-     {true, true, true},
-     {false, false, false},
-     2500},
-    {{"bile splatter", "bile stain", "puddle of bile"},
-     '%',                                                             {c_pink, c_pink, c_pink},
-     {true, true, true},
-     {false, false, false},
-     2500},
-    {{"slime trail", "slime stain", "puddle of slime"},
-     '%',                                                             {c_ltgreen, c_ltgreen, c_green},
-     {true, true, true},
-     {false, false, false},
-     2500},
-    {{"acid splatter", "acid streak", "pool of acid"},
-     '5',                                                             {c_ltgreen, c_green, c_green},
-     {true, true, true},
-     {true, true, true},
-     10  },
-    {{"small fire", "fire", "raging fire"},
-     '4',                                                             {c_yellow, c_ltred, c_red},
-     {true, true, true},
-     {true, true, true},
-     2000},
-    {{"thin smoke", "smoke", "thick smoke"},
-     '8',                                                             {c_white, c_ltgray, c_dkgray},
-     {true, false, false},
-     {false, true, true},
-     400 },
-    {{"hazy cloud", "tear gas", "thick tear gas"},
-     '8',                                                             {c_white, c_yellow, c_brown},
-     {true, false, false},
-     {true, true, true},
-     600 },
-    {{"hazy cloud", "radioactive gas", "thick radioactive gas"},
-     '8',                                                             {c_white, c_ltgreen, c_green},
-     {true, true, false},
-     {true, true, true},
-     1000},
-    {{"sparks", "electric crackle", "electric cloud"},
-     '9',                                                             {c_white, c_cyan, c_blue},
-     {true, true, true},
-     {true, true, true},
-     2   }
+const std::array<field_t, field_id::num_fields> fieldlist {
+    {{{
+          "",
+          "",
+          "",
+      },
+      '%',
+      {c_white, c_white, c_white},
+      {true, true, true},
+      {false, false, false},
+      0},
+     {{"blood splatter", "blood stain", "puddle of blood"},
+      '%',
+      {c_red, c_red, c_red},
+      {true, true, true},
+      {false, false, false},
+      2500},
+     {{"bile splatter", "bile stain", "puddle of bile"},
+      '%',
+      {c_pink, c_pink, c_pink},
+      {true, true, true},
+      {false, false, false},
+      2500},
+     {{"slime trail", "slime stain", "puddle of slime"},
+      '%',
+      {c_ltgreen, c_ltgreen, c_green},
+      {true, true, true},
+      {false, false, false},
+      2500},
+     {{"acid splatter", "acid streak", "pool of acid"},
+      '5',
+      {c_ltgreen, c_green, c_green},
+      {true, true, true},
+      {true, true, true},
+      10},
+     {{"small fire", "fire", "raging fire"},
+      '4',
+      {c_yellow, c_ltred, c_red},
+      {true, true, true},
+      {true, true, true},
+      2000},
+     {{"thin smoke", "smoke", "thick smoke"},
+      '8',
+      {c_white, c_ltgray, c_dkgray},
+      {true, false, false},
+      {false, true, true},
+      400},
+     {{"hazy cloud", "tear gas", "thick tear gas"},
+      '8',
+      {c_white, c_yellow, c_brown},
+      {true, false, false},
+      {true, true, true},
+      600},
+     {{"hazy cloud", "radioactive gas", "thick radioactive gas"},
+      '8',
+      {c_white, c_ltgreen, c_green},
+      {true, true, false},
+      {true, true, true},
+      1000},
+     {{"sparks", "electric crackle", "electric cloud"},
+      '9',
+      {c_white, c_cyan, c_blue},
+      {true, true, true},
+      {true, true, true},
+      2}}
 };
 
 struct field {
     field_id type;
-    signed char density;
+    char density {1};
     int age;
+
     field()
     {
         type = fd_null;
-        density = 1;
         age = 0;
     }
-    field(field_id t, unsigned char d, unsigned int a)
+
+    field(field_id t, const char p_density, unsigned int a)
+        : density {p_density}
     {
         type = t;
-        density = d;
         age = a;
     }
+
     bool is_null()
     {
         if (type == fd_null || type == fd_blood || type == fd_bile || type == fd_slime)

@@ -188,7 +188,6 @@ private:
     oter_id ter_at(int x, int y, bool& mark_as_seen);
 
     // Debug functions
-    void debug();
     void display_scent();
     void mondebug();
     void groupdebug();

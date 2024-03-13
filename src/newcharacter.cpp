@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -46,11 +47,13 @@ bool player::create(Game* g, character_type type)
     if (type != PLTYPE_CUSTOM) {
         switch (type) {
         case PLTYPE_RANDOM:
-            str_max = rng(6, 12);
-            dex_max = rng(6, 12);
-            int_max = rng(6, 12);
-            per_max = rng(6, 12);
-            break;
+        default: {
+            str_max = static_cast<int>(rng(6, 12));
+            dex_max = static_cast<int>(rng(6, 12));
+            int_max = static_cast<int>(rng(6, 12));
+            per_max = static_cast<int>(rng(6, 12));
+        } break;
+
         case PLTYPE_STUDENT:
             str_max = dice(2, 5) + 3;
             dex_max = dice(2, 5) + 3;
@@ -108,6 +111,7 @@ bool player::create(Game* g, character_type type)
             points--;
             break;
         }
+
         points = points - str_max - dex_max - int_max - per_max;
         int num_gtraits = 0, num_btraits = 0, rn, tries;
         while (points < 0 || rng(-3, 20) > points) {
@@ -843,7 +847,10 @@ int player::random_good_trait(character_type type)
 {
     switch (type) {
     case PLTYPE_RANDOM:
-        return rng(1, PF_SPLIT - 1);
+    default: {
+        return static_cast<int>(rng(1, pl_flag::PF_SPLIT - 1));
+    } break;
+
     case PLTYPE_STUDENT:
         switch (rng(1, 12)) {
         case 1:
@@ -1126,7 +1133,11 @@ int player::random_bad_trait(character_type type)
 {
     switch (type) {
     case PLTYPE_RANDOM:
-        return rng(PF_SPLIT + 1, PF_MAX - 1);
+    default: {
+        return static_cast<int>(
+            rng(static_cast<std::int64_t>(pl_flag::PF_SPLIT) + 1, pl_flag::PF_MAX - 1));
+    } break;
+
     case PLTYPE_STUDENT:
         switch (rng(1, 19)) {
         case 1:
@@ -1379,7 +1390,10 @@ int random_skill(character_type type)
 {
     switch (type) {
     case PLTYPE_RANDOM:
-        return rng(1, num_skill_types - 1);
+    default: {
+        return static_cast<int>(rng(1, skill::num_skill_types - 1));
+    } break;
+
     case PLTYPE_STUDENT:
         switch (rng(1, 8)) {
         case 1:

@@ -1,6 +1,7 @@
 // Monster movement code; essentially, the AI
 
 #include <cmath>
+#include <cstddef>
 #include <functional>
 #include <string>
 #include <vector>
@@ -78,15 +79,17 @@ void Monster::plan(Game* g)
     int dist = 1000;
     int tc, stc;
     if (friendly != 0) { // Target monsters, not the player!
-        for (int i = 0; i < g->z.size(); i++) {
-            Monster* tmp = &(g->z[i]);
-            if (tmp->friendly == 0 && rl_dist(posx, posy, tmp->posx, tmp->posy) < dist
-                && g->m.sees(posx, posy, tmp->posx, tmp->posy, sightrange, tc)) {
-                closest = i;
-                dist = rl_dist(posx, posy, tmp->posx, tmp->posy);
+        for (std::size_t i {0}; i < g->z.size(); ++i) {
+            const Monster* monster {&g->z[i]};
+
+            if (monster->friendly == 0 && rl_dist(posx, posy, monster->posx, monster->posy) < dist
+                && g->m.sees(posx, posy, monster->posx, monster->posy, sightrange, tc)) {
+                closest = static_cast<int>(i);
+                dist = rl_dist(posx, posy, monster->posx, monster->posy);
                 stc = tc;
             }
         }
+
         if (closest >= 0)
             set_dest(g->z[closest].posx, g->z[closest].posy, stc);
         else if (friendly > 0 && one_in(3)) // Grow restless with no targets
@@ -112,24 +115,29 @@ void Monster::plan(Game* g)
             closest = -2;
             stc = tc;
         }
-        for (int i = 0; i < g->active_npc.size(); i++) {
-            npc* me = &(g->active_npc[i]);
-            if (rl_dist(posx, posy, me->posx, me->posy) < dist
-                && g->m.sees(posx, posy, me->posx, me->posy, sightrange, tc)) {
-                dist = rl_dist(posx, posy, me->posx, me->posy);
-                closest = i;
+
+        for (std::size_t i {0}; i < g->active_npc.size(); ++i) {
+            const npc* nearby_npc {&g->active_npc[i]};
+
+            if (rl_dist(posx, posy, nearby_npc->posx, nearby_npc->posy) < dist
+                && g->m.sees(posx, posy, nearby_npc->posx, nearby_npc->posy, sightrange, tc)) {
+                dist = rl_dist(posx, posy, nearby_npc->posx, nearby_npc->posy);
+                closest = static_cast<int>(i);
                 stc = tc;
             }
         }
-        for (int i = 0; i < g->z.size(); i++) {
-            Monster* mon = &(g->z[i]);
-            if (mon->friendly != 0 && rl_dist(posx, posy, mon->posx, mon->posy) < dist
-                && g->m.sees(posx, posy, mon->posx, mon->posy, sightrange, tc)) {
-                dist = rl_dist(posx, posy, mon->posx, mon->posy);
-                closest = -3 - i;
+
+        for (std::size_t i {0}; i < g->z.size(); ++i) {
+            const Monster* monster {&g->z[i]};
+
+            if (monster->friendly != 0 && rl_dist(posx, posy, monster->posx, monster->posy) < dist
+                && g->m.sees(posx, posy, monster->posx, monster->posy, sightrange, tc)) {
+                dist = rl_dist(posx, posy, monster->posx, monster->posy);
+                closest = -3 - static_cast<int>(i);
                 stc = tc;
             }
         }
+
         if (closest == -2)
             set_dest(g->u.posx, g->u.posy, stc);
         else if (closest <= -3)
@@ -179,12 +187,8 @@ void Monster::move(Game* g)
     }
 
     moves -= 100;
-    int rn = 0, hmove = 0;
-    bool moved = false, xbest = false;
+    bool moved {false};
     Point next;
-    int x, x2, x3, y, y2, y3, junk;
-    rn = rng(0, 50);
-    hmove = rng(0, 5);
     int mondex = (plans.size() > 0 ? g->mon_at(plans[0].x, plans[0].y) : -1);
 
     if (plans.size() > 0 && (mondex == -1 || g->z[mondex].friendly != 0 || has_flag(MF_ATTACKMON))
@@ -283,7 +287,8 @@ Point Monster::scent_move(Game* g)
     int maxsmell = 1; // Squares with smell 0 are not eligable targets
     int minsmell = 9999;
     Point pbuff, next(-1, -1);
-    unsigned int smell;
+    int smell {0};
+
     for (int x = -1; x <= 1; x++) {
         for (int y = -1; y <= 1; y++) {
             smell = g->scent(posx + x, posy + y);
@@ -291,6 +296,7 @@ Point Monster::scent_move(Game* g)
                 && (can_move_to(g->m, posx + x, posy + y)
                     || (posx + x == g->u.posx && posx + y == g->u.posy)
                     || (g->m.has_flag(bashable, posx + x, posy + y) && has_flag(MF_BASHES)))) {
+
                 if ((!is_fleeing(g->u) && smell > maxsmell)
                     || (is_fleeing(g->u) && smell < minsmell)) {
                     smoves.clear();
@@ -509,13 +515,19 @@ void Monster::stumble(Game* g, bool moved)
             if (g->m.sees(posx, posy, plans[0].x, plans[0].y, -1, tc)) {
                 // Copy out old plans...
                 std::vector<Point> plans2;
-                for (int i = 0; i < plans.size(); i++)
-                    plans2.push_back(plans[i]);
+                plans2.reserve(plans.size());
+
+                for (const auto plan : plans) {
+                    plans2.push_back(plan);
+                }
+
                 // Set plans to a route between where we are now, and where we were
                 set_dest(plans[0].x, plans[0].y, tc);
-                // Append old plans to the new plans
-                for (int index = 0; index < plans2.size(); index++)
-                    plans.push_back(plans2[index]);
+
+                // Append old plans to the new plans.
+                for (const auto index : plans2) {
+                    plans.push_back(index);
+                }
             } else
                 plans.clear();
         }

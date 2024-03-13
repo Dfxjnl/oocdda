@@ -17,6 +17,7 @@
 #include "pldata.hpp"
 #include "rng.hpp"
 #include "setvector.hpp"
+#include "skill.hpp"
 
 namespace oocdda {
 void draw_recipe_tabs(WINDOW* w, craft_cat tab);
@@ -431,14 +432,19 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
         // Clear the screen of recipe data, and draw it anew
         werase(w_data);
         wrefresh(w_data);
-        for (int i = 0; i < current.size() && i < 23; i++) {
-            if (i == line)
-                mvwprintz(w_data, i, 0, (available[i] ? h_white : h_dkgray),
+
+        for (std::size_t i {0}; i < current.size() && i < 23; ++i) {
+            if (static_cast<int>(i) == line) {
+                mvwprintz(w_data, static_cast<int>(i), 0,
+                          (available[i] ? nc_color::h_white : nc_color::h_dkgray),
                           itypes[current[i]->result]->name.c_str());
-            else
-                mvwprintz(w_data, i, 0, (available[i] ? c_white : c_dkgray),
+            } else {
+                mvwprintz(w_data, static_cast<int>(i), 0,
+                          (available[i] ? nc_color::c_white : nc_color::c_dkgray),
                           itypes[current[i]->result]->name.c_str());
+            }
         }
+
         if (current.size() > 0) {
             nc_color col = (available[line] ? c_white : c_dkgray);
             mvwprintz(w_data, 0, 30, col, "Primary skill: %s",
@@ -468,16 +474,18 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
                 ypos = 6;
             } else {
                 ypos = 5;
-                // Loop to print the required tools
-                for (int i = 0; i < 5; i++) {
-                    if (current[line]->tools[i].size() > 0) {
+
+                // Loop to print the required tools.
+                for (const auto& tool : current[line]->tools) {
+                    if (tool.size() > 0) {
                         ypos++;
                         mvwputch(w_data, ypos, 30, col, '>');
                     }
                     xpos = 32;
-                    for (int j = 0; j < current[line]->tools[i].size(); j++) {
-                        itype_id type = current[line]->tools[i][j].type;
-                        int charges = current[line]->tools[i][j].count;
+
+                    for (std::size_t j {0}; j < tool.size(); ++j) {
+                        itype_id type = tool[j].type;
+                        int charges = tool[j].count;
                         nc_color toolcol = c_red;
                         if (charges < 0 && u.has_amount(type, 1))
                             toolcol = c_green;
@@ -496,7 +504,7 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
                         }
                         mvwprintz(w_data, ypos, xpos, toolcol, toolname.c_str());
                         xpos += toolname.length();
-                        if (j < current[line]->tools[i].size() - 1) {
+                        if (j < tool.size() - 1) {
                             if (xpos >= 77) {
                                 xpos = 32;
                                 ypos++;
@@ -510,15 +518,17 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
             // Loop to print the required components
             ypos++;
             mvwprintz(w_data, ypos, 30, col, "Components required:");
-            for (int i = 0; i < 5; i++) {
-                if (current[line]->components[i].size() > 0) {
+
+            for (const auto& component : current[line]->components) {
+                if (component.size() > 0) {
                     ypos++;
                     mvwputch(w_data, ypos, 30, col, '>');
                 }
                 xpos = 32;
-                for (int j = 0; j < current[line]->components[i].size(); j++) {
-                    int count = current[line]->components[i][j].count;
-                    itype_id type = current[line]->components[i][j].type;
+
+                for (std::size_t j {0}; j < component.size(); ++j) {
+                    int count = component[j].count;
+                    itype_id type = component[j].type;
                     nc_color compcol = (u.has_number(type, count) ? c_green : c_red);
                     std::stringstream dump;
                     dump << count << "x " << itypes[type]->name << " ";
@@ -529,7 +539,8 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
                     }
                     mvwprintz(w_data, ypos, xpos, compcol, compname.c_str());
                     xpos += compname.length();
-                    if (j < current[line]->components[i].size() - 1) {
+
+                    if (j < component.size() - 1) {
                         if (xpos >= 77) {
                             ypos++;
                             xpos = 32;
@@ -580,8 +591,9 @@ Press ? to describe object.  Press <ENTER> to attempt to craft object.");
         }
         if (line < 0)
             line = current.size() - 1;
-        else if (line >= current.size())
+        else if (line >= static_cast<int>(current.size())) {
             line = 0;
+        }
     } while (ch != KEY_ESCAPE && ch != 'q' && ch != 'Q' && !done);
 
     werase(w_head);
@@ -682,7 +694,11 @@ void draw_recipe_tabs(WINDOW* w, craft_cat tab)
         mvwputch(w, 1, 65, h_ltgray, '<');
         mvwputch(w, 1, 76, h_ltgray, '>');
         break;
+
+    default:
+        break;
     }
+
     wrefresh(w);
 }
 
@@ -691,42 +707,48 @@ void Game::pick_recipes(std::vector<recipe*>& current, std::vector<bool>& availa
     bool have_tool[5], have_comp[5];
     current.clear();
     available.clear();
-    for (int i = 0; i < recipes.size(); i++) {
-        // Check if the category matches the tab, and we have the requisite skills
-        if (recipes[i].category == tab
-            && (recipes[i].sk_primary == sk_null
-                || u.sklevel[recipes[i].sk_primary] >= recipes[i].difficulty)
-            && (recipes[i].sk_secondary == sk_null || u.sklevel[recipes[i].sk_secondary] > 0))
-            current.push_back(&(recipes[i]));
+
+    for (auto& recipe : recipes) {
+        // Check if the category matches the tab, and we have the requisite skills.
+        if (recipe.category == tab
+            && (recipe.sk_primary == skill::sk_null
+                || u.sklevel[recipe.sk_primary] >= recipe.difficulty)
+            && (recipe.sk_secondary == skill::sk_null || u.sklevel[recipe.sk_secondary] > 0)) {
+            current.push_back(&recipe);
+        }
+
         available.push_back(false);
     }
-    for (int i = 0; i < current.size() && i < 22; i++) {
-        // Check if we have the requisite tools and components
+
+    for (std::size_t i {0}; i < current.size() && i < 22; ++i) {
+        // Check if we have the requisite tools and components.
         for (int j = 0; j < 5; j++) {
             have_tool[j] = false;
             have_comp[j] = false;
             if (current[i]->tools[j].size() == 0)
                 have_tool[j] = true;
             else {
-                for (int k = 0; k < current[i]->tools[j].size(); k++) {
-                    itype_id type = current[i]->tools[j][k].type;
-                    int req = current[i]->tools[j][k].count; // -1 => 1
+                for (const auto& tool : current[i]->tools[j]) {
+                    const itype_id type {tool.type};
+                    const int req {tool.count}; // -1 => 1.
+
                     if (u.has_bionic(bio_tools) || (req < 0 && u.has_amount(type, 1))
                         || (req > 0 && u.has_charges(type, req))) {
                         have_tool[j] = true;
-                        k = current[i]->tools[j].size();
+                        break;
                     }
                 }
             }
             if (current[i]->components[j].size() == 0)
                 have_comp[j] = true;
             else {
-                for (int k = 0; k < current[i]->components[j].size(); k++) {
-                    itype_id type = current[i]->components[j][k].type;
-                    int count = current[i]->components[j][k].count;
+                for (const auto& component : current[i]->components[j]) {
+                    const itype_id type {component.type};
+                    const int count {component.count};
+
                     if (u.has_number(type, count)) {
                         have_comp[j] = true;
-                        k = current[i]->components[j].size();
+                        break;
                     }
                 }
             }
@@ -750,10 +772,13 @@ void Game::complete_craft()
     for (int i = 0; i < 5; i++) {
         if (making.components[i].size() > 0) {
             std::vector<component> you_have;
-            for (int j = 0; j < making.components[i].size(); j++) {
-                if (u.has_number(making.components[i][j].type, making.components[i][j].count))
-                    you_have.push_back(making.components[i][j]);
+
+            for (auto& component : making.components[i]) {
+                if (u.has_number(component.type, component.count)) {
+                    you_have.push_back(component);
+                }
             }
+
             if (you_have.size() == 1)
                 will_use.push_back(component(you_have[0].type, you_have[0].count));
             else { // Let the player pick which component they want to use
@@ -761,22 +786,28 @@ void Game::complete_craft()
                 wborder(w, LINE_XOXO, LINE_XOXO, LINE_OXOX, LINE_OXOX, LINE_OXXO, LINE_OOXX,
                         LINE_XXOO, LINE_XOOX);
                 mvwprintz(w, 0, 5, c_red, "Use which component?");
-                for (int j = 0; j < you_have.size(); j++)
-                    mvwprintz(w, j + 1, 1, c_white, "%d: %s", j + 1,
+
+                for (std::size_t j {0}; j < you_have.size(); ++j) {
+                    mvwprintz(w, static_cast<int>(j) + 1, 1, nc_color::c_white, "%d: %s", j + 1,
                               itypes[you_have[j].type]->name.c_str());
+                }
+
                 wrefresh(w);
-                char ch;
-                do
+                int ch {0};
+
+                do {
                     ch = getch();
-                while (ch < '1' || ch >= '1' + you_have.size());
+                } while (ch < '1' || ch >= '1' + static_cast<int>(you_have.size()));
+
                 ch -= '1';
                 will_use.push_back(component(you_have[ch].type, you_have[ch].count));
             }
         }
         if (making.tools[i].size() > 0) {
-            for (int j = 0; j < making.tools[i].size(); j++) {
-                if (making.tools[i][j].count > 0)
-                    u.use_charges(making.tools[i][j].type, making.tools[i][j].count);
+            for (const auto& component : making.tools[i]) {
+                if (component.count > 0) {
+                    u.use_charges(component.type, component.count);
+                }
             }
         }
     }
@@ -806,8 +837,11 @@ void Game::complete_craft()
         u.activity.type = ACT_NULL;
         return;
     }
-    for (int i = 0; i < will_use.size(); i++)
-        u.use_amount(will_use[i].type, will_use[i].count);
+
+    for (const auto& item : will_use) {
+        u.use_amount(item.type, item.count);
+    }
+
     int iter = 0;
     Item newit(itypes[making.result], turn, nextinv);
     do {
@@ -816,11 +850,12 @@ void Game::complete_craft()
         iter++;
     } while (u.has_item(newit.invlet) && iter < 52);
     newit = newit.in_its_container(&itypes);
-    if (iter == 52 || u.volume_carried() + newit.volume() > u.volume_capacity()) {
+
+    if (iter == 52 || u.volume_carried() + static_cast<int>(newit.volume()) > u.volume_capacity()) {
         add_msg("There's no room in your inventory for the %s, so you drop it.",
                 newit.tname().c_str());
         m.add_item(u.posx, u.posy, newit);
-    } else if (u.weight_carried() + newit.volume() > u.weight_capacity()) {
+    } else if (u.weight_carried() + static_cast<int>(newit.volume()) > u.weight_capacity()) {
         add_msg("The %s is too heavy to carry, so you drop it.", newit.tname().c_str());
         m.add_item(u.posx, u.posy, newit);
     } else {

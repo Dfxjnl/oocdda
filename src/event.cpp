@@ -12,6 +12,7 @@ namespace oocdda {
 void event::actualize(Game* g)
 {
     npc tmp;
+
     switch (type) {
     case EVENT_HELP:
         if (relevant_faction == NULL) {
@@ -30,6 +31,9 @@ void event::actualize(Game* g)
                 g->active_npc.push_back(tmp);
             }
         }
+        break;
+
+    default:
         break;
     }
 }

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -59,14 +60,17 @@ void antqueen(Game& g, Monster& z)
         int junk;
         if (g.u_see(z.posx, z.posy, junk))
             g.add_msg("The %s tends nearby eggs, and they hatch!", z.name().c_str());
-        for (int i = 0; i < egg_points.size(); i++) {
-            int x = egg_points[i].x, y = egg_points[i].y;
-            for (int j = 0; j < g.m.i_at(x, y).size(); j++) {
-                if (g.m.i_at(x, y)[j].type->id == itm_ant_egg) {
-                    g.m.i_rem(x, y, j);
-                    j = g.m.i_at(x, y).size();
-                    Monster tmp(g.mtypes[mon_ant_larva], x, y);
-                    g.z.push_back(tmp);
+
+        for (const auto point : egg_points) {
+            const int x {point.x};
+            const int y {point.y};
+
+            for (std::size_t j {0}; j < g.m.i_at(x, y).size(); ++j) {
+                if (g.m.i_at(x, y)[j].type->id == itype_id::itm_ant_egg) {
+                    g.m.i_rem(x, y, static_cast<int>(j));
+                    const Monster larva {g.mtypes[mon_id::mon_ant_larva], x, y};
+                    g.z.push_back(larva);
+                    break;
                 }
             }
         }
@@ -96,12 +100,13 @@ void acid(Game& g, Monster& z)
         for (int j = -3; j <= 3; j++) {
             if (g.m.move_cost(hitx + i, hity + j) > 0
                 && g.m.sees(hitx + i, hity + j, hitx, hity, 6, junk)
-                && (one_in(abs(j)) && one_in(abs(i)) || (i == 0 && j == 0))) {
-                if (g.m.field_at(hitx + i, hity + j).type == fd_acid
-                    && g.m.field_at(hitx + i, hity + j).density < 3)
+                && ((one_in(std::abs(j)) && one_in(std::abs(i))) || (i == 0 && j == 0))) {
+                if (g.m.field_at(hitx + i, hity + j).type == field_id::fd_acid
+                    && g.m.field_at(hitx + i, hity + j).density < 3) {
                     g.m.field_at(hitx + i, hity + j).density++;
-                else
-                    g.m.add_field(&g, hitx + i, hity + j, fd_acid, 2);
+                } else {
+                    g.m.add_field(&g, hitx + i, hity + j, field_id::fd_acid, 2);
+                }
             }
         }
     }
@@ -119,10 +124,13 @@ void shockstorm(Game& g, Monster& z)
     if (!g.m.sees(z.posx, z.posy, tarx, tary, -1, t))
         t = 0;
     std::vector<Point> bolt = line_to(z.posx, z.posy, tarx, tary, t);
-    for (int i = 0; i < bolt.size(); i++) {
-        if (!one_in(4))
-            g.m.add_field(&g, bolt[i].x, bolt[i].y, fd_electricity, rng(1, 3));
+
+    for (const auto& point : bolt) {
+        if (!one_in(4)) {
+            g.m.add_field(&g, point.x, point.y, field_id::fd_electricity, rng(1, 3));
+        }
     }
+
     for (int i = tarx - 1; i <= tarx + 1; i++) {
         for (int j = tary - 1; j <= tary + 1; j++) {
             if (!one_in(6))
@@ -140,16 +148,19 @@ void boomer(Game& g, Monster& z)
     z.sp_timeout = z.type->sp_freq; // Reset timer
     z.moves = -250;                 // It takes a while
     bool u_see = g.u_see(z.posx, z.posy, j);
-    for (int i = 0; i < line.size(); i++) {
-        if (g.m.field_at(line[i].x, line[i].y).type == fd_blood) {
-            g.m.field_at(line[i].x, line[i].y).type = fd_bile;
-            g.m.field_at(line[i].x, line[i].y).density = 1;
-        } else if (g.m.field_at(line[i].x, line[i].y).type == fd_bile
-                   && g.m.field_at(line[i].x, line[i].y).density < 3)
-            g.m.field_at(line[i].x, line[i].y).density++;
-        else
-            g.m.add_field(&g, line[i].x, line[i].y, fd_bile, 1);
+
+    for (const auto& point : line) {
+        if (g.m.field_at(point.x, point.y).type == field_id::fd_blood) {
+            g.m.field_at(point.x, point.y).type = field_id::fd_bile;
+            g.m.field_at(point.x, point.y).density = 1;
+        } else if (g.m.field_at(point.x, point.y).type == field_id::fd_bile
+                   && g.m.field_at(point.x, point.y).density < 3) {
+            ++g.m.field_at(point.x, point.y).density;
+        } else {
+            g.m.add_field(&g, point.x, point.y, field_id::fd_bile, 1);
+        }
     }
+
     if (u_see)
         g.add_msg("The %s spews bile!", z.name().c_str());
     if (rng(0, 10) > g.u.dodge() || one_in(g.u.dodge()))
@@ -164,9 +175,10 @@ void resurrect(Game& g, Monster& z)
     for (int x = z.posx - 6; x <= z.posx + 6; x++) {
         for (int y = z.posy - 6; y <= z.posy + 6; y++) {
             if (g.mon_at(x, y) == -1) {
-                for (int i = 0; i < g.m.i_at(x, y).size(); i++) {
-                    if (g.m.i_at(x, y)[i].type->id == itm_corpse)
-                        corpses.push_back(Point(x, y));
+                for (const auto& item : g.m.i_at(x, y)) {
+                    if (item.type->id == itype_id::itm_corpse) {
+                        corpses.emplace_back(x, y);
+                    }
                 }
             }
         }
@@ -180,20 +192,27 @@ void resurrect(Game& g, Monster& z)
     z.sp_timeout = z.type->sp_freq; // Reset timer
     z.moves = -500;                 // It takes a while
     int raised = 0;
-    for (int i = 0; i < corpses.size(); i++) {
-        int x = corpses[i].x, y = corpses[i].y;
-        for (int n = 0; n < g.m.i_at(x, y).size(); n++) {
-            if (g.m.i_at(x, y)[n].type->id == itm_corpse && one_in(2)) {
-                if (g.u_see(x, y, junk))
-                    raised++;
-                Monster mon(g.m.i_at(x, y)[n].corpse, x, y);
-                mon.speed = int(mon.speed * .8); // Raised corpses are slower
-                g.m.i_rem(x, y, n);
-                n = g.m.i_at(x, y).size();
-                g.z.push_back(mon);
+
+    for (const auto& corpse : corpses) {
+        const int x {corpse.x};
+        const int y {corpse.y};
+
+        for (std::size_t n {0}; n < g.m.i_at(x, y).size(); ++n) {
+            if (g.m.i_at(x, y)[n].type->id == itype_id::itm_corpse && one_in(2)) {
+                if (g.u_see(x, y, junk)) {
+                    ++raised;
+                }
+
+                Monster resurrected {g.m.i_at(x, y)[n].corpse, x, y};
+                resurrected.speed
+                    = static_cast<int>(resurrected.speed * 0.8); // Raised corpses are slower.
+                g.m.i_rem(x, y, static_cast<int>(n));
+                g.z.push_back(resurrected);
+                break;
             }
         }
     }
+
     if (raised > 0) {
         if (raised == 1)
             g.add_msg("A nearby corpse rises from the dead!");
@@ -427,12 +446,16 @@ void stare(Game& g, Monster& z)
     } else {
         g.add_msg("A piercing beam of light bursts forth!");
         std::vector<Point> sight = line_to(z.posx, z.posy, g.u.posx, g.u.posy, 0);
-        for (int i = 0; i < sight.size(); i++) {
-            if (g.m.ter(sight[i].x, sight[i].y) == t_reinforced_glass_h
-                || g.m.ter(sight[i].x, sight[i].y) == t_reinforced_glass_v)
-                i = sight.size();
-            else if (g.m.is_destructable(sight[i].x, sight[i].y))
-                g.m.ter(sight[i].x, sight[i].y) = t_rubble;
+
+        for (const auto& point : sight) {
+            if (g.m.ter(point.x, point.y) == ter_id::t_reinforced_glass_h
+                || g.m.ter(point.x, point.y) == ter_id::t_reinforced_glass_v) {
+                break;
+            }
+
+            if (g.m.is_destructable(point.x, point.y)) {
+                g.m.ter(point.x, point.y) = ter_id::t_rubble;
+            }
         }
     }
 }
@@ -489,8 +512,11 @@ void flamethrower(Game& g, Monster& z)
     z.sp_timeout = z.type->sp_freq; // Reset timer
     z.moves = -500;                 // It takes a while
     std::vector<Point> traj = line_to(z.posx, z.posy, g.u.posx, g.u.posy, t);
-    for (int i = 0; i < traj.size(); i++)
-        g.m.add_field(&g, traj[i].x, traj[i].y, fd_fire, 1);
+
+    for (const auto& point : traj) {
+        g.m.add_field(&g, point.x, point.y, field_id::fd_fire, 1);
+    }
+
     g.u.add_disease(DI_ONFIRE, 8, &g);
 }
 
